@@ -9,6 +9,7 @@ environment:
 resolution: workspace
 
 dependencies:
+  crypto: ^3.0.7
   serverpod: 4.0.0
   serverpod_auth_idp_server: 4.0.0
   serverpod_cloud_storage: 4.0.0
