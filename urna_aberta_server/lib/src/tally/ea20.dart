@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../tse/tse_time.dart';
 import 'aggregator.dart';
 
 /// Parses an EA20 result file (`<scope>-c<office>-e<election>-u.json`).
@@ -45,29 +46,12 @@ ScopeResult parseEa20(List<int> bytes) {
     sectionsTotal: total,
     sectionsTotalized: totalized,
     votes: votes,
-    generatedAt: _brasilia(json['dg'], json['hg']),
+    generatedAt: parseTseDateTime(
+      json['dg'],
+      json['hg'],
+      what: 'EA20 generation time',
+    ),
     candidates: candidates,
-  );
-}
-
-final _date = RegExp(r'^(\d{2})/(\d{2})/(\d{4})$');
-final _time = RegExp(r'^(\d{2}):(\d{2}):(\d{2})$');
-
-/// TSE stamps files in Brasília time, UTC-3 with no daylight saving.
-DateTime _brasilia(Object? dg, Object? hg) {
-  final d = _date.firstMatch(_string(dg, 'dg'));
-  final t = _time.firstMatch(_string(hg, 'hg'));
-  if (d == null || t == null) {
-    throw FormatException('EA20: bad generation time "$dg $hg"');
-  }
-  int g(RegExpMatch m, int i) => int.parse(m.group(i)!);
-  return DateTime.utc(
-    g(d, 3),
-    g(d, 2),
-    g(d, 1),
-    g(t, 1) + 3,
-    g(t, 2),
-    g(t, 3),
   );
 }
 

@@ -1,0 +1,18 @@
+### One looked-up polling section, with the raw TSE files it was built from.
+class: SectionCheck
+table: section_check
+fields:
+  pleito: int
+  uf: String
+  municipio: int
+  zona: int
+  secao: int
+  ### EA18 section status (Totalizada, Recebida, Anulada…).
+  auxStatus: String
+  auxGeneratedAt: DateTime
+  fetchedAt: DateTime
+  files: List<SectionFile>?, relation(name=check_files)
+indexes:
+  section_check_identity_idx:
+    fields: pleito, uf, municipio, zona, secao
+    unique: true

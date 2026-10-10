@@ -10,3 +10,19 @@ Contents: EA11 (`ele-c.json`), EA12 (municipalities, 6257 and 6259), EA14 (Brazi
 Regenerate with `dart run bin/archive_fixtures.dart` from `urna_aberta_server` (20 req/s, stops at the first error).
 
 These are the final files (generated 05/10/2026). They show the end state, not the night's progression.
+
+## One polling section (EA18 + urna files)
+
+Fetched 10/10/2026 to build and test the section decoder:
+AC, Porto Walter (01066), zona 0004, seção 0077.
+
+| File | SHA-256 |
+|---|---|
+| `oficial/ele2026/arquivo-urna/3220/dados/ac/01066/0004/0077/p003220-ac-m01066-z0004-s0077-aux.json` (EA18) | `c449b5edf0d12a831bb05039d31b53da5d0cfd94e834b33b7e302339ce914504` |
+| `…/0077/<hash>/o03220ac0106600040077-bu.dat` (boletim de urna, ASN.1) | `e987c40fc752fef52b3e03bea6fbe2f1893c4b2e94309f4f5c933319d8ed8985` |
+| `…/0077/<hash>/o03220ac0106600040077-vota.vsc` (urna signatures) | `264a49b0fba78d921ddf7a48139f108b61e381a614ef2c5406efe6bd6239380e` |
+
+`<hash>` is the folder named in the aux file. TSE has not published the
+2026 BU and signature schemas; `urna_aberta_server/lib/src/secao/asn1/`
+holds TSE's 2022 schemas adapted to these files (every office's votes add
+up to the turnout; the BU's SHA-512 matches the urna's signed list).

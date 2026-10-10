@@ -19,6 +19,7 @@ import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../greetings/greeting_endpoint.dart' as _il624ik7;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
+import '../secao/secao_endpoint.dart' as _i5402ufq;
 
 class Endpoints extends _is.EndpointDispatch {
   @override
@@ -46,6 +47,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'tally',
+          null,
+        ),
+      'secao': _i5402ufq.SecaoEndpoint()
+        ..initialize(
+          server,
+          'secao',
           null,
         ),
     };
@@ -361,6 +368,122 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['tally'] as _iphjbc6w.TallyEndpoint).divergence(
                     session,
                     params['at'],
+                  ),
+        ),
+      },
+    );
+    connectors['secao'] = _is.EndpointConnector(
+      name: 'secao',
+      endpoint: endpoints['secao']!,
+      methodConnectors: {
+        'municipios': _is.MethodConnector(
+          name: 'municipios',
+          params: {
+            'uf': _is.ParameterDescription(
+              name: 'uf',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['secao'] as _i5402ufq.SecaoEndpoint).municipios(
+                    session,
+                    params['uf'],
+                  ),
+        ),
+        'zonas': _is.MethodConnector(
+          name: 'zonas',
+          params: {
+            'uf': _is.ParameterDescription(
+              name: 'uf',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'municipio': _is.ParameterDescription(
+              name: 'municipio',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['secao'] as _i5402ufq.SecaoEndpoint).zonas(
+                session,
+                params['uf'],
+                params['municipio'],
+              ),
+        ),
+        'secoes': _is.MethodConnector(
+          name: 'secoes',
+          params: {
+            'uf': _is.ParameterDescription(
+              name: 'uf',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'municipio': _is.ParameterDescription(
+              name: 'municipio',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'zona': _is.ParameterDescription(
+              name: 'zona',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['secao'] as _i5402ufq.SecaoEndpoint).secoes(
+                session,
+                params['uf'],
+                params['municipio'],
+                params['zona'],
+              ),
+        ),
+        'consultar': _is.MethodConnector(
+          name: 'consultar',
+          params: {
+            'uf': _is.ParameterDescription(
+              name: 'uf',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'municipio': _is.ParameterDescription(
+              name: 'municipio',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'zona': _is.ParameterDescription(
+              name: 'zona',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'secao': _is.ParameterDescription(
+              name: 'secao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['secao'] as _i5402ufq.SecaoEndpoint).consultar(
+                    session,
+                    params['uf'],
+                    params['municipio'],
+                    params['zona'],
+                    params['secao'],
                   ),
         ),
       },

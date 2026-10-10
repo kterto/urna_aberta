@@ -1,0 +1,4 @@
+### TSE does not list this section; no request was made.
+exception: SectionNotFoundException
+fields:
+  message: String

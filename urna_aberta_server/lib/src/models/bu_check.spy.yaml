@@ -1,0 +1,14 @@
+### How the BU compares with the hash list the urna signed.
+enum: BuCheck
+serialized: byName
+values:
+  ### The BU hashes to the value the urna listed.
+  - matches
+  ### The BU's bytes hash differently from the urna's list.
+  - differs
+  ### The urna's signature file does not list this BU.
+  - notListed
+  ### The urna's list no longer matches the hash it signed.
+  - listingAltered
+  ### No BU or signature file was available.
+  - missing

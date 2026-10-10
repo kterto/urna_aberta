@@ -19,32 +19,54 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
 import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
+import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
+    as _i5vkvva1;
 import 'package:urna_aberta_server/src/generated/timeline_point.dart'
     as _ir3q3hqp;
+import 'bu_check.dart' as _ijbwnxcy;
 import 'candidate.dart' as _irnb9urg;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'candidate_votes.dart' as _iurxdm15;
+import 'cargo_result.dart' as _i77b8h6f;
 import 'data_origin.dart' as _i2ilnjuc;
 import 'divergence_event.dart' as _i3f5hnmb;
 import 'greetings/greeting.dart' as _izw8z7ou;
+import 'municipio_ref.dart' as _i663s1cn;
 import 'replay_night.dart' as _i1vi4thm;
 import 'replay_unavailable.dart' as _i6npibdt;
 import 'result_snapshot.dart' as _i4dv59av;
+import 'section_check.dart' as _i1fk3nml;
+import 'section_file.dart' as _i4rww364;
+import 'section_file_info.dart' as _igdizl70;
+import 'section_not_found.dart' as _iakf100n;
+import 'section_report.dart' as _i64rlb21;
+import 'section_unavailable.dart' as _i8oamffp;
 import 'tally_frame.dart' as _iiyd8otz;
 import 'timeline_point.dart' as _i4neo0h8;
 import 'uf_progress.dart' as _icbf2ppq;
+import 'voto_result.dart' as _iuhijha9;
+export 'bu_check.dart';
 export 'candidate.dart';
 export 'candidate_tally.dart';
 export 'candidate_votes.dart';
+export 'cargo_result.dart';
 export 'data_origin.dart';
 export 'divergence_event.dart';
 export 'greetings/greeting.dart';
+export 'municipio_ref.dart';
 export 'replay_night.dart';
 export 'replay_unavailable.dart';
 export 'result_snapshot.dart';
+export 'section_check.dart';
+export 'section_file.dart';
+export 'section_file_info.dart';
+export 'section_not_found.dart';
+export 'section_report.dart';
+export 'section_unavailable.dart';
 export 'tally_frame.dart';
 export 'timeline_point.dart';
 export 'uf_progress.dart';
+export 'voto_result.dart';
 
 class Protocol extends _is.DatabaseSerializationManager {
   Protocol._();
@@ -412,6 +434,191 @@ class Protocol extends _is.DatabaseSerializationManager {
       ],
       managed: true,
     ),
+    _isp.TableDefinition(
+      name: 'section_check',
+      dartName: 'SectionCheck',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'pleito',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'uf',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'municipio',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'zona',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'secao',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'auxStatus',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'auxGeneratedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'fetchedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'section_check_identity_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'pleito',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'uf',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'municipio',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'zona',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'secao',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'section_file',
+      dartName: 'SectionFile',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'checkId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'kind',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'name',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'url',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'sha256',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'content',
+          columnType: _isp.ColumnType.bytea,
+          isNullable: false,
+          dartType: 'dart:typed_data:ByteData',
+        ),
+        _isp.ColumnDefinition(
+          name: 'receivedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+      ],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'section_file_fk_0',
+          columns: ['checkId'],
+          referenceTable: 'section_check',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.cascade,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'section_file_check_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'checkId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'kind',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     ..._iais.Protocol.targetTableDefinitions,
     ..._iacs.Protocol.targetTableDefinitions,
     ..._isp.Protocol.targetTableDefinitions,
@@ -444,6 +651,9 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
 
+    if (t == _ijbwnxcy.BuCheck) {
+      return _ijbwnxcy.BuCheck.fromJson(data) as T;
+    }
     if (t == _irnb9urg.Candidate) {
       return _irnb9urg.Candidate.fromJson(data) as T;
     }
@@ -452,6 +662,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _iurxdm15.CandidateVotes) {
       return _iurxdm15.CandidateVotes.fromJson(data) as T;
+    }
+    if (t == _i77b8h6f.CargoResult) {
+      return _i77b8h6f.CargoResult.fromJson(data) as T;
     }
     if (t == _i2ilnjuc.DataOrigin) {
       return _i2ilnjuc.DataOrigin.fromJson(data) as T;
@@ -462,6 +675,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _izw8z7ou.Greeting) {
       return _izw8z7ou.Greeting.fromJson(data) as T;
     }
+    if (t == _i663s1cn.MunicipioRef) {
+      return _i663s1cn.MunicipioRef.fromJson(data) as T;
+    }
     if (t == _i1vi4thm.ReplayNight) {
       return _i1vi4thm.ReplayNight.fromJson(data) as T;
     }
@@ -471,6 +687,24 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i4dv59av.ResultSnapshot) {
       return _i4dv59av.ResultSnapshot.fromJson(data) as T;
     }
+    if (t == _i1fk3nml.SectionCheck) {
+      return _i1fk3nml.SectionCheck.fromJson(data) as T;
+    }
+    if (t == _i4rww364.SectionFile) {
+      return _i4rww364.SectionFile.fromJson(data) as T;
+    }
+    if (t == _igdizl70.SectionFileInfo) {
+      return _igdizl70.SectionFileInfo.fromJson(data) as T;
+    }
+    if (t == _iakf100n.SectionNotFoundException) {
+      return _iakf100n.SectionNotFoundException.fromJson(data) as T;
+    }
+    if (t == _i64rlb21.SectionReport) {
+      return _i64rlb21.SectionReport.fromJson(data) as T;
+    }
+    if (t == _i8oamffp.SectionUnavailableException) {
+      return _i8oamffp.SectionUnavailableException.fromJson(data) as T;
+    }
     if (t == _iiyd8otz.TallyFrame) {
       return _iiyd8otz.TallyFrame.fromJson(data) as T;
     }
@@ -479,6 +713,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _icbf2ppq.UfProgress) {
       return _icbf2ppq.UfProgress.fromJson(data) as T;
+    }
+    if (t == _iuhijha9.VotoResult) {
+      return _iuhijha9.VotoResult.fromJson(data) as T;
+    }
+    if (t == _is.getType<_ijbwnxcy.BuCheck?>()) {
+      return (data != null ? _ijbwnxcy.BuCheck.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_irnb9urg.Candidate?>()) {
       return (data != null ? _irnb9urg.Candidate.fromJson(data) : null) as T;
@@ -491,6 +731,9 @@ class Protocol extends _is.DatabaseSerializationManager {
       return (data != null ? _iurxdm15.CandidateVotes.fromJson(data) : null)
           as T;
     }
+    if (t == _is.getType<_i77b8h6f.CargoResult?>()) {
+      return (data != null ? _i77b8h6f.CargoResult.fromJson(data) : null) as T;
+    }
     if (t == _is.getType<_i2ilnjuc.DataOrigin?>()) {
       return (data != null ? _i2ilnjuc.DataOrigin.fromJson(data) : null) as T;
     }
@@ -500,6 +743,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_izw8z7ou.Greeting?>()) {
       return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i663s1cn.MunicipioRef?>()) {
+      return (data != null ? _i663s1cn.MunicipioRef.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_i1vi4thm.ReplayNight?>()) {
       return (data != null ? _i1vi4thm.ReplayNight.fromJson(data) : null) as T;
@@ -514,6 +760,32 @@ class Protocol extends _is.DatabaseSerializationManager {
       return (data != null ? _i4dv59av.ResultSnapshot.fromJson(data) : null)
           as T;
     }
+    if (t == _is.getType<_i1fk3nml.SectionCheck?>()) {
+      return (data != null ? _i1fk3nml.SectionCheck.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i4rww364.SectionFile?>()) {
+      return (data != null ? _i4rww364.SectionFile.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_igdizl70.SectionFileInfo?>()) {
+      return (data != null ? _igdizl70.SectionFileInfo.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_iakf100n.SectionNotFoundException?>()) {
+      return (data != null
+              ? _iakf100n.SectionNotFoundException.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _is.getType<_i64rlb21.SectionReport?>()) {
+      return (data != null ? _i64rlb21.SectionReport.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i8oamffp.SectionUnavailableException?>()) {
+      return (data != null
+              ? _i8oamffp.SectionUnavailableException.fromJson(data)
+              : null)
+          as T;
+    }
     if (t == _is.getType<_iiyd8otz.TallyFrame?>()) {
       return (data != null ? _iiyd8otz.TallyFrame.fromJson(data) : null) as T;
     }
@@ -523,6 +795,15 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_icbf2ppq.UfProgress?>()) {
       return (data != null ? _icbf2ppq.UfProgress.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_iuhijha9.VotoResult?>()) {
+      return (data != null ? _iuhijha9.VotoResult.fromJson(data) : null) as T;
+    }
+    if (t == List<_iuhijha9.VotoResult>) {
+      return (data as List)
+              .map((e) => deserialize<_iuhijha9.VotoResult>(e))
+              .toList()
+          as T;
     }
     if (t == List<_ixvsuy9r.CandidateTally>) {
       return (data as List)
@@ -536,6 +817,32 @@ class Protocol extends _is.DatabaseSerializationManager {
                     .map((e) => deserialize<_ixvsuy9r.CandidateTally>(e))
                     .toList()
               : null)
+          as T;
+    }
+    if (t == List<_i4rww364.SectionFile>) {
+      return (data as List)
+              .map((e) => deserialize<_i4rww364.SectionFile>(e))
+              .toList()
+          as T;
+    }
+    if (t == _is.getType<List<_i4rww364.SectionFile>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i4rww364.SectionFile>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i77b8h6f.CargoResult>) {
+      return (data as List)
+              .map((e) => deserialize<_i77b8h6f.CargoResult>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_igdizl70.SectionFileInfo>) {
+      return (data as List)
+              .map((e) => deserialize<_igdizl70.SectionFileInfo>(e))
+              .toList()
           as T;
     }
     if (t == List<String>) {
@@ -565,6 +872,15 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_i5vkvva1.MunicipioRef>) {
+      return (data as List)
+              .map((e) => deserialize<_i5vkvva1.MunicipioRef>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
     try {
       return _iais.Protocol().deserialize<T>(data, t);
     } on _is.DeserializationTypeNotFoundException catch (_) {}
@@ -579,18 +895,28 @@ class Protocol extends _is.DatabaseSerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _ijbwnxcy.BuCheck => 'BuCheck',
       _irnb9urg.Candidate => 'Candidate',
       _ixvsuy9r.CandidateTally => 'CandidateTally',
       _iurxdm15.CandidateVotes => 'CandidateVotes',
+      _i77b8h6f.CargoResult => 'CargoResult',
       _i2ilnjuc.DataOrigin => 'DataOrigin',
       _i3f5hnmb.DivergenceEvent => 'DivergenceEvent',
       _izw8z7ou.Greeting => 'Greeting',
+      _i663s1cn.MunicipioRef => 'MunicipioRef',
       _i1vi4thm.ReplayNight => 'ReplayNight',
       _i6npibdt.ReplayUnavailableException => 'ReplayUnavailableException',
       _i4dv59av.ResultSnapshot => 'ResultSnapshot',
+      _i1fk3nml.SectionCheck => 'SectionCheck',
+      _i4rww364.SectionFile => 'SectionFile',
+      _igdizl70.SectionFileInfo => 'SectionFileInfo',
+      _iakf100n.SectionNotFoundException => 'SectionNotFoundException',
+      _i64rlb21.SectionReport => 'SectionReport',
+      _i8oamffp.SectionUnavailableException => 'SectionUnavailableException',
       _iiyd8otz.TallyFrame => 'TallyFrame',
       _i4neo0h8.TimelinePoint => 'TimelinePoint',
       _icbf2ppq.UfProgress => 'UfProgress',
+      _iuhijha9.VotoResult => 'VotoResult',
       _ => null,
     };
   }
@@ -605,30 +931,50 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
 
     switch (data) {
+      case _ijbwnxcy.BuCheck():
+        return 'BuCheck';
       case _irnb9urg.Candidate():
         return 'Candidate';
       case _ixvsuy9r.CandidateTally():
         return 'CandidateTally';
       case _iurxdm15.CandidateVotes():
         return 'CandidateVotes';
+      case _i77b8h6f.CargoResult():
+        return 'CargoResult';
       case _i2ilnjuc.DataOrigin():
         return 'DataOrigin';
       case _i3f5hnmb.DivergenceEvent():
         return 'DivergenceEvent';
       case _izw8z7ou.Greeting():
         return 'Greeting';
+      case _i663s1cn.MunicipioRef():
+        return 'MunicipioRef';
       case _i1vi4thm.ReplayNight():
         return 'ReplayNight';
       case _i6npibdt.ReplayUnavailableException():
         return 'ReplayUnavailableException';
       case _i4dv59av.ResultSnapshot():
         return 'ResultSnapshot';
+      case _i1fk3nml.SectionCheck():
+        return 'SectionCheck';
+      case _i4rww364.SectionFile():
+        return 'SectionFile';
+      case _igdizl70.SectionFileInfo():
+        return 'SectionFileInfo';
+      case _iakf100n.SectionNotFoundException():
+        return 'SectionNotFoundException';
+      case _i64rlb21.SectionReport():
+        return 'SectionReport';
+      case _i8oamffp.SectionUnavailableException():
+        return 'SectionUnavailableException';
       case _iiyd8otz.TallyFrame():
         return 'TallyFrame';
       case _i4neo0h8.TimelinePoint():
         return 'TimelinePoint';
       case _icbf2ppq.UfProgress():
         return 'UfProgress';
+      case _iuhijha9.VotoResult():
+        return 'VotoResult';
     }
     className = _iais.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -655,6 +1001,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'BuCheck') {
+      return deserialize<_ijbwnxcy.BuCheck>(data['data']);
+    }
     if (dataClassName == 'Candidate') {
       return deserialize<_irnb9urg.Candidate>(data['data']);
     }
@@ -663,6 +1012,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'CandidateVotes') {
       return deserialize<_iurxdm15.CandidateVotes>(data['data']);
+    }
+    if (dataClassName == 'CargoResult') {
+      return deserialize<_i77b8h6f.CargoResult>(data['data']);
     }
     if (dataClassName == 'DataOrigin') {
       return deserialize<_i2ilnjuc.DataOrigin>(data['data']);
@@ -673,6 +1025,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'Greeting') {
       return deserialize<_izw8z7ou.Greeting>(data['data']);
     }
+    if (dataClassName == 'MunicipioRef') {
+      return deserialize<_i663s1cn.MunicipioRef>(data['data']);
+    }
     if (dataClassName == 'ReplayNight') {
       return deserialize<_i1vi4thm.ReplayNight>(data['data']);
     }
@@ -682,6 +1037,24 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'ResultSnapshot') {
       return deserialize<_i4dv59av.ResultSnapshot>(data['data']);
     }
+    if (dataClassName == 'SectionCheck') {
+      return deserialize<_i1fk3nml.SectionCheck>(data['data']);
+    }
+    if (dataClassName == 'SectionFile') {
+      return deserialize<_i4rww364.SectionFile>(data['data']);
+    }
+    if (dataClassName == 'SectionFileInfo') {
+      return deserialize<_igdizl70.SectionFileInfo>(data['data']);
+    }
+    if (dataClassName == 'SectionNotFoundException') {
+      return deserialize<_iakf100n.SectionNotFoundException>(data['data']);
+    }
+    if (dataClassName == 'SectionReport') {
+      return deserialize<_i64rlb21.SectionReport>(data['data']);
+    }
+    if (dataClassName == 'SectionUnavailableException') {
+      return deserialize<_i8oamffp.SectionUnavailableException>(data['data']);
+    }
     if (dataClassName == 'TallyFrame') {
       return deserialize<_iiyd8otz.TallyFrame>(data['data']);
     }
@@ -690,6 +1063,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'UfProgress') {
       return deserialize<_icbf2ppq.UfProgress>(data['data']);
+    }
+    if (dataClassName == 'VotoResult') {
+      return deserialize<_iuhijha9.VotoResult>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
@@ -740,6 +1116,10 @@ class Protocol extends _is.DatabaseSerializationManager {
         return _i3f5hnmb.DivergenceEvent.t;
       case _i4dv59av.ResultSnapshot:
         return _i4dv59av.ResultSnapshot.t;
+      case _i1fk3nml.SectionCheck:
+        return _i1fk3nml.SectionCheck.t;
+      case _i4rww364.SectionFile:
+        return _i4rww364.SectionFile.t;
     }
     return null;
   }

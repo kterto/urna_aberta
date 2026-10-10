@@ -1,0 +1,9 @@
+### One office's votes in a section's BU.
+class: CargoResult
+fields:
+  eleicao: int
+  ### TSE office code (1 President, 3 Governor, 5 Senator, 6 Federal Deputy…).
+  codigo: int
+  nome: String
+  comparecimento: int
+  votos: List<VotoResult>

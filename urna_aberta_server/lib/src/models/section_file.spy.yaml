@@ -1,0 +1,18 @@
+### A raw TSE file stored exactly as fetched.
+class: SectionFile
+table: section_file
+fields:
+  checkId: int
+  check: SectionCheck?, relation(name=check_files, field=checkId, onDelete=Cascade)
+  ### aux, bu or vota.
+  kind: String
+  name: String
+  url: String
+  sha256: String
+  content: ByteData
+  ### When TSE received the urna files (UTC); null for the aux file.
+  receivedAt: DateTime?
+indexes:
+  section_file_check_idx:
+    fields: checkId, kind
+    unique: true

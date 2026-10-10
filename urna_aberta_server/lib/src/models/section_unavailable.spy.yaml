@@ -1,0 +1,4 @@
+### TSE could not be reached or refused the request; try again later.
+exception: SectionUnavailableException
+fields:
+  message: String

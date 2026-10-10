@@ -7,6 +7,12 @@ import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 import 'src/cache_busting.dart';
 import 'src/generated/serverpod.dart';
 import 'src/replay/fixture_seeder.dart';
+import 'src/secao/secao_endpoint.dart';
+import 'src/secao/section_directories.dart';
+import 'src/secao/section_service.dart';
+import 'src/tse/token_bucket.dart';
+import 'src/tse/tse_client.dart';
+import 'src/tse/tse_urls.dart';
 import 'src/web/routes/app_config_route.dart';
 import 'src/web/routes/root.dart';
 
@@ -97,6 +103,24 @@ void run(List<String> args) async {
     await ServerpodCloudProvider.public(
       fallback: () => DatabaseCloudStorage('public'),
     ),
+  );
+
+  // One rate-limited TSE client for the whole server, well under the
+  // 100 req/s per-IP limit.
+  final tse = TseClient(
+    http: IoTseHttp(),
+    bucket: TokenBucket(ratePerSecond: 20, burst: 5),
+  );
+  final urls = TseUrls.oficial();
+  SecaoEndpoint.service = SectionService(
+    client: tse,
+    urls: urls,
+    directory: SectionDirectories(
+      client: tse,
+      urls: urls,
+      pleito: 3220,
+      archive: Directory('../fixtures/2026-1t'),
+    ).call,
   );
 
   // Start the server.

@@ -21,7 +21,11 @@ import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
     as _ivdor3em;
 import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
     as _i0ezu2ai;
+import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
+    as _iawxlp65;
 import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
+import 'package:urna_aberta_client/src/protocol/section_report.dart'
+    as _it6gukgl;
 import 'package:urna_aberta_client/src/protocol/tally_frame.dart' as _iirfdrc4;
 import 'package:urna_aberta_client/src/protocol/timeline_point.dart'
     as _ipzn9brv;
@@ -318,6 +322,64 @@ class EndpointTally extends _isc.EndpointRef {
       );
 }
 
+/// Minha seção: find a polling section and read its official files.
+/// {@category Endpoint}
+class EndpointSecao extends _isc.EndpointRef {
+  EndpointSecao(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'secao';
+
+  _ida.Future<List<_iawxlp65.MunicipioRef>> municipios(String uf) =>
+      caller.callServerEndpoint<List<_iawxlp65.MunicipioRef>>(
+        'secao',
+        'municipios',
+        {'uf': uf},
+      );
+
+  _ida.Future<List<int>> zonas(
+    String uf,
+    int municipio,
+  ) => caller.callServerEndpoint<List<int>>(
+    'secao',
+    'zonas',
+    {
+      'uf': uf,
+      'municipio': municipio,
+    },
+  );
+
+  _ida.Future<List<int>> secoes(
+    String uf,
+    int municipio,
+    int zona,
+  ) => caller.callServerEndpoint<List<int>>(
+    'secao',
+    'secoes',
+    {
+      'uf': uf,
+      'municipio': municipio,
+      'zona': zona,
+    },
+  );
+
+  _ida.Future<_it6gukgl.SectionReport> consultar(
+    String uf,
+    int municipio,
+    int zona,
+    int secao,
+  ) => caller.callServerEndpoint<_it6gukgl.SectionReport>(
+    'secao',
+    'consultar',
+    {
+      'uf': uf,
+      'municipio': municipio,
+      'zona': zona,
+      'secao': secao,
+    },
+  );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _iaic.Caller(client);
@@ -360,6 +422,7 @@ class Client extends _isc.ServerpodClientShared {
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
     tally = EndpointTally(this);
+    secao = EndpointSecao(this);
     modules = Modules(this);
   }
 
@@ -371,6 +434,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointTally tally;
 
+  late final EndpointSecao secao;
+
   late final Modules modules;
 
   @override
@@ -379,6 +444,7 @@ class Client extends _isc.ServerpodClientShared {
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
     'tally': tally,
+    'secao': secao,
   };
 
   @override

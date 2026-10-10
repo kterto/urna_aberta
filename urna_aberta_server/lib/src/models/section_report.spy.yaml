@@ -1,0 +1,27 @@
+### Everything Urna Aberta knows about one polling section.
+class: SectionReport
+fields:
+  uf: String
+  municipio: int
+  municipioNome: String
+  zona: int
+  secao: int
+  ### EA18 status, or `Aguardando` when TSE has no aux file yet.
+  status: String
+  auxGeneratedAt: DateTime?
+  ### When TSE received the urna files (UTC).
+  receivedAt: DateTime?
+  ### Urna clock times, local to the urna, `YYYY-MM-DDThh:mm:ss`.
+  emitidoEm: String?
+  abertura: String?
+  encerramento: String?
+  local: int?
+  aptos: int?
+  comparecimento: int?
+  buCheck: BuCheck
+  ### Always false for now: the urna's EdDSA signature is not verified.
+  signatureVerified: bool
+  ### Votes, only when buCheck is `matches`.
+  cargos: List<CargoResult>
+  files: List<SectionFileInfo>
+  fetchedAt: DateTime?

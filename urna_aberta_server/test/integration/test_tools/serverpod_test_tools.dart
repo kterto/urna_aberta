@@ -21,8 +21,12 @@ import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
 import 'package:urna_aberta_server/src/generated/greetings/greeting.dart'
     as _i13zhb17;
+import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
+    as _i5vkvva1;
 import 'package:urna_aberta_server/src/generated/replay_night.dart'
     as _igasjbde;
+import 'package:urna_aberta_server/src/generated/section_report.dart'
+    as _i68ta11r;
 import 'package:urna_aberta_server/src/generated/tally_frame.dart' as _i5xgbeon;
 import 'package:urna_aberta_server/src/generated/timeline_point.dart'
     as _ir3q3hqp;
@@ -161,6 +165,8 @@ class TestEndpoints {
   late final _GreetingEndpoint greeting;
 
   late final _TallyEndpoint tally;
+
+  late final _SecaoEndpoint secao;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -183,6 +189,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     tally = _TallyEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    secao = _SecaoEndpoint(
       endpoints,
       serializationManager,
     );
@@ -681,6 +691,159 @@ class _TallyEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<List<_it5gv87d.DivergenceEvent>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _SecaoEndpoint {
+  _SecaoEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<List<_i5vkvva1.MunicipioRef>> municipios(
+    _ist.TestSessionBuilder sessionBuilder,
+    String uf,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'secao',
+            method: 'municipios',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'secao',
+          methodName: 'municipios',
+          parameters: _ist.testObjectToJson({'uf': uf}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_i5vkvva1.MunicipioRef>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<int>> zonas(
+    _ist.TestSessionBuilder sessionBuilder,
+    String uf,
+    int municipio,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'secao',
+            method: 'zonas',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'secao',
+          methodName: 'zonas',
+          parameters: _ist.testObjectToJson({
+            'uf': uf,
+            'municipio': municipio,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<int>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<int>> secoes(
+    _ist.TestSessionBuilder sessionBuilder,
+    String uf,
+    int municipio,
+    int zona,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'secao',
+            method: 'secoes',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'secao',
+          methodName: 'secoes',
+          parameters: _ist.testObjectToJson({
+            'uf': uf,
+            'municipio': municipio,
+            'zona': zona,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<int>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_i68ta11r.SectionReport> consultar(
+    _ist.TestSessionBuilder sessionBuilder,
+    String uf,
+    int municipio,
+    int zona,
+    int secao,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'secao',
+            method: 'consultar',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'secao',
+          methodName: 'consultar',
+          parameters: _ist.testObjectToJson({
+            'uf': uf,
+            'municipio': municipio,
+            'zona': zona,
+            'secao': secao,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i68ta11r.SectionReport>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

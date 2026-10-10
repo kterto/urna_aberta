@@ -1,0 +1,4 @@
+class: MunicipioRef
+fields:
+  codigo: int
+  nome: String

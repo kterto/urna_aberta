@@ -1,0 +1,10 @@
+### Votes of one kind (a candidacy, a party, blank or null) in a BU.
+class: VotoResult
+fields:
+  ### nominal, legenda, branco, nulo or cargoSemCandidato.
+  tipo: String
+  numero: int?
+  partido: int?
+  ### Ballot name when a stored result file lists the number.
+  nome: String?
+  votos: int

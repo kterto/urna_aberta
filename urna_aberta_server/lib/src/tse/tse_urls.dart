@@ -39,6 +39,50 @@ class Scope {
   String toString() => code;
 }
 
+/// One polling section: UF (or exterior), municipality, zone and section
+/// codes, validated against the widths TSE uses in file names.
+class SectionId {
+  SectionId({
+    required String uf,
+    required this.municipio,
+    required this.zona,
+    required this.secao,
+  }) : uf = Scope.uf(uf).code {
+    _range(municipio, 'municipio', 99999);
+    _range(zona, 'zona', 9999);
+    _range(secao, 'secao', 9999);
+  }
+
+  final String uf;
+  final int municipio;
+  final int zona;
+  final int secao;
+
+  String get municipio5 => municipio.toString().padLeft(5, '0');
+  String get zona4 => zona.toString().padLeft(4, '0');
+  String get secao4 => secao.toString().padLeft(4, '0');
+
+  static void _range(int v, String name, int max) {
+    if (v < 1 || v > max) {
+      throw ArgumentError.value(v, name, 'must be 1 to $max');
+    }
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is SectionId &&
+      other.uf == uf &&
+      other.municipio == municipio &&
+      other.zona == zona &&
+      other.secao == secao;
+
+  @override
+  int get hashCode => Object.hash(uf, municipio, zona, secao);
+
+  @override
+  String toString() => '$uf/$municipio5/$zona4/$secao4';
+}
+
 /// Builds TSE result-publication URLs exactly. TSE files cannot be listed
 /// and repeated 404s can get the IP blocked, so every input is validated
 /// before a URL exists.
@@ -115,6 +159,44 @@ class TseUrls {
       '${scope.code}-p${_election6(pleito)}-cs.json',
     ]);
   }
+
+  /// EA18: one section's aux file, listing the urna files received for it.
+  Uri sectionAux(int pleito, SectionId id) => _uri([
+    ..._sectionDir(pleito, id),
+    'p${_election6(pleito)}-${id.uf}-m${id.municipio5}'
+        '-z${id.zona4}-s${id.secao4}-aux.json',
+  ]);
+
+  /// A urna file (BU, signatures, RDV, log) named in an aux file. The name
+  /// must embed this pleito and section, so an aux entry can never point
+  /// the client at another section's folder.
+  Uri urnaFile(int pleito, SectionId id, String hash, String name) {
+    if (!_hex.hasMatch(hash)) {
+      throw ArgumentError.value(hash, 'hash', 'not an even-length hex string');
+    }
+    final prefix =
+        'o${pleito.toString().padLeft(5, '0')}${id.uf}'
+        '${id.municipio5}${id.zona4}${id.secao4}-';
+    if (!name.startsWith(prefix) ||
+        !_urnaSuffix.hasMatch(name.substring(prefix.length))) {
+      throw ArgumentError.value(name, 'name', 'not a urna file of $id');
+    }
+    return _uri([..._sectionDir(pleito, id), hash, name]);
+  }
+
+  static final _hex = RegExp(r'^(?:[0-9a-f]{2})+$');
+  static final _urnaSuffix = RegExp(r'^[a-z]+\.[a-z]+$');
+
+  List<String> _sectionDir(int pleito, SectionId id) => [
+    cycle,
+    'arquivo-urna',
+    '$pleito',
+    'dados',
+    id.uf,
+    id.municipio5,
+    id.zona4,
+    id.secao4,
+  ];
 
   /// EA20: unified result file for a scope and office.
   Uri result(int election, Scope scope, Office office) {

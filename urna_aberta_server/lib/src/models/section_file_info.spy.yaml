@@ -1,0 +1,8 @@
+### A TSE file behind a section report.
+class: SectionFileInfo
+fields:
+  kind: String
+  name: String
+  url: String
+  sha256: String
+  sizeBytes: int

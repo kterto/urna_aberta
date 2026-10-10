@@ -16,3 +16,8 @@ tally:
   - frame:
   - timeline:
   - divergence:
+secao:
+  - municipios:
+  - zonas:
+  - secoes:
+  - consultar:

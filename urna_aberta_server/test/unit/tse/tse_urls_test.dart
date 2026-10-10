@@ -127,6 +127,60 @@ void main() {
     );
   });
 
+  group('section files (EA18 aux and urna files)', () {
+    final ac77 = SectionId(uf: 'AC', municipio: 1066, zona: 4, secao: 77);
+    const hash =
+        '4a6b704a7350756e6a5a496433337049453538516932486a676159553779785542752d6d765749354f41343d';
+    const dir =
+        'https://resultados.tse.jus.br/oficial/ele2026/arquivo-urna/3220/dados/ac/01066/0004/0077';
+
+    test('EA18 aux: zero-padded codes in path and name', () {
+      expect(
+        urls.sectionAux(3220, ac77).toString(),
+        '$dir/p003220-ac-m01066-z0004-s0077-aux.json',
+      );
+    });
+
+    test('urna file lives under the aux hash', () {
+      expect(
+        urls
+            .urnaFile(3220, ac77, hash, 'o03220ac0106600040077-bu.dat')
+            .toString(),
+        '$dir/$hash/o03220ac0106600040077-bu.dat',
+      );
+    });
+
+    test('a hash that is not hex is refused', () {
+      expect(
+        () =>
+            urls.urnaFile(3220, ac77, 'xyz/..', 'o03220ac0106600040077-bu.dat'),
+        throwsArgumentError,
+      );
+    });
+
+    test('a file name for another section is refused', () {
+      expect(
+        () => urls.urnaFile(3220, ac77, hash, 'o03220ac0106600040078-bu.dat'),
+        throwsArgumentError,
+      );
+    });
+
+    test('section codes out of range are refused', () {
+      expect(
+        () => SectionId(uf: 'ac', municipio: 100000, zona: 4, secao: 77),
+        throwsArgumentError,
+      );
+      expect(
+        () => SectionId(uf: 'ac', municipio: 1066, zona: 0, secao: 77),
+        throwsArgumentError,
+      );
+      expect(
+        () => SectionId(uf: 'br', municipio: 1066, zona: 4, secao: 77),
+        throwsArgumentError,
+      );
+    });
+  });
+
   test('all 27 UFs plus exterior are known', () {
     expect(Scope.ufs, hasLength(28));
     expect(Scope.ufs, containsAll(['ac', 'df', 'sp', 'to', 'zz']));
