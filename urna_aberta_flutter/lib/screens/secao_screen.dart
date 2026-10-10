@@ -408,10 +408,21 @@ class _ResultState extends State<_Result> {
             runSpacing: Space.x2,
             children: [
               StatusBadge(VerificationStatus.valid, label: l.secaoHashMatches),
-              StatusBadge(
-                VerificationStatus.pending,
-                label: l.secaoSignatureUnverified,
-              ),
+              switch (r.urnaSignature) {
+                UrnaSignature.valid => StatusBadge(
+                  VerificationStatus.valid,
+                  label: l.secaoUrnaSignatureValid,
+                ),
+                UrnaSignature.invalid => StatusBadge(
+                  VerificationStatus.invalid,
+                  label: l.secaoUrnaSignatureInvalid,
+                ),
+                UrnaSignature.unsupported ||
+                UrnaSignature.missing => StatusBadge(
+                  VerificationStatus.pending,
+                  label: l.secaoUrnaSignatureUnchecked,
+                ),
+              },
             ],
           ),
           const SizedBox(height: Space.x3),
@@ -423,23 +434,43 @@ class _ResultState extends State<_Result> {
             const SizedBox(height: Space.x2),
           ],
           const SizedBox(height: Space.x2),
-          Text.rich(
-            TextSpan(
-              style: t.bodySmall?.copyWith(color: p.inkSecondary),
-              children: [
-                TextSpan(
-                  text: l.secaoProvesLabel,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
-                TextSpan(text: l.secaoProves),
-                TextSpan(
-                  text: l.secaoNotYetLabel,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
-                TextSpan(text: l.secaoNotYet),
-              ],
+          if (r.urnaSignature == UrnaSignature.invalid) ...[
+            Text(
+              l.secaoSignatureInvalidNote,
+              style: t.bodyMedium?.copyWith(color: p.ink),
             ),
-          ),
+            const SizedBox(height: Space.x2),
+          ],
+          if (r.urnaSignature
+              case UrnaSignature.unsupported || UrnaSignature.missing) ...[
+            Text(
+              l.secaoSignatureUncheckedNote,
+              style: t.bodySmall?.copyWith(color: p.inkSecondary),
+            ),
+            const SizedBox(height: Space.x2),
+          ],
+          if (r.urnaSignature != UrnaSignature.invalid)
+            Text.rich(
+              TextSpan(
+                style: t.bodySmall?.copyWith(color: p.inkSecondary),
+                children: [
+                  TextSpan(
+                    text: l.secaoProvesLabel,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  TextSpan(
+                    text: r.urnaSignature == UrnaSignature.valid
+                        ? l.secaoProves
+                        : l.secaoProvesHashOnly,
+                  ),
+                  TextSpan(
+                    text: l.secaoNotYetLabel,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  TextSpan(text: l.secaoNotYet),
+                ],
+              ),
+            ),
         ],
       ),
     );

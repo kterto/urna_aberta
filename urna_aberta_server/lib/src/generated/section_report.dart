@@ -15,6 +15,7 @@ import 'package:urna_aberta_server/src/generated/protocol.dart' as _iyugoj1j;
 import 'bu_check.dart' as _ijbwnxcy;
 import 'cargo_result.dart' as _i77b8h6f;
 import 'section_file_info.dart' as _igdizl70;
+import 'urna_signature.dart' as _i343iyih;
 
 /// Everything Urna Aberta knows about one polling section.
 abstract class SectionReport
@@ -35,7 +36,7 @@ abstract class SectionReport
     this.aptos,
     this.comparecimento,
     required this.buCheck,
-    required this.signatureVerified,
+    required this.urnaSignature,
     required this.cargos,
     required this.files,
     this.fetchedAt,
@@ -57,7 +58,7 @@ abstract class SectionReport
     int? aptos,
     int? comparecimento,
     required _ijbwnxcy.BuCheck buCheck,
-    required bool signatureVerified,
+    required _i343iyih.UrnaSignature urnaSignature,
     required List<_i77b8h6f.CargoResult> cargos,
     required List<_igdizl70.SectionFileInfo> files,
     DateTime? fetchedAt,
@@ -88,8 +89,8 @@ abstract class SectionReport
       buCheck: _ijbwnxcy.BuCheck.fromJson(
         (jsonSerialization['buCheck'] as String),
       ),
-      signatureVerified: _is.BoolJsonExtension.fromJson(
-        jsonSerialization['signatureVerified'],
+      urnaSignature: _i343iyih.UrnaSignature.fromJson(
+        (jsonSerialization['urnaSignature'] as String),
       ),
       cargos: _iyugoj1j.Protocol().deserialize<List<_i77b8h6f.CargoResult>>(
         jsonSerialization['cargos'],
@@ -136,8 +137,7 @@ abstract class SectionReport
 
   _ijbwnxcy.BuCheck buCheck;
 
-  /// Always false for now: the urna's EdDSA signature is not verified.
-  bool signatureVerified;
+  _i343iyih.UrnaSignature urnaSignature;
 
   /// Votes, only when buCheck is `matches`.
   List<_i77b8h6f.CargoResult> cargos;
@@ -165,7 +165,7 @@ abstract class SectionReport
     int? aptos,
     int? comparecimento,
     _ijbwnxcy.BuCheck? buCheck,
-    bool? signatureVerified,
+    _i343iyih.UrnaSignature? urnaSignature,
     List<_i77b8h6f.CargoResult>? cargos,
     List<_igdizl70.SectionFileInfo>? files,
     DateTime? fetchedAt,
@@ -189,7 +189,7 @@ abstract class SectionReport
       if (aptos != null) 'aptos': aptos,
       if (comparecimento != null) 'comparecimento': comparecimento,
       'buCheck': buCheck.toJson(),
-      'signatureVerified': signatureVerified,
+      'urnaSignature': urnaSignature.toJson(),
       'cargos': cargos.toJson(valueToJson: (v) => v.toJson()),
       'files': files.toJson(valueToJson: (v) => v.toJson()),
       if (fetchedAt != null) 'fetchedAt': fetchedAt?.toJson(),
@@ -215,7 +215,7 @@ abstract class SectionReport
       if (aptos != null) 'aptos': aptos,
       if (comparecimento != null) 'comparecimento': comparecimento,
       'buCheck': buCheck.toJson(),
-      'signatureVerified': signatureVerified,
+      'urnaSignature': urnaSignature.toJson(),
       'cargos': cargos.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'files': files.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (fetchedAt != null) 'fetchedAt': fetchedAt?.toJson(),
@@ -247,7 +247,7 @@ class _SectionReportImpl extends SectionReport {
     int? aptos,
     int? comparecimento,
     required _ijbwnxcy.BuCheck buCheck,
-    required bool signatureVerified,
+    required _i343iyih.UrnaSignature urnaSignature,
     required List<_i77b8h6f.CargoResult> cargos,
     required List<_igdizl70.SectionFileInfo> files,
     DateTime? fetchedAt,
@@ -267,7 +267,7 @@ class _SectionReportImpl extends SectionReport {
          aptos: aptos,
          comparecimento: comparecimento,
          buCheck: buCheck,
-         signatureVerified: signatureVerified,
+         urnaSignature: urnaSignature,
          cargos: cargos,
          files: files,
          fetchedAt: fetchedAt,
@@ -293,7 +293,7 @@ class _SectionReportImpl extends SectionReport {
     Object? aptos = _Undefined,
     Object? comparecimento = _Undefined,
     _ijbwnxcy.BuCheck? buCheck,
-    bool? signatureVerified,
+    _i343iyih.UrnaSignature? urnaSignature,
     List<_i77b8h6f.CargoResult>? cargos,
     List<_igdizl70.SectionFileInfo>? files,
     Object? fetchedAt = _Undefined,
@@ -318,7 +318,7 @@ class _SectionReportImpl extends SectionReport {
           ? comparecimento
           : this.comparecimento,
       buCheck: buCheck ?? this.buCheck,
-      signatureVerified: signatureVerified ?? this.signatureVerified,
+      urnaSignature: urnaSignature ?? this.urnaSignature,
       cargos: cargos ?? this.cargos.map((e0) => e0.copyWith()).toList(),
       files: files ?? this.files.map((e0) => e0.copyWith()).toList(),
       fetchedAt: fetchedAt is DateTime? ? fetchedAt : this.fetchedAt,

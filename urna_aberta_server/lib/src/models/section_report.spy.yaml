@@ -19,8 +19,7 @@ fields:
   aptos: int?
   comparecimento: int?
   buCheck: BuCheck
-  ### Always false for now: the urna's EdDSA signature is not verified.
-  signatureVerified: bool
+  urnaSignature: UrnaSignature
   ### Votes, only when buCheck is `matches`.
   cargos: List<CargoResult>
   files: List<SectionFileInfo>

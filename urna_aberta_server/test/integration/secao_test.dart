@@ -102,7 +102,7 @@ void main() {
         expect(r.emitidoEm, '2026-10-04T15:44:09');
         expect([r.aptos, r.comparecimento, r.local], [289, 234, 1031]);
         expect(r.buCheck, BuCheck.matches);
-        expect(r.signatureVerified, isFalse);
+        expect(r.urnaSignature, UrnaSignature.valid);
 
         final presidente = r.cargos.singleWhere((c) => c.codigo == 1);
         final v22 = presidente.votos.singleWhere((v) => v.numero == 22);

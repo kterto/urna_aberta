@@ -466,11 +466,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get entendaCh4Callout =>
-      'Urna Aberta checks two things: TSE\'s signature on every result file (Verify screen) and the hash of your section\'s report against the list in the auxiliary file (My section screen).';
+      'Urna Aberta checks three things: TSE\'s signature on every result file (Verify screen), the hash of your section\'s report against the machine\'s file list, and the machine\'s own signature on that list (My section screen).';
 
   @override
   String get entendaCh4Para4 =>
-      'Urna Aberta does not yet check the voting machine\'s own signature on the report. For that, scan the QR code on the printed report with the Boletim na Mão app.';
+      'On 2020 and 2022 model machines that signature uses EdDSA on the E-521 curve, as TSE\'s QR code manual describes. Urna Aberta checks the signature with the key in the machine\'s certificate, and checks that the certificate was issued by TSE\'s voting-machine certification authority, whose key is pinned in the code. Older models use another algorithm, which Urna Aberta does not check.';
 
   @override
   String get entendaCh5Para1 =>
@@ -501,14 +501,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get entendaCh7Para2 =>
-      'That the result files were signed by TSE and not altered afterwards (EdDSA signature checked against the official key, on the server and, if you ask, on your device). That the independent sum of the states and abroad matches, or does not match, the national file. That the published report for your section is exactly the file whose hash appears in the auxiliary file\'s list.';
+      'That the result files were signed by TSE and not altered afterwards (EdDSA signature checked against the official key, on the server and, if you ask, on your device). That the independent sum of the states and abroad matches, or does not match, the national file. That the published report for your section is exactly the file the voting machine listed, and that the list was signed by a machine whose certificate TSE issued (2020 and 2022 models).';
 
   @override
   String get entendaCh7NotTitle => 'What it does not prove';
 
   @override
   String get entendaCh7Para3 =>
-      'Anything about how the voting machine works, its software, or whether each vote was recorded as the voter intended: that is the job of the protocols in chapter 5. It does not yet check the machine\'s signature on the report, and it does not check that the published report matches the printed one: that comparison is yours to make, with the posted report or Boletim na Mão.';
+      'Anything about how the voting machine works, its software, or whether each vote was recorded as the voter intended: that is the job of the protocols in chapter 5. It does not check that the published report matches the printed one: that comparison is yours to make, with the posted report or Boletim na Mão.';
 
   @override
   String get entendaCh7Para4 =>
@@ -724,7 +724,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secaoHashMatches => 'Hash matches';
 
   @override
-  String get secaoSignatureUnverified => 'Signature not verified';
+  String get secaoUrnaSignatureValid => 'Ballot box signature valid';
+
+  @override
+  String get secaoUrnaSignatureInvalid => 'Ballot box signature invalid';
+
+  @override
+  String get secaoUrnaSignatureUnchecked => 'Signature not checked';
 
   @override
   String secaoHashLabel(String kind) {
@@ -745,14 +751,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get secaoProves =>
-      'the published report is exactly the file the ballot box listed in its signed file list. ';
+      'the published report is exactly the file the ballot box listed, and that list was signed by a ballot box whose certificate TSE issued. ';
 
   @override
-  String get secaoNotYetLabel => 'What it does not prove yet: ';
+  String get secaoNotYetLabel => 'What it does not prove: ';
 
   @override
   String get secaoNotYet =>
-      'Urna Aberta does not yet verify the ballot box\'s digital signature on that list. And nothing here says anything about the ballot box itself.';
+      'anything about the ballot box itself. The signature shows where the file came from, not how the ballot box worked.';
+
+  @override
+  String get secaoProvesHashOnly =>
+      'the published report is exactly the file the ballot box listed in its file list. ';
+
+  @override
+  String get secaoSignatureInvalidNote =>
+      'The signature does not check out: this file list did not come from a TSE-certified ballot box, or it was changed afterwards. Do not trust these numbers; compare them with the printed report.';
+
+  @override
+  String get secaoSignatureUncheckedNote =>
+      'This ballot box model uses a signature algorithm Urna Aberta does not check. Only the hashes were checked.';
 
   @override
   String get secaoVoteBranco => 'Blank';
@@ -1030,7 +1048,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verificarUrnaNote =>
-      'Each voting machine\'s files (the boletim de urna) carry a different signature, checked by hash in My section; Urna Aberta does not yet verify the machine\'s own signature.';
+      'Each voting machine\'s files (the boletim de urna) carry a different signature, the machine\'s own, checked in My section.';
 
   @override
   String get verificarLoadError => 'Could not reach the Urna Aberta server.';

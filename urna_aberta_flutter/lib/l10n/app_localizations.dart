@@ -831,13 +831,13 @@ abstract class AppLocalizations {
   /// No description provided for @entendaCh4Callout.
   ///
   /// In pt, this message translates to:
-  /// **'A Urna Aberta confere duas coisas: a assinatura do TSE em cada arquivo de resultado (tela Verificar) e o hash do boletim da sua seção contra a lista do arquivo auxiliar (tela Minha seção).'**
+  /// **'A Urna Aberta confere três coisas: a assinatura do TSE em cada arquivo de resultado (tela Verificar), o hash do boletim da sua seção contra a lista de arquivos da urna e a assinatura da própria urna sobre essa lista (tela Minha seção).'**
   String get entendaCh4Callout;
 
   /// No description provided for @entendaCh4Para4.
   ///
   /// In pt, this message translates to:
-  /// **'A assinatura da própria urna sobre o boletim ainda não é conferida pela Urna Aberta. Para isso, use o QR Code do boletim impresso com o aplicativo Boletim na Mão.'**
+  /// **'Nas urnas modelo 2020 e 2022, essa assinatura usa EdDSA na curva E-521, como descreve o manual do QR Code do TSE. A Urna Aberta confere a assinatura com a chave do certificado da urna e confere que esse certificado foi emitido pela autoridade certificadora de urnas do TSE, cuja chave fica fixada no código. Urnas de modelos anteriores usam outro algoritmo, que a Urna Aberta não confere.'**
   String get entendaCh4Para4;
 
   /// No description provided for @entendaCh5Para1.
@@ -885,7 +885,7 @@ abstract class AppLocalizations {
   /// No description provided for @entendaCh7Para2.
   ///
   /// In pt, this message translates to:
-  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo cujo hash consta da lista do arquivo auxiliar.'**
+  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022).'**
   String get entendaCh7Para2;
 
   /// No description provided for @entendaCh7NotTitle.
@@ -897,7 +897,7 @@ abstract class AppLocalizations {
   /// No description provided for @entendaCh7Para3.
   ///
   /// In pt, this message translates to:
-  /// **'Nada sobre o funcionamento da urna, o software dela ou se cada voto foi registrado como o eleitor quis: isso é o papel dos protocolos do capítulo 5. Ela ainda não confere a assinatura da urna sobre o boletim, e não confere que o boletim publicado é igual ao impresso: essa comparação é sua, com o boletim afixado ou o Boletim na Mão.'**
+  /// **'Nada sobre o funcionamento da urna, o software dela ou se cada voto foi registrado como o eleitor quis: isso é o papel dos protocolos do capítulo 5. Ela não confere que o boletim publicado é igual ao impresso: essa comparação é sua, com o boletim afixado ou o Boletim na Mão.'**
   String get entendaCh7Para3;
 
   /// No description provided for @entendaCh7Para4.
@@ -1237,11 +1237,23 @@ abstract class AppLocalizations {
   /// **'Hash confere'**
   String get secaoHashMatches;
 
-  /// No description provided for @secaoSignatureUnverified.
+  /// No description provided for @secaoUrnaSignatureValid.
   ///
   /// In pt, this message translates to:
-  /// **'Assinatura não verificada'**
-  String get secaoSignatureUnverified;
+  /// **'Assinatura da urna confere'**
+  String get secaoUrnaSignatureValid;
+
+  /// No description provided for @secaoUrnaSignatureInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'Assinatura da urna não confere'**
+  String get secaoUrnaSignatureInvalid;
+
+  /// No description provided for @secaoUrnaSignatureUnchecked.
+  ///
+  /// In pt, this message translates to:
+  /// **'Assinatura não conferida'**
+  String get secaoUrnaSignatureUnchecked;
 
   /// No description provided for @secaoHashLabel.
   ///
@@ -1276,20 +1288,38 @@ abstract class AppLocalizations {
   /// No description provided for @secaoProves.
   ///
   /// In pt, this message translates to:
-  /// **'o boletim publicado é exatamente o arquivo que a urna listou na sua lista de arquivos assinada. '**
+  /// **'o boletim publicado é exatamente o arquivo que a urna listou, e essa lista foi assinada por uma urna com certificado emitido pelo TSE. '**
   String get secaoProves;
 
   /// No description provided for @secaoNotYetLabel.
   ///
   /// In pt, this message translates to:
-  /// **'O que ainda não prova: '**
+  /// **'O que não prova: '**
   String get secaoNotYetLabel;
 
   /// No description provided for @secaoNotYet.
   ///
   /// In pt, this message translates to:
-  /// **'a assinatura digital da urna sobre essa lista ainda não é verificada pela Urna Aberta. E nada aqui diz algo sobre a urna em si.'**
+  /// **'nada sobre a urna em si. A assinatura mostra de onde veio o arquivo, não como a urna funcionou.'**
   String get secaoNotYet;
+
+  /// No description provided for @secaoProvesHashOnly.
+  ///
+  /// In pt, this message translates to:
+  /// **'o boletim publicado é exatamente o arquivo que a urna listou na sua lista de arquivos. '**
+  String get secaoProvesHashOnly;
+
+  /// No description provided for @secaoSignatureInvalidNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'A assinatura não confere: esta lista de arquivos não veio de uma urna certificada pelo TSE, ou foi alterada depois. Não confie nestes números; compare com o boletim impresso.'**
+  String get secaoSignatureInvalidNote;
+
+  /// No description provided for @secaoSignatureUncheckedNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este modelo de urna usa um algoritmo de assinatura que a Urna Aberta não confere. Só os hashes foram conferidos.'**
+  String get secaoSignatureUncheckedNote;
 
   /// No description provided for @secaoVoteBranco.
   ///
@@ -1744,7 +1774,7 @@ abstract class AppLocalizations {
   /// No description provided for @verificarUrnaNote.
   ///
   /// In pt, this message translates to:
-  /// **'Os arquivos de cada urna (boletim de urna) têm outra assinatura, conferida em Minha seção pelo hash; a assinatura da própria urna ainda não é verificada pela Urna Aberta.'**
+  /// **'Os arquivos de cada urna (boletim de urna) têm outra assinatura, a da própria urna, conferida em Minha seção.'**
   String get verificarUrnaNote;
 
   /// No description provided for @verificarLoadError.

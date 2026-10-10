@@ -79,9 +79,35 @@ void main() {
     expect(find.text('22 · FLAVIO BOLSONARO'), findsOneWidget);
     expect(find.text('103'), findsWidgets);
     expect(find.text('Hash confere'), findsOneWidget);
-    expect(find.text('Assinatura não verificada'), findsOneWidget);
+    expect(find.text('Assinatura da urna confere'), findsOneWidget);
+    expect(find.textContaining('AC UE2022'), findsNothing);
+    expect(find.textContaining('ainda não é verificada'), findsNothing);
     expect(find.textContaining('18:34'), findsWidgets);
     expect(find.text('Branco'), findsOneWidget);
+  });
+
+  testWidgets('an urna signature that does not check out is flagged', (
+    tester,
+  ) async {
+    final source = FakeSecaoSource()
+      ..report = () => sampleReport(signature: UrnaSignature.invalid);
+    await pumpScreen(tester, source);
+    await lookUp77(tester);
+    expect(find.text('Assinatura da urna não confere'), findsOneWidget);
+    expect(find.text('Assinatura da urna confere'), findsNothing);
+    expect(
+      find.textContaining('não veio de uma urna certificada'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('older urna models are not claimed as checked', (tester) async {
+    final source = FakeSecaoSource()
+      ..report = () => sampleReport(signature: UrnaSignature.unsupported);
+    await pumpScreen(tester, source);
+    await lookUp77(tester);
+    expect(find.text('Assinatura não conferida'), findsOneWidget);
+    expect(find.text('Assinatura da urna confere'), findsNothing);
   });
 
   testWidgets('a paper number that differs is flagged', (tester) async {
@@ -210,7 +236,7 @@ void main() {
       expect(find.text('Governor'), findsOneWidget);
       expect(find.text('Blank'), findsOneWidget);
       expect(find.text('Hash matches'), findsOneWidget);
-      expect(find.text('Signature not verified'), findsOneWidget);
+      expect(find.text('Ballot box signature valid'), findsOneWidget);
       expect(
         find.textContaining('1,289 eligible voters, 234 voted'),
         findsOneWidget,

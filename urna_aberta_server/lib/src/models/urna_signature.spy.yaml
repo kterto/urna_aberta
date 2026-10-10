@@ -1,0 +1,12 @@
+### The urna's own digital signature over its file list.
+enum: UrnaSignature
+serialized: byName
+values:
+  ### Signed by the urna, with a certificate from TSE's urna CA.
+  - valid
+  ### The signature, the list or the certificate does not check out.
+  - invalid
+  ### An algorithm Urna Aberta cannot check (older urna models).
+  - unsupported
+  ### No signature file was available.
+  - missing

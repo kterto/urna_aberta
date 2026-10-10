@@ -185,7 +185,7 @@ class SectionService {
     secao: id.secao,
     status: 'Aguardando',
     buCheck: BuCheck.missing,
-    signatureVerified: false,
+    urnaSignature: UrnaSignature.missing,
     cargos: [],
     files: [],
   );
@@ -204,17 +204,24 @@ class SectionService {
 
     final bu = files['bu'], vota = files['vota'];
     var buCheck = BuCheck.missing;
+    var urnaSignature = UrnaSignature.missing;
     Boletim? boletim;
-    if (bu != null && vota != null) {
-      buCheck = switch (decodeAssinaturas(
-        bytesOf(vota),
-      ).check(bu.name, bytesOf(bu))) {
-        FileCheck.matches => BuCheck.matches,
-        FileCheck.differs => BuCheck.differs,
-        FileCheck.notListed => BuCheck.notListed,
-        FileCheck.listingAltered => BuCheck.listingAltered,
+    if (vota != null) {
+      final assinaturas = decodeAssinaturas(bytesOf(vota));
+      urnaSignature = switch (assinaturas.hardwareSignature()) {
+        HardwareSignature.valid => UrnaSignature.valid,
+        HardwareSignature.invalid => UrnaSignature.invalid,
+        HardwareSignature.unsupported => UrnaSignature.unsupported,
       };
-      if (buCheck == BuCheck.matches) boletim = decodeBoletim(bytesOf(bu));
+      if (bu != null) {
+        buCheck = switch (assinaturas.check(bu.name, bytesOf(bu))) {
+          FileCheck.matches => BuCheck.matches,
+          FileCheck.differs => BuCheck.differs,
+          FileCheck.notListed => BuCheck.notListed,
+          FileCheck.listingAltered => BuCheck.listingAltered,
+        };
+        if (buCheck == BuCheck.matches) boletim = decodeBoletim(bytesOf(bu));
+      }
     }
 
     final names = boletim == null
@@ -236,7 +243,7 @@ class SectionService {
       aptos: boletim?.eleicoes.firstOrNull?.aptos,
       comparecimento: boletim?.comparecimento,
       buCheck: buCheck,
-      signatureVerified: false,
+      urnaSignature: urnaSignature,
       cargos: [
         for (final e in boletim?.eleicoes ?? const <BoletimEleicao>[])
           for (final c in e.cargos)

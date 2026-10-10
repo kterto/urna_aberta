@@ -21,6 +21,7 @@ abstract final class ReplayService {
 
   static final start = _brt(4, 17, 0);
   static final end = _brt(5, 1, 0);
+
   /// TSE, "É falso que a interrupção na divulgação dos resultados tenha
   /// fraudado o resultado do 1º turno para presidente" (Fato ou Boato,
   /// 06/10/2026): the "Brasil" files stopped at 64.81% around 19:14 and

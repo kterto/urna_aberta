@@ -461,11 +461,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get entendaCh4Callout =>
-      'A Urna Aberta confere duas coisas: a assinatura do TSE em cada arquivo de resultado (tela Verificar) e o hash do boletim da sua seção contra a lista do arquivo auxiliar (tela Minha seção).';
+      'A Urna Aberta confere três coisas: a assinatura do TSE em cada arquivo de resultado (tela Verificar), o hash do boletim da sua seção contra a lista de arquivos da urna e a assinatura da própria urna sobre essa lista (tela Minha seção).';
 
   @override
   String get entendaCh4Para4 =>
-      'A assinatura da própria urna sobre o boletim ainda não é conferida pela Urna Aberta. Para isso, use o QR Code do boletim impresso com o aplicativo Boletim na Mão.';
+      'Nas urnas modelo 2020 e 2022, essa assinatura usa EdDSA na curva E-521, como descreve o manual do QR Code do TSE. A Urna Aberta confere a assinatura com a chave do certificado da urna e confere que esse certificado foi emitido pela autoridade certificadora de urnas do TSE, cuja chave fica fixada no código. Urnas de modelos anteriores usam outro algoritmo, que a Urna Aberta não confere.';
 
   @override
   String get entendaCh5Para1 =>
@@ -496,14 +496,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get entendaCh7Para2 =>
-      'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo cujo hash consta da lista do arquivo auxiliar.';
+      'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022).';
 
   @override
   String get entendaCh7NotTitle => 'O que ela não prova';
 
   @override
   String get entendaCh7Para3 =>
-      'Nada sobre o funcionamento da urna, o software dela ou se cada voto foi registrado como o eleitor quis: isso é o papel dos protocolos do capítulo 5. Ela ainda não confere a assinatura da urna sobre o boletim, e não confere que o boletim publicado é igual ao impresso: essa comparação é sua, com o boletim afixado ou o Boletim na Mão.';
+      'Nada sobre o funcionamento da urna, o software dela ou se cada voto foi registrado como o eleitor quis: isso é o papel dos protocolos do capítulo 5. Ela não confere que o boletim publicado é igual ao impresso: essa comparação é sua, com o boletim afixado ou o Boletim na Mão.';
 
   @override
   String get entendaCh7Para4 =>
@@ -721,7 +721,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get secaoHashMatches => 'Hash confere';
 
   @override
-  String get secaoSignatureUnverified => 'Assinatura não verificada';
+  String get secaoUrnaSignatureValid => 'Assinatura da urna confere';
+
+  @override
+  String get secaoUrnaSignatureInvalid => 'Assinatura da urna não confere';
+
+  @override
+  String get secaoUrnaSignatureUnchecked => 'Assinatura não conferida';
 
   @override
   String secaoHashLabel(String kind) {
@@ -742,14 +748,26 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get secaoProves =>
-      'o boletim publicado é exatamente o arquivo que a urna listou na sua lista de arquivos assinada. ';
+      'o boletim publicado é exatamente o arquivo que a urna listou, e essa lista foi assinada por uma urna com certificado emitido pelo TSE. ';
 
   @override
-  String get secaoNotYetLabel => 'O que ainda não prova: ';
+  String get secaoNotYetLabel => 'O que não prova: ';
 
   @override
   String get secaoNotYet =>
-      'a assinatura digital da urna sobre essa lista ainda não é verificada pela Urna Aberta. E nada aqui diz algo sobre a urna em si.';
+      'nada sobre a urna em si. A assinatura mostra de onde veio o arquivo, não como a urna funcionou.';
+
+  @override
+  String get secaoProvesHashOnly =>
+      'o boletim publicado é exatamente o arquivo que a urna listou na sua lista de arquivos. ';
+
+  @override
+  String get secaoSignatureInvalidNote =>
+      'A assinatura não confere: esta lista de arquivos não veio de uma urna certificada pelo TSE, ou foi alterada depois. Não confie nestes números; compare com o boletim impresso.';
+
+  @override
+  String get secaoSignatureUncheckedNote =>
+      'Este modelo de urna usa um algoritmo de assinatura que a Urna Aberta não confere. Só os hashes foram conferidos.';
 
   @override
   String get secaoVoteBranco => 'Branco';
@@ -1027,7 +1045,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get verificarUrnaNote =>
-      'Os arquivos de cada urna (boletim de urna) têm outra assinatura, conferida em Minha seção pelo hash; a assinatura da própria urna ainda não é verificada pela Urna Aberta.';
+      'Os arquivos de cada urna (boletim de urna) têm outra assinatura, a da própria urna, conferida em Minha seção.';
 
   @override
   String get verificarLoadError =>

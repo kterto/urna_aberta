@@ -55,6 +55,31 @@ void main() {
     expect(s.check(_buName, _bu), FileCheck.listingAltered);
   });
 
+  test("the urna's own signature verifies, back to TSE's AC UE2022", () {
+    expect(sig.hardwareSignature(), HardwareSignature.valid);
+  });
+
+  test('a changed byte in the urna signature is caught', () {
+    final edited = Uint8List.fromList(_vsc);
+    final at = _lastIndexOf(edited, sig.hardware.signature);
+    edited[at + 70] ^= 1;
+    expect(
+      decodeAssinaturas(edited).hardwareSignature(),
+      HardwareSignature.invalid,
+    );
+  });
+
+  test('a signature by a certificate TSE did not issue is caught', () {
+    final edited = Uint8List.fromList(_vsc);
+    // The certificate is stored as PEM; change one base64 character.
+    final at = _lastIndexOf(edited, 'MIICzzCCAjWgAwIBAgIDAws8'.codeUnits);
+    edited[at + 30] = edited[at + 30] == 0x41 ? 0x42 : 0x41;
+    expect(
+      decodeAssinaturas(edited).hardwareSignature(),
+      HardwareSignature.invalid,
+    );
+  });
+
   test('bytes that are not a signature file are refused', () {
     expect(() => decodeAssinaturas(_bu), throwsFormatException);
     expect(() => decodeAssinaturas([0x30, 0x00]), throwsFormatException);

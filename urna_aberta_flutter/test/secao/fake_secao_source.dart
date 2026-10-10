@@ -7,6 +7,7 @@ SectionReport sampleReport({
   BuCheck check = BuCheck.matches,
   String status = 'Totalizada',
   int aptos = 289,
+  UrnaSignature signature = UrnaSignature.valid,
 }) => SectionReport(
   uf: 'ac',
   municipio: 1066,
@@ -23,7 +24,7 @@ SectionReport sampleReport({
   aptos: aptos,
   comparecimento: 234,
   buCheck: check,
-  signatureVerified: false,
+  urnaSignature: signature,
   cargos: check != BuCheck.matches
       ? []
       : [

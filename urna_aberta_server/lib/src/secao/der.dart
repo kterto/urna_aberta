@@ -8,6 +8,7 @@ class DerNode {
     this.constructed,
     this.tag,
     this.bytes,
+    this.encoded,
     this._children,
   );
 
@@ -18,11 +19,14 @@ class DerNode {
 
   /// The content octets.
   final List<int> bytes;
+
+  /// The whole element: tag, length and content (what a signature covers).
+  final List<int> encoded;
   final List<DerNode>? _children;
 
   static const universal = 0, context = 2;
   static const integer = 2, octetString = 4, enumerated = 10, sequence = 16;
-  static const generalString = 27;
+  static const bitString = 3, objectId = 6, generalString = 27;
 
   /// Parses exactly one element spanning all of [data].
   static DerNode parse(List<int> data) {
@@ -64,6 +68,7 @@ class DerNode {
       return d[off++];
     }
 
+    final start = off;
     final first = next();
     final tagClass = first >> 6;
     final constructed = first & 0x20 != 0;
@@ -101,7 +106,14 @@ class DerNode {
       }
     }
     return (
-      DerNode._(tagClass, constructed, tag, d.sublist(off, end), children),
+      DerNode._(
+        tagClass,
+        constructed,
+        tag,
+        d.sublist(off, end),
+        d.sublist(start, end),
+        children,
+      ),
       end,
     );
   }

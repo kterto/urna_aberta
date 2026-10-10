@@ -2,13 +2,16 @@
 /// hash of every file the urna wrote and a signature over that list.
 ///
 /// Follows TSE's 2022 `assinatura.asn1` adapted to the 2026 layout (see
-/// `asn1/assinatura2026.asn1`). The signature itself (EdDSA on a 521-bit
-/// curve for UE2020/UE2022) is not verified here; only hashes are.
+/// `asn1/assinatura2026.asn1`). The hardware block's signature (Ed521 on
+/// UE2020/UE2022) is verified back to TSE's urna CA; the software block uses
+/// TSE's unpublished CEPESC algorithm and only its hashes are checked.
 library;
 
 import 'package:crypto/crypto.dart';
 
 import 'der.dart';
+import 'ed521.dart';
+import 'urna_certificate.dart';
 
 enum FileCheck {
   /// The file hashes to the value the urna listed.
@@ -24,6 +27,18 @@ enum FileCheck {
   listingAltered,
 }
 
+enum HardwareSignature {
+  /// Signed by the urna, whose certificate TSE's urna CA issued.
+  valid,
+
+  /// The signature, the listing or the certificate does not check out.
+  invalid,
+
+  /// An algorithm this app cannot check (older urna models), or no
+  /// certificate in the file.
+  unsupported,
+}
+
 class SignatureBlock {
   const SignatureBlock({
     required this.kind,
@@ -32,7 +47,9 @@ class SignatureBlock {
     required this.signatureAlgorithm,
     required this.signatureBits,
     required this.listingIntact,
-    required this.hasCertificate,
+    required this.signedHash,
+    required this.signature,
+    required this.certificate,
     required this.fileHashes,
   });
 
@@ -45,7 +62,14 @@ class SignatureBlock {
 
   /// The file listing hashes to the value the urna signed.
   final bool listingIntact;
-  final bool hasCertificate;
+
+  /// The listing's hash, as the urna computed and signed it.
+  final List<int> signedHash;
+  final List<int> signature;
+
+  /// The urna's X.509 certificate (PEM), when the block carries one.
+  final List<int>? certificate;
+  bool get hasCertificate => certificate != null;
   final Map<String, List<int>> fileHashes;
 }
 
@@ -66,6 +90,37 @@ class UrnaSignatures {
     if (listed == null) return FileCheck.notListed;
     final actual = _hashes[hw.hashAlgorithm]!.convert(bytes).bytes;
     return _equal(actual, listed) ? FileCheck.matches : FileCheck.differs;
+  }
+
+  /// Checks the hardware block's signature over its listing, and that the
+  /// signing certificate comes from TSE's urna CA.
+  ///
+  /// The urna signs SHA-512 of the listing's SHA-512 hash, as TSE's QR code
+  /// manual does for the printed BU.
+  HardwareSignature hardwareSignature() {
+    final hw = hardware;
+    final cert = hw.certificate;
+    if (hw.signatureAlgorithm != 'eddsa' ||
+        hw.signatureBits != 521 ||
+        hw.hashAlgorithm != 'sha512' ||
+        cert == null) {
+      return HardwareSignature.unsupported;
+    }
+    if (!hw.listingIntact) return HardwareSignature.invalid;
+    final UrnaCertificate urna;
+    try {
+      urna = UrnaCertificate.parse(cert);
+    } on FormatException {
+      return HardwareSignature.invalid;
+    }
+    final valid =
+        urna.issuedByTse() &&
+        Ed521.verify(
+          publicKey: urna.publicKey,
+          message: sha512.convert(hw.signedHash).bytes,
+          signature: hw.signature,
+        );
+    return valid ? HardwareSignature.valid : HardwareSignature.invalid;
   }
 }
 
@@ -114,6 +169,7 @@ SignatureBlock _block(String kind, DerNode node) {
     throw const FormatException('VSC: unknown hash or signature algorithm');
   }
   final signedHash = auto[3].children[1].bytes;
+  final certificate = f.where((n) => n.isContext(1) && n.bytes.isNotEmpty);
   final listingHash = _hashes[hashName]!.convert(listing.bytes).bytes;
 
   // Assinatura: SEQUENCE { arquivosAssinados SEQUENCE OF
@@ -126,7 +182,9 @@ SignatureBlock _block(String kind, DerNode node) {
     signatureAlgorithm: signatureName,
     signatureBits: auto[2].children[1].asInt,
     listingIntact: _equal(listingHash, signedHash),
-    hasCertificate: f.any((n) => n.isContext(1) && n.bytes.isNotEmpty),
+    signedHash: signedHash,
+    signature: auto[3].children[2].bytes,
+    certificate: certificate.firstOrNull?.bytes,
     fileHashes: {
       for (final a in files)
         a.children[0].asString: a.children[1].children[1].bytes,

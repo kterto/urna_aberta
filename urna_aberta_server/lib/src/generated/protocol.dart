@@ -50,6 +50,7 @@ import 'signature_status.dart' as _iomwgc6v;
 import 'tally_frame.dart' as _iiyd8otz;
 import 'timeline_point.dart' as _i4neo0h8;
 import 'uf_progress.dart' as _icbf2ppq;
+import 'urna_signature.dart' as _i343iyih;
 import 'voto_result.dart' as _iuhijha9;
 export 'bu_check.dart';
 export 'candidate.dart';
@@ -76,6 +77,7 @@ export 'signature_status.dart';
 export 'tally_frame.dart';
 export 'timeline_point.dart';
 export 'uf_progress.dart';
+export 'urna_signature.dart';
 export 'voto_result.dart';
 
 class Protocol extends _is.DatabaseSerializationManager {
@@ -748,6 +750,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _icbf2ppq.UfProgress) {
       return _icbf2ppq.UfProgress.fromJson(data) as T;
     }
+    if (t == _i343iyih.UrnaSignature) {
+      return _i343iyih.UrnaSignature.fromJson(data) as T;
+    }
     if (t == _iuhijha9.VotoResult) {
       return _iuhijha9.VotoResult.fromJson(data) as T;
     }
@@ -846,6 +851,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_icbf2ppq.UfProgress?>()) {
       return (data != null ? _icbf2ppq.UfProgress.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i343iyih.UrnaSignature?>()) {
+      return (data != null ? _i343iyih.UrnaSignature.fromJson(data) : null)
+          as T;
     }
     if (t == _is.getType<_iuhijha9.VotoResult?>()) {
       return (data != null ? _iuhijha9.VotoResult.fromJson(data) : null) as T;
@@ -989,6 +998,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       _iiyd8otz.TallyFrame => 'TallyFrame',
       _i4neo0h8.TimelinePoint => 'TimelinePoint',
       _icbf2ppq.UfProgress => 'UfProgress',
+      _i343iyih.UrnaSignature => 'UrnaSignature',
       _iuhijha9.VotoResult => 'VotoResult',
       _ => null,
     };
@@ -1054,6 +1064,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'TimelinePoint';
       case _icbf2ppq.UfProgress():
         return 'UfProgress';
+      case _i343iyih.UrnaSignature():
+        return 'UrnaSignature';
       case _iuhijha9.VotoResult():
         return 'VotoResult';
     }
@@ -1156,6 +1168,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'UfProgress') {
       return deserialize<_icbf2ppq.UfProgress>(data['data']);
+    }
+    if (dataClassName == 'UrnaSignature') {
+      return deserialize<_i343iyih.UrnaSignature>(data['data']);
     }
     if (dataClassName == 'VotoResult') {
       return deserialize<_iuhijha9.VotoResult>(data['data']);
