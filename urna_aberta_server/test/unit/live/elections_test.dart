@@ -35,10 +35,36 @@ void main() {
     expect(targets.map((t) => t.$2).toSet(), {Office.presidente});
   });
 
-  test('state 1st round: Governor and Senator in every UF', () {
+  test('state 1st round: every state office in every UF', () {
     final targets = byCode(6259).targets;
-    expect(targets, hasLength(54));
+    Iterable<String> where(Office o) =>
+        targets.where((t) => t.$2 == o).map((t) => t.$1.code);
+    expect(where(Office.governador), hasLength(27));
+    expect(where(Office.senador), hasLength(27));
+    expect(where(Office.deputadoFederal), hasLength(27));
+    expect(where(Office.deputadoEstadual), hasLength(26));
+    expect(where(Office.deputadoEstadual), isNot(contains('df')));
+    expect(where(Office.deputadoDistrital), ['df']);
     expect(targets.map((t) => t.$1.code), isNot(contains('zz')));
+  });
+
+  test('2024 municipal 1st round: every municipality, from EA12', () {
+    final first = byCode(619);
+    expect(first.round, 1);
+    expect(first.day, (2024, 10, 6));
+    expect(first.offices, {Office.prefeito, Office.vereador});
+    expect(first.allMunicipalities, isTrue);
+    expect(first.targets, isEmpty);
+  });
+
+  test('2024 municipal 2nd round: Prefeito where EA11 lists it', () {
+    final second = byCode(620);
+    expect(second.allMunicipalities, isFalse);
+    expect(
+      second.targets,
+      contains((Scope.municipality('sp', 71072), Office.prefeito)),
+    );
+    expect(second.targets.map((t) => t.$2).toSet(), {Office.prefeito});
   });
 
   test('state 2nd round: Governor only where there is one', () {
@@ -47,8 +73,8 @@ void main() {
     expect(targets.map((t) => t.$2).toSet(), {Office.governador});
   });
 
-  test('offices this app does not tally are left out', () {
-    // Municipal (Prefeito) and plebiscites have no tracked office.
+  test('supplementary elections and plebiscites are left out', () {
+    // Ordinary elections only for now.
     expect(all.any((e) => e.code == 6284), isFalse);
     expect(all.any((e) => e.code == 6288), isFalse);
   });

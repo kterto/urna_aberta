@@ -197,4 +197,90 @@ void main() {
     expect(Scope.ufs, hasLength(28));
     expect(Scope.ufs, containsAll(['ac', 'df', 'sp', 'to', 'zz']));
   });
+
+  group('every office, every cycle', () {
+    final y2024 = TseUrls.oficial(year: 2024);
+    final sp = Scope.municipality('SP', 71072);
+
+    test('office codes and levels', () {
+      expect(Office.deputadoFederal.fileCode, 'c0006');
+      expect(Office.deputadoEstadual.fileCode, 'c0007');
+      expect(Office.deputadoDistrital.fileCode, 'c0008');
+      expect(Office.prefeito.fileCode, 'c0011');
+      expect(Office.vereador.fileCode, 'c0013');
+      expect(Office.presidente.level, OfficeLevel.federal);
+      expect(Office.deputadoFederal.level, OfficeLevel.state);
+      expect(Office.vereador.level, OfficeLevel.municipal);
+      expect(Office.vereador.proportional, isTrue);
+      expect(Office.senador.proportional, isFalse);
+    });
+
+    test('a municipality scope is UF + 5-digit TSE code', () {
+      expect(sp.code, 'sp71072');
+      expect(sp.uf, 'sp');
+      expect(sp.isMunicipality, isTrue);
+      expect(Scope.uf('sp').isMunicipality, isFalse);
+      expect(() => Scope.municipality('zz', 1), throwsArgumentError);
+      expect(() => Scope.municipality('sp', 0), throwsArgumentError);
+      expect(() => Scope.municipality('sp', 100000), throwsArgumentError);
+      expect(Scope.municipality('ac', 1066).code, 'ac01066');
+    });
+
+    test('2024 Vereador, São Paulo, signed file', () {
+      expect(
+        y2024.resultJws(619, sp, Office.vereador).toString(),
+        'https://resultados.tse.jus.br/oficial/ele2024/619/dados/sp/sp71072-c0013-e000619-u.jws',
+      );
+      expect(
+        y2024.resultJws(620, sp, Office.prefeito).toString(),
+        'https://resultados.tse.jus.br/oficial/ele2024/620/dados/sp/sp71072-c0011-e000620-u.jws',
+      );
+    });
+
+    test('2026 deputies per UF', () {
+      expect(
+        urls.resultJws(6259, Scope.uf('sp'), Office.deputadoFederal).toString(),
+        'https://resultados.tse.jus.br/oficial/ele2026/6259/dados/sp/sp-c0006-e006259-u.jws',
+      );
+      expect(
+        urls
+            .resultJws(6259, Scope.uf('df'), Office.deputadoDistrital)
+            .toString(),
+        'https://resultados.tse.jus.br/oficial/ele2026/6259/dados/df/df-c0008-e006259-u.jws',
+      );
+    });
+
+    test('EA12 for 2024 is the signed config', () {
+      expect(
+        y2024.municipalitiesConfigJws(619).toString(),
+        'https://resultados.tse.jus.br/oficial/ele2024/619/config/mun-e000619-cm.jws',
+      );
+    });
+
+    test('no URL for an office outside its scope', () {
+      final sp = Scope.uf('sp'), df = Scope.uf('df');
+      final mun = Scope.municipality('sp', 71072);
+      expect(() => y2024.result(619, sp, Office.vereador), throwsArgumentError);
+      expect(
+        () => urls.result(6259, mun, Office.governador),
+        throwsArgumentError,
+      );
+      expect(
+        () => urls.result(6259, df, Office.deputadoEstadual),
+        throwsArgumentError,
+      );
+      expect(
+        () => urls.result(6259, sp, Office.deputadoDistrital),
+        throwsArgumentError,
+      );
+      expect(
+        () => urls.result(6259, Scope.uf('zz'), Office.senador),
+        throwsArgumentError,
+      );
+      expect(
+        () => urls.result(6257, mun, Office.presidente),
+        throwsArgumentError,
+      );
+    });
+  });
 }

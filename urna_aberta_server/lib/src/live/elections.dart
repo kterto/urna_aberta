@@ -11,7 +11,9 @@ class Election {
     required this.round,
     required this.name,
     required this.day,
+    required this.offices,
     required this.targets,
+    this.allMunicipalities = false,
   });
 
   final int code;
@@ -22,8 +24,14 @@ class Election {
   /// Election day, Brasília calendar: (year, month, day).
   final (int, int, int) day;
 
-  /// Every (scope, office) result file this election publishes.
+  final Set<Office> offices;
+
+  /// Every (scope, office) result file this election publishes, except the
+  /// per-municipality files of [allMunicipalities], which come from EA12.
   final List<(Scope, Office)> targets;
+
+  /// A municipal election held in every municipality (EA11 scope `br`).
+  final bool allMunicipalities;
 
   /// Polls close at 17:00 Brasília; TSE publishes from then until the count
   /// ends, usually overnight. The window closes at 06:00 the next day.
@@ -48,8 +56,9 @@ DateTime? nextLiveWindow(List<Election> elections, DateTime now) {
   return next;
 }
 
-/// Reads EA11. Elections without an office in [Office] (municipal,
-/// plebiscites) are left out. Throws [FormatException] on a malformed file.
+/// Reads EA11. Only ordinary elections with an office in [Office] are kept
+/// (supplementary elections and plebiscites are left out). Throws
+/// [FormatException] on a malformed file.
 List<Election> parseElections(List<int> bytes) {
   final Object? json;
   try {
@@ -71,51 +80,79 @@ List<Election> parseElections(List<int> bytes) {
   throw const FormatException('EA11 sem lista de pleitos (pl)');
 }
 
+/// EA11 election types: 8 federal, 1 state, 3 municipal (ordinary).
+const _ordinary = {'1', '3', '8'};
+
 Election? _election(Object? e, int pleito, (int, int, int) day) {
   if (e case {
     'cd': final String cd,
     't': final String t,
+    'tp': final String tp,
     'nm': final String nm,
     'abr': final List<Object?> abr,
   }) {
+    if (!_ordinary.contains(tp)) return null;
+    final offices = <Office>{};
     final targets = <(Scope, Office)>[];
+    var allMunicipalities = false;
     for (final a in abr) {
       if (a case {'cd': final String scope, 'cp': final List<Object?> cps}) {
+        final mus = [
+          if (a['mu'] case final List<Object?> mu)
+            for (final m in mu)
+              if (m case {'cd': final String c}) int.parse(c),
+        ];
         for (final cp in cps) {
-          if (cp case {'cd': final String office}) {
-            final o = Office.values
-                .where((o) => o.code == int.parse(office))
-                .firstOrNull;
-            if (o != null) targets.addAll(_scopes(scope, o));
+          if (cp case {'cd': final String code}) {
+            final o = Office.byCode(int.parse(code));
+            if (o == null) continue;
+            offices.add(o);
+            if (o.level == OfficeLevel.municipal && scope == 'br') {
+              allMunicipalities = true;
+            } else {
+              targets.addAll(_scopes(scope, mus, o));
+            }
           }
         }
       }
     }
-    if (targets.isEmpty) return null;
+    if (offices.isEmpty) return null;
     return Election(
       code: int.parse(cd),
       pleito: pleito,
       round: int.parse(t),
       name: nm,
       day: day,
+      offices: offices,
       targets: targets,
+      allMunicipalities: allMunicipalities,
     );
   }
   return null;
 }
 
 /// `br` in EA11 means nationwide: Brazil, every UF and abroad for
-/// President; every UF for state offices.
-Iterable<(Scope, Office)> _scopes(String scope, Office office) {
+/// President; every UF that elects the office for state offices. A UF entry
+/// may list municipalities (`mu`) for municipal offices.
+Iterable<(Scope, Office)> _scopes(String scope, List<int> mus, Office office) {
+  if (office.level == OfficeLevel.municipal) {
+    return [for (final m in mus) (Scope.municipality(scope, m), office)];
+  }
   if (scope != 'br') return [(Scope.uf(scope), office)];
   final ufs = Scope.ufs.where((u) => u != 'zz');
-  return office == Office.presidente
-      ? [
-          (Scope.brazil(), office),
-          for (final u in ufs) (Scope.uf(u), office),
-          (Scope.uf('zz'), office),
-        ]
-      : [for (final u in ufs) (Scope.uf(u), office)];
+  return switch (office) {
+    Office.presidente => [
+      (Scope.brazil(), office),
+      for (final u in ufs) (Scope.uf(u), office),
+      (Scope.uf('zz'), office),
+    ],
+    Office.deputadoEstadual => [
+      for (final u in ufs)
+        if (u != 'df') (Scope.uf(u), office),
+    ],
+    Office.deputadoDistrital => [(Scope.uf('df'), office)],
+    _ => [for (final u in ufs) (Scope.uf(u), office)],
+  };
 }
 
 (int, int, int) _day(String ddmmyyyy) {

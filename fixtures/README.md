@@ -28,3 +28,23 @@ AC, Porto Walter (01066), zona 0004, seção 0077.
 2026 BU and signature schemas; `urna_aberta_server/lib/src/secao/asn1/`
 holds TSE's 2022 schemas adapted to these files (every office's votes add
 up to the turnout; the BU's SHA-512 matches the urna's signed list).
+
+## Every office: deputies and the 2024 municipal election
+
+Fetched 10/10/2026 with `dart run bin/archive_results.dart <set>` from
+`urna_aberta_server` (5 req/s, `.jws` only, each signature checked before
+the file is written; URLs built only from EA11/EA12 entries):
+
+- `2026-1t/manifest-deputados.json`: Deputado Federal (27 UFs), Deputado
+  Estadual (26 UFs) and Deputado Distrital (DF) for election 6259, as
+  `<uf>-c000{6,7,8}-e006259-u.jws`.
+- `2024/manifest-municipal2024.json`: EA12 for both 2024 rounds
+  (`mun-e000619-cm.jws`, `mun-e000620-cm.jws`; their two manifest entries
+  were rebuilt from the archived bytes, so they lack HTTP validators), and
+  Prefeito + Vereador for the 26 state capitals (election 619), plus
+  Prefeito in each capital with a 2nd round (620), as
+  `<uf><mun5>-c00{11,13}-e000{619,620}-u.jws`.
+
+TSE's Resultados app fetches only these signed files; the JSON is the JWS
+payload. In a municipal file the scope is only the municipality code
+(`cdabr` `71072`, `tpabr` `mu`): the UF comes from the folder.
