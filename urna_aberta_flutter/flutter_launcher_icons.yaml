@@ -1,0 +1,23 @@
+# Source art and generator: assets/brand/ (run assets/brand/build_icons.sh).
+flutter_launcher_icons:
+  image_path: "assets/brand/icon.png"
+  android: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#123A4C"
+  adaptive_icon_foreground: "assets/brand/icon-foreground.png"
+  adaptive_icon_monochrome: "assets/brand/icon-foreground.png"
+  ios: true
+  remove_alpha_ios: true
+  background_color_ios: "#123A4C"
+  web:
+    generate: true
+    image_path: "assets/brand/icon.png"
+    background_color: "#F3F5F1"
+    theme_color: "#123A4C"
+  macos:
+    generate: true
+    image_path: "assets/brand/icon.png"
+  windows:
+    generate: true
+    image_path: "assets/brand/icon.png"
+    icon_size: 256

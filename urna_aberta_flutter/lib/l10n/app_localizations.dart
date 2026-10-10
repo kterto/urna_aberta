@@ -552,12 +552,6 @@ abstract class AppLocalizations {
   /// **'Entenda'**
   String get navEntenda;
 
-  /// No description provided for @navSistema.
-  ///
-  /// In pt, this message translates to:
-  /// **'Sistema'**
-  String get navSistema;
-
   /// No description provided for @themeLight.
   ///
   /// In pt, this message translates to:

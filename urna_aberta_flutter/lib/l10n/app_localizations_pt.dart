@@ -292,9 +292,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navEntenda => 'Entenda';
 
   @override
-  String get navSistema => 'Sistema';
-
-  @override
   String get themeLight => 'Claro';
 
   @override

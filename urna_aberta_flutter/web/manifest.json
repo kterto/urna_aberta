@@ -1,13 +1,14 @@
 {
-    "name": "urna_aberta_flutter",
-    "short_name": "urna_aberta_flutter",
+    "name": "Urna Aberta",
+    "short_name": "Urna Aberta",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F3F5F1",
+    "theme_color": "#123A4C",
+    "description": "Acompanhe e confira a divulgação dos resultados das eleições a partir dos arquivos oficiais do TSE.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "lang": "pt-BR",
     "icons": [
         {
             "src": "icons/Icon-192.png",

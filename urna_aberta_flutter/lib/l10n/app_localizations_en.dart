@@ -298,9 +298,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navEntenda => 'Learn';
 
   @override
-  String get navSistema => 'System';
-
-  @override
   String get themeLight => 'Light';
 
   @override

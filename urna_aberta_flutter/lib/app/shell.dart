@@ -8,7 +8,6 @@ import '../screens/apuracao_screen.dart';
 import '../screens/entenda_screen.dart';
 import '../screens/secao_screen.dart';
 import '../screens/verificar_screen.dart';
-import '../showcase/design_system_screen.dart';
 import 'app.dart';
 
 class Destination {
@@ -156,7 +155,9 @@ class _Wordmark extends StatelessWidget {
   Widget build(BuildContext context) {
     final mark = CustomPaint(
       size: const Size(26, 26),
-      painter: _BallotMark(color),
+      painter: _BallotMark(color, [
+        for (final r in Regiao.values) context.atlas.region(r),
+      ]),
     );
     if (compact) return Semantics(label: 'Urna Aberta', child: mark);
     return Semantics(
@@ -180,48 +181,59 @@ class _Wordmark extends StatelessWidget {
   }
 }
 
-/// The wordmark glyph: an open ballot box with a check.
+/// The wordmark glyph, same as the launcher icon (assets/brand/): a ballot
+/// with a check rising from a ballot box whose front carries the five region
+/// legend keys.
 class _BallotMark extends CustomPainter {
-  _BallotMark(this.color);
+  _BallotMark(this.color, this.regions);
 
   final Color color;
+  final List<Color> regions;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final s = size.width / 26;
-    canvas.scale(s);
+    canvas.scale(size.width / 26);
     final p = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 1.9
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(
+      Path()
+        ..moveTo(8, 11)
+        ..lineTo(8, 3.2)
+        ..quadraticBezierTo(8, 2, 9.2, 2)
+        ..lineTo(16.8, 2)
+        ..quadraticBezierTo(18, 2, 18, 3.2)
+        ..lineTo(18, 11),
+      p,
+    );
+    canvas.drawPath(
+      Path()
+        ..moveTo(10.9, 6.7)
+        ..lineTo(12.5, 8.3)
+        ..lineTo(15.2, 5.6),
+      p,
+    );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        const Rect.fromLTWH(1, 9, 24, 16),
-        const Radius.circular(1.5),
+        const Rect.fromLTWH(1, 11, 24, 13),
+        const Radius.circular(1.4),
       ),
       p,
     );
-    canvas.drawPath(
-      Path()
-        ..moveTo(7, 9)
-        ..lineTo(7, 4.5)
-        ..quadraticBezierTo(7, 3, 8.5, 3)
-        ..lineTo(17.5, 3)
-        ..quadraticBezierTo(19, 3, 19, 4.5)
-        ..lineTo(19, 9),
-      p,
-    );
-    canvas.drawPath(
-      Path()
-        ..moveTo(9, 15.5)
-        ..lineTo(11.6, 18.1)
-        ..lineTo(17, 12.7),
-      p..strokeWidth = 2.2,
-    );
+    for (var i = 0; i < regions.length; i++) {
+      canvas.drawRect(
+        Rect.fromLTWH(4 + i * 3.8, 17, 2.8, 4),
+        Paint()..color = regions[i],
+      );
+    }
   }
 
   @override
-  bool shouldRepaint(_BallotMark old) => old.color != color;
+  bool shouldRepaint(_BallotMark old) =>
+      old.color != color || old.regions != regions;
 }
 
 class _Masthead extends StatelessWidget {
@@ -255,15 +267,6 @@ class _Masthead extends StatelessWidget {
                       selected: i == index,
                       onTap: () => onSelect(i),
                     ),
-                  _MastLink(
-                    label: context.l10n.navSistema,
-                    selected: false,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const DesignSystemScreen(),
-                      ),
-                    ),
-                  ),
                   const SizedBox(width: Space.x4),
                   ValueListenableBuilder<ThemeMode>(
                     valueListenable: themeModeNotifier,
