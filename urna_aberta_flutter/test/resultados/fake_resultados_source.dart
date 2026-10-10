@@ -219,6 +219,42 @@ class FakeResultadosSource implements ResultadosSource {
   /// When set, reports wait for it to complete.
   Completer<void>? gate;
 
+  final camaraCalls = <int>[];
+
+  @override
+  Future<ChamberReport> camara(int eleicao) async {
+    camaraCalls.add(eleicao);
+    return ChamberReport(
+      electionCode: eleicao,
+      seats: 513,
+      states: 27,
+      matchingStates: 27,
+      differingStates: [],
+      lists: [
+        ListReport(
+          number: 'P1/P2',
+          name: 'FEDERAÇÃO AZUL',
+          kind: 'federation',
+          parties: ['P1', 'P2'],
+          votes: 30000000,
+          legendVotes: 1000000,
+          tseSeats: 300,
+          ourSeats: 300,
+        ),
+        ListReport(
+          number: 'P3',
+          name: 'PARTIDO VERDE CLARO',
+          kind: 'party',
+          parties: ['P3'],
+          votes: 20000000,
+          legendVotes: 500000,
+          tseSeats: 213,
+          ourSeats: 213,
+        ),
+      ],
+    );
+  }
+
   @override
   Future<List<ElectionSummary>> eleicoes() async => elections;
 

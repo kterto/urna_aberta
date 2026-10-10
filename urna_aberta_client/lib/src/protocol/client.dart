@@ -17,6 +17,8 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _iaic;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:urna_aberta_client/src/protocol/chamber_report.dart'
+    as _i3l1h7iq;
 import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
     as _ivdor3em;
 import 'package:urna_aberta_client/src/protocol/election_summary.dart'
@@ -380,6 +382,14 @@ class EndpointResultados extends _isc.EndpointRef {
       'abrangencia': abrangencia,
     },
   );
+
+  /// The Câmara dos Deputados: every UF's Deputado Federal race summed.
+  _ida.Future<_i3l1h7iq.ChamberReport> camara(int eleicao) =>
+      caller.callServerEndpoint<_i3l1h7iq.ChamberReport>(
+        'resultados',
+        'camara',
+        {'eleicao': eleicao},
+      );
 }
 
 /// Minha seção: find a polling section and read its official files.

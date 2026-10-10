@@ -439,6 +439,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultadosKindCoalition => 'Coalition';
 
   @override
+  String get resultadosBrasilCamara => 'Brazil (Chamber)';
+
+  @override
+  String get resultadosChamber => 'Chamber of Deputies';
+
+  @override
+  String get resultadosChamberPlate =>
+      'Benches elected, by party or federation';
+
+  @override
+  String resultadosChamberMatches(int count) {
+    return 'Our count matches TSE\'s in all $count states';
+  }
+
+  @override
+  String resultadosChamberDiffers(String states) {
+    return 'Our count differs from TSE\'s in: $states';
+  }
+
+  @override
+  String get resultadosChamberNote =>
+      'The 27 races summed: each state elects its own bench, with its own quotient. Urna Aberta redid the seat allocation in every state and compared it with TSE\'s.';
+
+  @override
+  String get resultadosChamberSource =>
+      'TSE · 27 Federal Deputy files (EA20); sum and count: Urna Aberta';
+
+  @override
   String get resultadosCandidatesPlate => 'Candidates';
 
   @override

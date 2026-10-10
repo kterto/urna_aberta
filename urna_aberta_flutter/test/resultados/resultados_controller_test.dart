@@ -66,6 +66,18 @@ void main() {
     expect(c.scopes, contains('zz'));
   });
 
+  test('Deputado Federal for Brazil is the Câmara: 27 states summed', () async {
+    await c.start();
+    expect(c.scopes.first, 'br');
+    await c.selectUf('br');
+    expect(source.camaraCalls, [6259]);
+    expect(c.report, isNull);
+    expect(c.chamber!.seats, 513);
+    await c.selectUf('rj');
+    expect(c.chamber, isNull);
+    expect(c.report!.scopeCode, 'rj');
+  });
+
   test('a municipal election asks for a municipality first', () async {
     await c.start();
     await c.selectElection(sampleElections.singleWhere((e) => e.code == 619));

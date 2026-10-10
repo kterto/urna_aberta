@@ -774,6 +774,48 @@ abstract class AppLocalizations {
   /// **'Coligação'**
   String get resultadosKindCoalition;
 
+  /// No description provided for @resultadosBrasilCamara.
+  ///
+  /// In pt, this message translates to:
+  /// **'Brasil (Câmara)'**
+  String get resultadosBrasilCamara;
+
+  /// No description provided for @resultadosChamber.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmara dos Deputados'**
+  String get resultadosChamber;
+
+  /// No description provided for @resultadosChamberPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Bancadas eleitas, por partido ou federação'**
+  String get resultadosChamberPlate;
+
+  /// No description provided for @resultadosChamberMatches.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nossa conta confere com a do TSE nos {count} estados'**
+  String resultadosChamberMatches(int count);
+
+  /// No description provided for @resultadosChamberDiffers.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nossa conta difere da do TSE em: {states}'**
+  String resultadosChamberDiffers(String states);
+
+  /// No description provided for @resultadosChamberNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Soma das 27 disputas: cada estado elege a sua bancada separadamente, com o seu próprio quociente. A Urna Aberta refez a distribuição das vagas em cada estado e comparou com a do TSE.'**
+  String get resultadosChamberNote;
+
+  /// No description provided for @resultadosChamberSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · 27 arquivos de Deputado Federal (EA20); soma e conta: Urna Aberta'**
+  String get resultadosChamberSource;
+
   /// No description provided for @resultadosCandidatesPlate.
   ///
   /// In pt, this message translates to:

@@ -197,5 +197,25 @@ void main() {
       );
       expect(tse.requested.where((p) => p.contains('dados')), isEmpty);
     });
+
+    test(
+      'the Câmara: 513 seats, our count matching TSE in all 27 states',
+      () async {
+        final c = await endpoints.resultados.camara(sessionBuilder, 6259);
+        expect(c.seats, 513);
+        expect(c.states, 27);
+        expect(c.matchingStates, 27);
+        expect(c.differingStates, isEmpty);
+        expect(c.lists.fold(0, (s, l) => s + l.tseSeats!), 513);
+        expect(c.lists.fold(0, (s, l) => s + l.ourSeats!), 513);
+        final pl = c.lists.singleWhere((l) => l.number == 'PL');
+        expect(pl.tseSeats, greaterThan(0));
+        // Largest bench first.
+        expect(
+          c.lists.first.tseSeats,
+          greaterThanOrEqualTo(c.lists[1].tseSeats!),
+        );
+      },
+    );
   });
 }

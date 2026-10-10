@@ -121,11 +121,16 @@ class _Controls extends StatelessWidget {
               DropdownMenu<String>(
                 key: ValueKey('uf ${c.uf} ${c.office}'),
                 label: Text(l.resultadosPlace),
-                width: 160,
+                width: 210,
                 initialSelection: c.uf,
                 dropdownMenuEntries: [
                   for (final s in places)
-                    DropdownMenuEntry(value: s, label: _scopeLabel(l, s)),
+                    DropdownMenuEntry(
+                      value: s,
+                      label: s == 'br' && c.office == Cargo.deputadoFederal
+                          ? l.resultadosBrasilCamara
+                          : _scopeLabel(l, s),
+                    ),
                 ],
                 onSelected: (s) {
                   if (s != null) c.selectUf(s);
@@ -209,6 +214,20 @@ class _Body extends StatelessWidget {
           l.resultadosTseUnavailable,
         _ => l.resultadosError,
       });
+    }
+    final chamber = c.chamber;
+    if (chamber != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            '${officeName(l, Cargo.deputadoFederal)} · ${l.resultadosChamber}',
+            style: AtlasType.headlineSerif.copyWith(color: p.ink),
+          ),
+          const SizedBox(height: Space.x4),
+          _ChamberPlate(chamber: chamber),
+        ],
+      );
     }
     final r = c.report;
     if (r == null) {
@@ -381,9 +400,12 @@ class _SeatsPlate extends StatelessWidget {
 }
 
 class _ListRow extends StatelessWidget {
-  const _ListRow({required this.x});
+  const _ListRow({required this.x, this.showQp = true});
 
   final ListReport x;
+
+  /// The QP is per race; a sum of races has none.
+  final bool showQp;
 
   @override
   Widget build(BuildContext context) {
@@ -447,14 +469,15 @@ class _ListRow extends StatelessWidget {
               textAlign: TextAlign.end,
             ),
           ),
-          SizedBox(
-            width: 40,
-            child: Text(
-              '${x.partyQuotient ?? ''}',
-              style: figure,
-              textAlign: TextAlign.end,
+          if (showQp)
+            SizedBox(
+              width: 40,
+              child: Text(
+                '${x.partyQuotient ?? ''}',
+                style: figure,
+                textAlign: TextAlign.end,
+              ),
             ),
-          ),
           SizedBox(
             width: 48,
             child: Text(
@@ -463,6 +486,90 @@ class _ListRow extends StatelessWidget {
               textAlign: TextAlign.end,
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChamberPlate extends StatelessWidget {
+  const _ChamberPlate({required this.chamber});
+
+  final ChamberReport chamber;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final t = Theme.of(context).textTheme;
+    final p = context.atlas;
+    final matches = chamber.differingStates.isEmpty;
+    final head = AtlasType.legend.copyWith(color: p.inkMuted);
+    return Plate(
+      title: l.resultadosChamberPlate,
+      trailing: StatusBadge(
+        matches ? VerificationStatus.valid : VerificationStatus.invalid,
+        label: matches
+            ? l.resultadosChamberMatches(chamber.states)
+            : l.resultadosChamberDiffers(
+                chamber.differingStates.map((u) => u.toUpperCase()).join(', '),
+              ),
+      ),
+      fonte: FonteLine(
+        plateNumber: 14,
+        source: l.resultadosChamberSource,
+        codes: [
+          FileCode(
+            '<uf>-c0006-e${chamber.electionCode.toString().padLeft(6, '0')}'
+            '-u.jws',
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Wrap(
+            spacing: Space.x6,
+            runSpacing: Space.x4,
+            children: [
+              _Figure(l.resultadosSeats, context.integer(chamber.seats)),
+              _Figure(
+                l.resultadosValidVotes,
+                context.integer(
+                  chamber.lists.fold(0, (s, x) => s + x.votes),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: Space.x4),
+          Text(
+            l.resultadosChamberNote,
+            style: t.bodySmall?.copyWith(color: p.inkSecondary),
+          ),
+          const SizedBox(height: Space.x4),
+          Row(
+            children: [
+              Expanded(child: Text(l.resultadosColList, style: head)),
+              SizedBox(
+                width: 92,
+                child: Text(
+                  l.resultadosColVotes,
+                  style: head,
+                  textAlign: TextAlign.end,
+                ),
+              ),
+              SizedBox(
+                width: 48,
+                child: Text(
+                  l.resultadosColSeats,
+                  style: head,
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+          for (final x in chamber.lists)
+            if ((x.tseSeats ?? 0) > 0 || (x.ourSeats ?? 0) > 0)
+              _ListRow(x: x, showQp: false),
         ],
       ),
     );

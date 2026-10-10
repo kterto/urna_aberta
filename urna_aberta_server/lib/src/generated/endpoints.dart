@@ -472,6 +472,26 @@ class Endpoints extends _is.EndpointDispatch {
                         params['abrangencia'],
                       ),
         ),
+        'camara': _is.MethodConnector(
+          name: 'camara',
+          params: {
+            'eleicao': _is.ParameterDescription(
+              name: 'eleicao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .camara(
+                        session,
+                        params['eleicao'],
+                      ),
+        ),
       },
     );
     connectors['secao'] = _is.EndpointConnector(

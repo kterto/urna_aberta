@@ -434,6 +434,34 @@ class AppLocalizationsPt extends AppLocalizations {
   String get resultadosKindCoalition => 'Coligação';
 
   @override
+  String get resultadosBrasilCamara => 'Brasil (Câmara)';
+
+  @override
+  String get resultadosChamber => 'Câmara dos Deputados';
+
+  @override
+  String get resultadosChamberPlate =>
+      'Bancadas eleitas, por partido ou federação';
+
+  @override
+  String resultadosChamberMatches(int count) {
+    return 'Nossa conta confere com a do TSE nos $count estados';
+  }
+
+  @override
+  String resultadosChamberDiffers(String states) {
+    return 'Nossa conta difere da do TSE em: $states';
+  }
+
+  @override
+  String get resultadosChamberNote =>
+      'Soma das 27 disputas: cada estado elege a sua bancada separadamente, com o seu próprio quociente. A Urna Aberta refez a distribuição das vagas em cada estado e comparou com a do TSE.';
+
+  @override
+  String get resultadosChamberSource =>
+      'TSE · 27 arquivos de Deputado Federal (EA20); soma e conta: Urna Aberta';
+
+  @override
   String get resultadosCandidatesPlate => 'Candidaturas';
 
   @override

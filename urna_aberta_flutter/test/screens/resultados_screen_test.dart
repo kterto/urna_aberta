@@ -101,6 +101,24 @@ void main() {
     );
   });
 
+  testWidgets('the Câmara: benches and the check in every state', (
+    tester,
+  ) async {
+    await pumpScreen(tester, FakeResultadosSource());
+    await pick(tester, find.byType(DropdownMenu<String>), 'Brasil (Câmara)');
+    expect(
+      find.text('Deputado Federal · Câmara dos Deputados'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Nossa conta confere com a do TSE nos 27 estados'),
+      findsOneWidget,
+    );
+    expect(find.text('FEDERAÇÃO AZUL'), findsOneWidget);
+    expect(find.text('300'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('a vote not held yet says so', (tester) async {
     await pumpScreen(tester, FakeResultadosSource());
     await pick(

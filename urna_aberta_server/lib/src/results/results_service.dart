@@ -76,15 +76,85 @@ class ResultsService {
       throw _invalid('O cargo $officeCode não é eleito em $scopeCode.');
     }
 
+    final (parsed, file) = await _load(session, election, office, scope, uri);
+    return _report(parsed, file, uri.pathSegments.last);
+  }
+
+  /// The Câmara: every UF's Deputado Federal race, summed by party or
+  /// federation (matched by their parties), with our allocation per UF.
+  Future<ChamberReport> chamber(Session session, int electionCode) async {
+    final election = _election(electionCode);
+    const office = Office.deputadoFederal;
+    if (!election.offices.contains(office)) {
+      throw _invalid('A eleição $electionCode não elege deputados federais.');
+    }
+    _assertClosed(election);
+    final urls = TseUrls.oficial(year: election.day.$1);
+    final byKey = <String, _ChamberList>{};
+    final differing = <String>[];
+    var seats = 0, states = 0;
+    for (final (scope, o) in election.targets) {
+      if (o != office) continue;
+      final uri = urls.resultJws(election.code, scope, office);
+      final (r, _) = await _load(session, election, office, scope, uri);
+      final ours = allocateSeats(r);
+      if (!SeatComparison.of(r, ours).matches) differing.add(scope.code);
+      seats += r.seats;
+      states++;
+      for (final l in r.lists) {
+        final parties = [for (final p in l.parties) p.abbrev]..sort();
+        final sum = byKey.putIfAbsent(
+          parties.join('/'),
+          () => _ChamberList(l.name, parties, l.kind),
+        );
+        sum.votes += l.votes;
+        sum.legend += l.parties.fold(0, (s, p) => s + p.legendVotes);
+        sum.tseSeats += l.seatsWon ?? 0;
+        sum.ourSeats += ours.seatsOf(l.number);
+      }
+    }
+    final lists = byKey.entries.toList()
+      ..sort((a, b) {
+        final bySeats = b.value.tseSeats.compareTo(a.value.tseSeats);
+        return bySeats != 0 ? bySeats : b.value.votes.compareTo(a.value.votes);
+      });
+    return ChamberReport(
+      electionCode: election.code,
+      seats: seats,
+      states: states,
+      matchingStates: states - differing.length,
+      differingStates: differing,
+      lists: [
+        for (final MapEntry(key: key, value: l) in lists)
+          ListReport(
+            number: key,
+            name: l.name,
+            kind: l.kind.name,
+            parties: l.parties,
+            votes: l.votes,
+            legendVotes: l.legend,
+            tseSeats: l.tseSeats,
+            ourSeats: l.ourSeats,
+          ),
+      ],
+    );
+  }
+
+  Future<(OfficeResult, ResultFile)> _load(
+    Session session,
+    Election election,
+    Office office,
+    Scope scope,
+    Uri uri,
+  ) async {
     final file =
         await _stored(session, election.code, office, scope) ??
         await _fetch(session, election, office, scope, uri);
-    final jws = TseJws.parse(file.jws);
     final parsed = parseOfficeResult(
-      jws.payload,
+      TseJws.parse(file.jws).payload,
       uf: scope.isMunicipality ? scope.uf : null,
     );
-    return _report(parsed, file, uri.pathSegments.last);
+    return (parsed, file);
   }
 
   Election _election(int code) =>
@@ -292,4 +362,13 @@ class ResultsService {
     );
     return byDay != 0 ? byDay : a.code.compareTo(b.code);
   }
+}
+
+class _ChamberList {
+  _ChamberList(this.name, this.parties, this.kind);
+
+  final String name;
+  final List<String> parties;
+  final ListKind kind;
+  int votes = 0, legend = 0, tseSeats = 0, ourSeats = 0;
 }

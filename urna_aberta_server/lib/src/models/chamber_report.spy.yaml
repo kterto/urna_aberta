@@ -1,0 +1,14 @@
+### The Câmara dos Deputados as elected: the 27 state races for Deputado
+### Federal summed by party or federation, with Urna Aberta's own count.
+class: ChamberReport
+fields:
+  electionCode: int
+  seats: int
+  ### Lists summed across states (matched by their parties); `number` is
+  ### the party abbreviations joined with `/`.
+  lists: List<ListReport>
+  ### States read, and those where our allocation matches TSE's exactly.
+  states: int
+  matchingStates: int
+  ### UFs where it does not, if any.
+  differingStates: List<String>

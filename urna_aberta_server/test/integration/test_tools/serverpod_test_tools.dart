@@ -17,6 +17,8 @@ import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
+import 'package:urna_aberta_server/src/generated/chamber_report.dart'
+    as _ifmqn2o5;
 import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
 import 'package:urna_aberta_server/src/generated/election_summary.dart'
@@ -861,6 +863,37 @@ class _ResultadosEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_it8y8zyf.OfficeReport>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_ifmqn2o5.ChamberReport> camara(
+    _ist.TestSessionBuilder sessionBuilder,
+    int eleicao,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'resultados',
+            method: 'camara',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'resultados',
+          methodName: 'camara',
+          parameters: _ist.testObjectToJson({'eleicao': eleicao}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ifmqn2o5.ChamberReport>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

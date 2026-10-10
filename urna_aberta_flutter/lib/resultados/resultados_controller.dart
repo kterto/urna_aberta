@@ -7,6 +7,7 @@ abstract interface class ResultadosSource {
   Future<List<ElectionSummary>> eleicoes();
   Future<List<MunicipioRef>> municipios(int eleicao, String uf);
   Future<OfficeReport> resultado(int eleicao, int cargo, String abrangencia);
+  Future<ChamberReport> camara(int eleicao);
 }
 
 class ServerResultadosSource implements ResultadosSource {
@@ -24,6 +25,10 @@ class ServerResultadosSource implements ResultadosSource {
   @override
   Future<OfficeReport> resultado(int eleicao, int cargo, String abrangencia) =>
       _client.resultados.resultado(eleicao, cargo, abrangencia);
+
+  @override
+  Future<ChamberReport> camara(int eleicao) =>
+      _client.resultados.camara(eleicao);
 }
 
 /// Provides the [ResultadosSource] to the screens below it.
@@ -87,6 +92,7 @@ class ResultadosController extends ChangeNotifier {
   List<MunicipioRef> _municipios = const [];
   MunicipioRef? _municipio;
   OfficeReport? _report;
+  ChamberReport? _chamber;
   Object? _error;
   ResultadosLoad? _loading;
   String _query = '';
@@ -99,6 +105,9 @@ class ResultadosController extends ChangeNotifier {
   List<MunicipioRef> get municipios => _municipios;
   MunicipioRef? get municipio => _municipio;
   OfficeReport? get report => _report;
+
+  /// Deputado Federal for Brazil: the Câmara, the 27 state races summed.
+  ChamberReport? get chamber => _chamber;
   Object? get error => _error;
   ResultadosLoad? get loading => _loading;
   String get query => _query;
@@ -136,6 +145,7 @@ class ResultadosController extends ChangeNotifier {
         if (u != 'df') u,
     ],
     Cargo.deputadoDistrital => ['df'],
+    Cargo.deputadoFederal => ['br', ...ufs],
     null => const [],
     _ => ufs,
   };
@@ -262,6 +272,7 @@ class ResultadosController extends ChangeNotifier {
   Future<void> _refresh() async {
     final generation = ++_generation;
     _report = null;
+    _chamber = null;
     _error = null;
     final e = _election;
     if (e == null || !isHeld(e) || _office == null || _uf == null) {
@@ -294,9 +305,15 @@ class ResultadosController extends ChangeNotifier {
       }
       _loading = ResultadosLoad.report;
       notifyListeners();
-      final r = await _source.resultado(e.code, _office!, s);
-      if (generation != _generation) return;
-      _report = r;
+      if (_office == Cargo.deputadoFederal && s == 'br') {
+        final chamber = await _source.camara(e.code);
+        if (generation != _generation) return;
+        _chamber = chamber;
+      } else {
+        final r = await _source.resultado(e.code, _office!, s);
+        if (generation != _generation) return;
+        _report = r;
+      }
     } on Object catch (err) {
       if (generation != _generation) return;
       _error = err;

@@ -25,4 +25,8 @@ class ResultadosEndpoint extends Endpoint {
     int cargo,
     String abrangencia,
   ) => service.result(session, eleicao, cargo, abrangencia);
+
+  /// The Câmara dos Deputados: every UF's Deputado Federal race summed.
+  Future<ChamberReport> camara(Session session, int eleicao) =>
+      service.chamber(session, eleicao);
 }

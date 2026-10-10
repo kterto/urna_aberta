@@ -331,6 +331,27 @@
   },
   "resultadosKindFederation": "Federação",
   "resultadosKindCoalition": "Coligação",
+  "resultadosBrasilCamara": "Brasil (Câmara)",
+  "resultadosChamber": "Câmara dos Deputados",
+  "resultadosChamberPlate": "Bancadas eleitas, por partido ou federação",
+  "resultadosChamberMatches": "Nossa conta confere com a do TSE nos {count} estados",
+  "@resultadosChamberMatches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultadosChamberDiffers": "Nossa conta difere da do TSE em: {states}",
+  "@resultadosChamberDiffers": {
+    "placeholders": {
+      "states": {
+        "type": "String"
+      }
+    }
+  },
+  "resultadosChamberNote": "Soma das 27 disputas: cada estado elege a sua bancada separadamente, com o seu próprio quociente. A Urna Aberta refez a distribuição das vagas em cada estado e comparou com a do TSE.",
+  "resultadosChamberSource": "TSE · 27 arquivos de Deputado Federal (EA20); soma e conta: Urna Aberta",
   "resultadosCandidatesPlate": "Candidaturas",
   "resultadosCandidatesSource": "TSE · votos e situação de cada candidatura",
   "resultadosSearch": "Buscar por nome, número ou partido",

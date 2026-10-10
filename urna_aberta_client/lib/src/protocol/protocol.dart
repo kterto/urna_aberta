@@ -32,6 +32,7 @@ import 'candidate_report.dart' as _i8xvblpk;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'candidate_votes.dart' as _iurxdm15;
 import 'cargo_result.dart' as _i77b8h6f;
+import 'chamber_report.dart' as _igvtxk1g;
 import 'data_origin.dart' as _i2ilnjuc;
 import 'divergence_event.dart' as _i3f5hnmb;
 import 'election_summary.dart' as _ipxcqqyf;
@@ -66,6 +67,7 @@ export 'candidate_report.dart';
 export 'candidate_tally.dart';
 export 'candidate_votes.dart';
 export 'cargo_result.dart';
+export 'chamber_report.dart';
 export 'data_origin.dart';
 export 'divergence_event.dart';
 export 'election_summary.dart';
@@ -147,6 +149,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _i77b8h6f.CargoResult) {
       return _i77b8h6f.CargoResult.fromJson(data) as T;
+    }
+    if (t == _igvtxk1g.ChamberReport) {
+      return _igvtxk1g.ChamberReport.fromJson(data) as T;
     }
     if (t == _i2ilnjuc.DataOrigin) {
       return _i2ilnjuc.DataOrigin.fromJson(data) as T;
@@ -252,6 +257,10 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _isc.getType<_i77b8h6f.CargoResult?>()) {
       return (data != null ? _i77b8h6f.CargoResult.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_igvtxk1g.ChamberReport?>()) {
+      return (data != null ? _igvtxk1g.ChamberReport.fromJson(data) : null)
+          as T;
     }
     if (t == _isc.getType<_i2ilnjuc.DataOrigin?>()) {
       return (data != null ? _i2ilnjuc.DataOrigin.fromJson(data) : null) as T;
@@ -365,11 +374,17 @@ class Protocol extends _isc.SerializationManager {
               .toList()
           as T;
     }
-    if (t == List<int>) {
-      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    if (t == List<_i49o1wen.ListReport>) {
+      return (data as List)
+              .map((e) => deserialize<_i49o1wen.ListReport>(e))
+              .toList()
+          as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
     if (t == List<_i4neo0h8.TimelinePoint>) {
       return (data as List)
@@ -380,12 +395,6 @@ class Protocol extends _isc.SerializationManager {
     if (t == List<_i3f5hnmb.DivergenceEvent>) {
       return (data as List)
               .map((e) => deserialize<_i3f5hnmb.DivergenceEvent>(e))
-              .toList()
-          as T;
-    }
-    if (t == List<_i49o1wen.ListReport>) {
-      return (data as List)
-              .map((e) => deserialize<_i49o1wen.ListReport>(e))
               .toList()
           as T;
     }
@@ -497,6 +506,7 @@ class Protocol extends _isc.SerializationManager {
       _ixvsuy9r.CandidateTally => 'CandidateTally',
       _iurxdm15.CandidateVotes => 'CandidateVotes',
       _i77b8h6f.CargoResult => 'CargoResult',
+      _igvtxk1g.ChamberReport => 'ChamberReport',
       _i2ilnjuc.DataOrigin => 'DataOrigin',
       _i3f5hnmb.DivergenceEvent => 'DivergenceEvent',
       _ipxcqqyf.ElectionSummary => 'ElectionSummary',
@@ -551,6 +561,8 @@ class Protocol extends _isc.SerializationManager {
         return 'CandidateVotes';
       case _i77b8h6f.CargoResult():
         return 'CargoResult';
+      case _igvtxk1g.ChamberReport():
+        return 'ChamberReport';
       case _i2ilnjuc.DataOrigin():
         return 'DataOrigin';
       case _i3f5hnmb.DivergenceEvent():
@@ -646,6 +658,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (dataClassName == 'CargoResult') {
       return deserialize<_i77b8h6f.CargoResult>(data['data']);
+    }
+    if (dataClassName == 'ChamberReport') {
+      return deserialize<_igvtxk1g.ChamberReport>(data['data']);
     }
     if (dataClassName == 'DataOrigin') {
       return deserialize<_i2ilnjuc.DataOrigin>(data['data']);
