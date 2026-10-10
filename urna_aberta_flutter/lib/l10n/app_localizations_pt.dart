@@ -1355,4 +1355,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get apuracaoSeeResults => 'Ver os resultados finais';
+
+  @override
+  String get apuracaoAllOffices => 'Ver todos os cargos em apuração';
 }

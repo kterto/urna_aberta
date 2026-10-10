@@ -14,10 +14,11 @@ import '../resultados/resultados_controller.dart';
 /// file; for proportional offices, Urna Aberta's own seat allocation next
 /// to TSE's.
 class ResultadosScreen extends StatefulWidget {
-  const ResultadosScreen({super.key, this.now});
+  const ResultadosScreen({super.key, this.now, this.autoRefresh = true});
 
   /// Clock override for tests.
   final DateTime Function()? now;
+  final bool autoRefresh;
 
   @override
   State<ResultadosScreen> createState() => _ResultadosScreenState();
@@ -30,7 +31,11 @@ class _ResultadosScreenState extends State<ResultadosScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_c == null) {
-      _c = ResultadosController(ResultadosScope.of(context), now: widget.now);
+      _c = ResultadosController(
+        ResultadosScope.of(context),
+        now: widget.now,
+        autoRefresh: widget.autoRefresh,
+      );
       _c!.start();
     }
   }
@@ -244,7 +249,7 @@ class _Body extends StatelessWidget {
           style: AtlasType.headlineSerif.copyWith(color: p.ink),
         ),
         const SizedBox(height: Space.x4),
-        _Summary(r: r),
+        _Summary(r: r, live: c.live),
         if (r.proportional && r.seatCheck != null) ...[
           const SizedBox(height: Space.x5),
           _SeatsPlate(r: r),
@@ -257,9 +262,12 @@ class _Body extends StatelessWidget {
 }
 
 class _Summary extends StatelessWidget {
-  const _Summary({required this.r});
+  const _Summary({required this.r, required this.live});
 
   final OfficeReport r;
+
+  /// Still being counted: reloads every 30 s.
+  final bool live;
 
   @override
   Widget build(BuildContext context) {
@@ -267,11 +275,25 @@ class _Summary extends StatelessWidget {
     final check = r.seatCheck;
     return Plate(
       title: l.resultadosSummaryPlate,
-      trailing: StatusBadge(switch (r.signature) {
-        SignatureStatus.valid => VerificationStatus.valid,
-        SignatureStatus.invalid => VerificationStatus.invalid,
-        SignatureStatus.unknownKey => VerificationStatus.pending,
-      }),
+      trailing: Wrap(
+        spacing: Space.x2,
+        runSpacing: Space.x2,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          if (live) ...[
+            const LiveStamp(),
+            Text(
+              l.apuracaoUpdatedAt(context.hm(r.fetchedAt)),
+              style: AtlasType.legend.copyWith(color: context.atlas.inkMuted),
+            ),
+          ],
+          StatusBadge(switch (r.signature) {
+            SignatureStatus.valid => VerificationStatus.valid,
+            SignatureStatus.invalid => VerificationStatus.invalid,
+            SignatureStatus.unknownKey => VerificationStatus.pending,
+          }),
+        ],
+      ),
       fonte: FonteLine(
         plateNumber: 11,
         source: l.resultadosSource(context.dateHm(r.tseGeneratedAt)),

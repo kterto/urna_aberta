@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
 
@@ -69,11 +71,20 @@ enum ResultadosLoad { elections, municipios, report }
 
 /// Election → office → UF (→ municipality), then the office's result.
 class ResultadosController extends ChangeNotifier {
-  ResultadosController(this._source, {DateTime Function()? now})
-    : _now = now ?? DateTime.now;
+  ResultadosController(
+    this._source, {
+    DateTime Function()? now,
+    this.autoRefresh = true,
+  }) : _now = now ?? DateTime.now;
 
   final ResultadosSource _source;
   final DateTime Function() _now;
+
+  /// While a count is on, reload every [refreshEvery] (tests turn it off
+  /// and call [reload]).
+  final bool autoRefresh;
+  static const refreshEvery = Duration(seconds: 30);
+  Timer? _timer;
 
   /// The 27 UFs in TSE's lowercase codes.
   static const ufs = [
@@ -117,6 +128,40 @@ class ResultadosController extends ChangeNotifier {
       !_now().isBefore(e.day.add(const Duration(hours: 20)));
 
   bool get notHeldYet => _election != null && !isHeld(_election!);
+
+  /// The result shown is still being counted: TSE will publish more.
+  bool get live =>
+      _report != null &&
+      !_report!.complete &&
+      _election != null &&
+      isHeld(_election!);
+
+  /// Reads the current result again, keeping it on screen meanwhile.
+  Future<void> reload() async {
+    final e = _election, s = scope, office = _office;
+    if (e == null || s == null || office == null || _report == null) return;
+    final generation = _generation;
+    try {
+      final r = await _source.resultado(e.code, office, s);
+      if (generation != _generation) return;
+      _report = r;
+      notifyListeners();
+    } on Object {
+      // Keep the last numbers; the next reload tries again.
+    }
+    _schedule();
+  }
+
+  void _schedule() {
+    _timer?.cancel();
+    _timer = autoRefresh && live ? Timer(refreshEvery, reload) : null;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   /// One entry per voting day (newest first): TSE splits a day into
   /// several elections (federal, state), which voters see as one.
@@ -320,6 +365,7 @@ class ResultadosController extends ChangeNotifier {
     }
     _loading = null;
     notifyListeners();
+    _schedule();
   }
 
   static String _fold(String s) {

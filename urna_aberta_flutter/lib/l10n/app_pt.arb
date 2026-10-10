@@ -807,5 +807,6 @@
   "atlasLive": "Ao vivo",
   "entendaPausePara2b": "O TSE informa ainda que, durante a pausa, os boletins de urna continuaram a ser transmitidos, recebidos e publicados, e que o cálculo da totalização seguiu normalmente, exceto por um breve momento em que foi suspenso pelo protocolo de segurança.",
   "entendaSourceFatoOuBoato": "TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)",
-  "apuracaoSeeResults": "Ver os resultados finais"
+  "apuracaoSeeResults": "Ver os resultados finais",
+  "apuracaoAllOffices": "Ver todos os cargos em apuração"
 }

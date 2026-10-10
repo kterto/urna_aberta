@@ -1356,4 +1356,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apuracaoSeeResults => 'See the final results';
+
+  @override
+  String get apuracaoAllOffices => 'See every office being counted';
 }

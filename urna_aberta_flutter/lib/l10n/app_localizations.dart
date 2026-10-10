@@ -2250,6 +2250,12 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Ver os resultados finais'**
   String get apuracaoSeeResults;
+
+  /// No description provided for @apuracaoAllOffices.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver todos os cargos em apuração'**
+  String get apuracaoAllOffices;
 }
 
 class _AppLocalizationsDelegate

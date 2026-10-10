@@ -1,6 +1,6 @@
 # Plan: follow and analyse any Brazilian election
 
-Status (10/10/2026): approved; steps 1–4 done (data layer, seat engine, Resultados + Câmara, reframe). Step 5 (live for every office) partly done: the live poller already fetches every office TSE publishes on a night; the Apuração view is still presidential.
+Status (10/10/2026): approved; all five steps done. Live on election night: the poller fetches every office TSE publishes; Resultados re-reads any incomplete file every 30 s (stored per version, falling back to the last one if TSE fails) and marks it live; Apuração links to it. Unverifiable until 25/10: the live 2nd-round files themselves.
 
 ## Goal
 

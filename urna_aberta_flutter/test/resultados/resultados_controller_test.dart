@@ -13,7 +13,7 @@ void main() {
 
   setUp(() {
     source = FakeResultadosSource();
-    c = ResultadosController(source, now: () => now);
+    c = ResultadosController(source, now: () => now, autoRefresh: false);
   });
 
   test('opens on the newest election held: Deputado Federal, SP', () async {
@@ -108,6 +108,22 @@ void main() {
     await c.start();
     expect(c.report, isNull);
     expect(c.error, isA<ResultUnavailable>());
+  });
+
+  test('a count still on reloads in place; a final one is not live', () async {
+    source.report = (e, o, a) => proportionalReport(totalized: 40);
+    await c.start();
+    expect(c.live, isTrue);
+    source.report = (e, o, a) => proportionalReport(totalized: 70);
+    final reloading = c.reload();
+    // The current numbers stay on screen while the new ones load.
+    expect(c.report!.sectionsTotalized, 40);
+    await reloading;
+    expect(c.report!.sectionsTotalized, 70);
+    expect(source.reportCalls, hasLength(2));
+    source.report = (e, o, a) => proportionalReport();
+    await c.reload();
+    expect(c.live, isFalse);
   });
 
   test('search filters candidates by name, number or party', () async {

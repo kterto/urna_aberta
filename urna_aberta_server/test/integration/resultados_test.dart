@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
@@ -15,9 +16,16 @@ import 'test_tools/serverpod_test_tools.dart';
 class ArchiveTse implements TseHttp {
   final requested = <String>[];
 
+  /// Served instead of the archived file, by file name.
+  final overrides = <String, List<int>>{};
+  int? failWith;
+
   @override
   Future<TseHttpResponse> get(Uri uri, Map<String, String> headers) async {
     requested.add(uri.path);
+    if (failWith != null) return TseHttpResponse(failWith!, const [], const {});
+    final override = overrides[uri.pathSegments.last];
+    if (override != null) return TseHttpResponse(200, override, const {});
     final root = uri.path.contains('/ele2024/')
         ? '../fixtures/2024'
         : '../fixtures/2026-1t';
@@ -34,6 +42,23 @@ class _NoWait extends TokenBucket {
   Future<void> acquire() async {}
 }
 
+/// The archived SP Deputado Federal file, rewritten as if only [st] of its
+/// sections were totalized (the signature no longer verifies; this tests
+/// freshness, not signatures).
+List<int> partialSpDeputados(int st) {
+  final jws = File(
+    '../fixtures/2026-1t/oficial/ele2026/6259/dados/sp/sp-c0006-e006259-u.jws',
+  ).readAsStringSync().trim().split('.');
+  final json =
+      jsonDecode(
+            utf8.decode(base64Url.decode(base64Url.normalize(jws[1]))),
+          )
+          as Map<String, dynamic>;
+  (json['s'] as Map<String, dynamic>)['st'] = '$st';
+  final payload = base64Url.encode(utf8.encode(jsonEncode(json)));
+  return utf8.encode('${jws[0]}.${payload.replaceAll('=', '')}.${jws[2]}');
+}
+
 void main() {
   final ea11 = parseElections(
     File(
@@ -43,14 +68,68 @@ void main() {
 
   withServerpod('Resultados', (sessionBuilder, endpoints) {
     late ArchiveTse tse;
+    late DateTime clock;
 
     setUp(() {
       tse = ArchiveTse();
+      clock = DateTime.utc(2026, 10, 10, 15);
       ResultadosEndpoint.service = ResultsService(
         client: TseClient(http: tse, bucket: _NoWait()),
         elections: () => ea11,
-        now: () => DateTime.utc(2026, 10, 10, 15),
+        now: () => clock,
       );
+    });
+
+    int fetches() =>
+        tse.requested.where((p) => p.endsWith('sp-c0006-e006259-u.jws')).length;
+
+    test(
+      'an incomplete result is checked again after 30 s; a final one is not',
+      () async {
+        tse.overrides['sp-c0006-e006259-u.jws'] = partialSpDeputados(50);
+        final partial = await endpoints.resultados.resultado(
+          sessionBuilder,
+          6259,
+          6,
+          'sp',
+        );
+        expect(partial.complete, isFalse);
+        expect(partial.sectionsTotalized, 50);
+
+        await endpoints.resultados.resultado(sessionBuilder, 6259, 6, 'sp');
+        expect(fetches(), 1, reason: 'fresh enough: no new request');
+
+        clock = clock.add(const Duration(seconds: 31));
+        tse.overrides.clear();
+        final done = await endpoints.resultados.resultado(
+          sessionBuilder,
+          6259,
+          6,
+          'sp',
+        );
+        expect(fetches(), 2);
+        expect(done.complete, isTrue);
+        expect(await ResultFile.db.count(sessionBuilder.build()), 2);
+
+        clock = clock.add(const Duration(hours: 1));
+        await endpoints.resultados.resultado(sessionBuilder, 6259, 6, 'sp');
+        expect(fetches(), 2, reason: 'a final file is never asked again');
+      },
+    );
+
+    test('if TSE fails during a refresh, the last version is served', () async {
+      tse.overrides['sp-c0006-e006259-u.jws'] = partialSpDeputados(50);
+      await endpoints.resultados.resultado(sessionBuilder, 6259, 6, 'sp');
+      clock = clock.add(const Duration(seconds: 31));
+      tse.failWith = 503;
+      final r = await endpoints.resultados.resultado(
+        sessionBuilder,
+        6259,
+        6,
+        'sp',
+      );
+      expect(r.sectionsTotalized, 50);
+      expect(r.complete, isFalse);
     });
 
     test('lists the ordinary elections with their offices', () async {

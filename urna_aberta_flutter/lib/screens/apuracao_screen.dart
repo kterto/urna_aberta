@@ -75,16 +75,25 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
               : l.apuracaoLiveEndedLede(status.round ?? 1),
           children: [
             if (liveFrame != null) ...[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: AtlasSegmented<bool>(
-                  segments: {
-                    false: l.apuracaoModeLive,
-                    true: l.apuracaoModeReplay,
-                  },
-                  selected: _replayChosen,
-                  onChanged: (v) => setState(() => _replayChosen = v),
-                ),
+              Wrap(
+                spacing: Space.x4,
+                runSpacing: Space.x2,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  AtlasSegmented<bool>(
+                    segments: {
+                      false: l.apuracaoModeLive,
+                      true: l.apuracaoModeReplay,
+                    },
+                    selected: _replayChosen,
+                    onChanged: (v) => setState(() => _replayChosen = v),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        ShellScope.of(context)?.go(Section.resultados),
+                    child: Text(l.apuracaoAllOffices),
+                  ),
+                ],
               ),
               const SizedBox(height: Space.x5),
             ] else if (_liveNotice(context, status) case final notice?) ...[

@@ -12,6 +12,10 @@ fields:
   fileName: String
   signature: SignatureStatus
   tseGeneratedAt: DateTime
+  ### When Urna Aberta last read the file from TSE.
+  fetchedAt: DateTime
+  ### Every section totalized: the file will not change again.
+  complete: bool
   sectionsTotal: int
   sectionsTotalized: int
   totalVotes: int

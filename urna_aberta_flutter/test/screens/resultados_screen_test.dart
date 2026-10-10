@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
+import 'package:urna_aberta_flutter/design/widgets/atlas_components.dart';
 import 'package:urna_aberta_flutter/resultados/resultados_controller.dart';
 import 'package:urna_aberta_flutter/screens/resultados_screen.dart';
 
@@ -23,7 +24,9 @@ Future<void> pumpScreen(
       locale: locale,
       home: ResultadosScope(
         source: source,
-        child: Scaffold(body: ResultadosScreen(now: () => _now)),
+        child: Scaffold(
+          body: ResultadosScreen(now: () => _now, autoRefresh: false),
+        ),
       ),
     ),
   );
@@ -117,6 +120,19 @@ void main() {
     expect(find.text('FEDERAÇÃO AZUL'), findsOneWidget);
     expect(find.text('300'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a count still on is marked live', (tester) async {
+    final source = FakeResultadosSource()
+      ..report = (e, c, a) => proportionalReport(totalized: 40);
+    await pumpScreen(tester, source);
+    expect(find.byType(LiveStamp), findsOneWidget);
+    expect(find.textContaining('40,00%'), findsOneWidget);
+  });
+
+  testWidgets('a final count is not marked live', (tester) async {
+    await pumpScreen(tester, FakeResultadosSource());
+    expect(find.byType(LiveStamp), findsNothing);
   });
 
   testWidgets('a vote not held yet says so', (tester) async {

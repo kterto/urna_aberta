@@ -257,6 +257,8 @@ void main() {
       expect(find.textContaining('BELTRANO'), findsOneWidget);
       expect(find.text('atualizado 19:15'), findsWidgets);
       expect(find.text('br-c0001-e006258-u.json'), findsWidgets);
+      // Governor and every other office counted tonight: in Resultados.
+      expect(find.text('Ver todos os cargos em apuração'), findsOneWidget);
     });
 
     testWidgets('the viewer can switch to the replay and back', (

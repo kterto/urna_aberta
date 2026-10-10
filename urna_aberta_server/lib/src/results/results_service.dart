@@ -140,6 +140,13 @@ class ResultsService {
     );
   }
 
+  /// How long an incomplete file is trusted before TSE is asked again
+  /// (a conditional GET, so an unchanged file costs a 304).
+  static const refreshAfter = Duration(seconds: 30);
+
+  /// The latest stored version; an incomplete one (the count is still on)
+  /// is re-read once it is [refreshAfter] old. If TSE fails then, the
+  /// stored version is served.
   Future<(OfficeResult, ResultFile)> _load(
     Session session,
     Election election,
@@ -147,15 +154,28 @@ class ResultsService {
     Scope scope,
     Uri uri,
   ) async {
-    final file =
-        await _stored(session, election.code, office, scope) ??
-        await _fetch(session, election, office, scope, uri);
-    final parsed = parseOfficeResult(
-      TseJws.parse(file.jws).payload,
-      uf: scope.isMunicipality ? scope.uf : null,
-    );
-    return (parsed, file);
+    final uf = scope.isMunicipality ? scope.uf : null;
+    OfficeResult parse(ResultFile f) =>
+        parseOfficeResult(TseJws.parse(f.jws).payload, uf: uf);
+
+    final stored = await _stored(session, election.code, office, scope);
+    if (stored != null) {
+      final r = parse(stored);
+      final fresh = _now().difference(stored.fetchedAt) < refreshAfter;
+      if (_complete(r) || fresh) return (r, stored);
+      try {
+        final file = await _fetch(session, election, office, scope, uri);
+        return (parse(file), file);
+      } on ResultUnavailable {
+        return (r, stored);
+      }
+    }
+    final file = await _fetch(session, election, office, scope, uri);
+    return (parse(file), file);
   }
+
+  static bool _complete(OfficeResult r) =>
+      r.sectionsTotal > 0 && r.sectionsTotalized == r.sectionsTotal;
 
   Election _election(int code) =>
       _elections().where((e) => e.code == code).firstOrNull ??
@@ -209,7 +229,9 @@ class ResultsService {
         t.electionCode.equals(election) &
         t.officeCode.equals(office.code) &
         t.scopeCode.equals(scope.code),
-    orderBy: (t) => t.tseGeneratedAt.desc(),
+    // The version read most recently (two versions can share TSE's
+    // timestamp, and TSE could serve an older one again).
+    orderBy: (t) => t.fetchedAt.desc(),
   );
 
   Future<ResultFile> _fetch(
@@ -221,6 +243,22 @@ class ResultsService {
   ) async {
     _assertClosed(election);
     final body = await _get(uri);
+    final digest = sha256.convert(body).toString();
+    // Same bytes as a stored version: only note that it was read again.
+    final same = await ResultFile.db.findFirstRow(
+      session,
+      where: (t) =>
+          t.electionCode.equals(election.code) &
+          t.officeCode.equals(office.code) &
+          t.scopeCode.equals(scope.code) &
+          t.rawSha256.equals(digest),
+    );
+    if (same != null) {
+      return ResultFile.db.updateRow(
+        session,
+        same.copyWith(fetchedAt: _now().toUtc()),
+      );
+    }
     final text = utf8.decode(body);
     final jws = TseJws.parse(text);
     final check = await checkJws(jws);
@@ -236,7 +274,7 @@ class ResultsService {
         scopeCode: scope.code,
         tseGeneratedAt: parsed.generatedAt,
         fetchedAt: _now().toUtc(),
-        rawSha256: sha256.convert(body).toString(),
+        rawSha256: digest,
         signature: switch (check) {
           JwsCheck.valid => SignatureStatus.valid,
           JwsCheck.invalid => SignatureStatus.invalid,
@@ -300,6 +338,8 @@ class ResultsService {
       fileName: fileName,
       signature: file.signature,
       tseGeneratedAt: r.generatedAt,
+      fetchedAt: file.fetchedAt,
+      complete: _complete(r),
       sectionsTotal: r.sectionsTotal,
       sectionsTotalized: r.sectionsTotalized,
       totalVotes: r.totals.total,

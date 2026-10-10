@@ -31,6 +31,8 @@ abstract class OfficeReport
     required this.fileName,
     required this.signature,
     required this.tseGeneratedAt,
+    required this.fetchedAt,
+    required this.complete,
     required this.sectionsTotal,
     required this.sectionsTotalized,
     required this.totalVotes,
@@ -55,6 +57,8 @@ abstract class OfficeReport
     required String fileName,
     required _iomwgc6v.SignatureStatus signature,
     required DateTime tseGeneratedAt,
+    required DateTime fetchedAt,
+    required bool complete,
     required int sectionsTotal,
     required int sectionsTotalized,
     required int totalVotes,
@@ -86,6 +90,10 @@ abstract class OfficeReport
       tseGeneratedAt: _is.DateTimeJsonExtension.fromJson(
         jsonSerialization['tseGeneratedAt'],
       ),
+      fetchedAt: _is.DateTimeJsonExtension.fromJson(
+        jsonSerialization['fetchedAt'],
+      ),
+      complete: _is.BoolJsonExtension.fromJson(jsonSerialization['complete']),
       sectionsTotal: jsonSerialization['sectionsTotal'] as int,
       sectionsTotalized: jsonSerialization['sectionsTotalized'] as int,
       totalVotes: jsonSerialization['totalVotes'] as int,
@@ -129,6 +137,12 @@ abstract class OfficeReport
 
   DateTime tseGeneratedAt;
 
+  /// When Urna Aberta last read the file from TSE.
+  DateTime fetchedAt;
+
+  /// Every section totalized: the file will not change again.
+  bool complete;
+
   int sectionsTotal;
 
   int sectionsTotalized;
@@ -168,6 +182,8 @@ abstract class OfficeReport
     String? fileName,
     _iomwgc6v.SignatureStatus? signature,
     DateTime? tseGeneratedAt,
+    DateTime? fetchedAt,
+    bool? complete,
     int? sectionsTotal,
     int? sectionsTotalized,
     int? totalVotes,
@@ -194,6 +210,8 @@ abstract class OfficeReport
       'fileName': fileName,
       'signature': signature.toJson(),
       'tseGeneratedAt': tseGeneratedAt.toJson(),
+      'fetchedAt': fetchedAt.toJson(),
+      'complete': complete,
       'sectionsTotal': sectionsTotal,
       'sectionsTotalized': sectionsTotalized,
       'totalVotes': totalVotes,
@@ -222,6 +240,8 @@ abstract class OfficeReport
       'fileName': fileName,
       'signature': signature.toJson(),
       'tseGeneratedAt': tseGeneratedAt.toJson(),
+      'fetchedAt': fetchedAt.toJson(),
+      'complete': complete,
       'sectionsTotal': sectionsTotal,
       'sectionsTotalized': sectionsTotalized,
       'totalVotes': totalVotes,
@@ -258,6 +278,8 @@ class _OfficeReportImpl extends OfficeReport {
     required String fileName,
     required _iomwgc6v.SignatureStatus signature,
     required DateTime tseGeneratedAt,
+    required DateTime fetchedAt,
+    required bool complete,
     required int sectionsTotal,
     required int sectionsTotalized,
     required int totalVotes,
@@ -280,6 +302,8 @@ class _OfficeReportImpl extends OfficeReport {
          fileName: fileName,
          signature: signature,
          tseGeneratedAt: tseGeneratedAt,
+         fetchedAt: fetchedAt,
+         complete: complete,
          sectionsTotal: sectionsTotal,
          sectionsTotalized: sectionsTotalized,
          totalVotes: totalVotes,
@@ -308,6 +332,8 @@ class _OfficeReportImpl extends OfficeReport {
     String? fileName,
     _iomwgc6v.SignatureStatus? signature,
     DateTime? tseGeneratedAt,
+    DateTime? fetchedAt,
+    bool? complete,
     int? sectionsTotal,
     int? sectionsTotalized,
     int? totalVotes,
@@ -331,6 +357,8 @@ class _OfficeReportImpl extends OfficeReport {
       fileName: fileName ?? this.fileName,
       signature: signature ?? this.signature,
       tseGeneratedAt: tseGeneratedAt ?? this.tseGeneratedAt,
+      fetchedAt: fetchedAt ?? this.fetchedAt,
+      complete: complete ?? this.complete,
       sectionsTotal: sectionsTotal ?? this.sectionsTotal,
       sectionsTotalized: sectionsTotalized ?? this.sectionsTotalized,
       totalVotes: totalVotes ?? this.totalVotes,
