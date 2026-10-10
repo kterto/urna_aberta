@@ -65,6 +65,35 @@ void main() {
       );
     });
 
+    test(
+      'stores candidate names once per election, office and scope',
+      () async {
+        await record(presidentFile('ac'));
+        await record(presidentFile('ac'), origin: DataOrigin.live);
+        final rows = await Candidate.db.find(
+          session,
+          where: (t) => t.scopeCode.equals('ac'),
+        );
+        expect(rows, hasLength(12));
+        final c22 = rows.singleWhere((c) => c.number == 22);
+        expect(c22.ballotName, 'FLAVIO BOLSONARO');
+        expect(c22.party, 'PL');
+        expect(c22.electionCode, 6257);
+        expect(c22.officeCode, 1);
+      },
+    );
+
+    test('re-recording a stored file fills in missing names', () async {
+      await record(presidentFile('ac'));
+      await Candidate.db.deleteWhere(
+        session,
+        where: (t) => t.id.notEquals(null),
+      );
+      final again = await record(presidentFile('ac'));
+      expect(again.isNew, isFalse);
+      expect(await Candidate.db.count(session), 12);
+    });
+
     test('recording the same file again adds nothing', () async {
       final first = await record(presidentFile('ac'));
       final again = await record(presidentFile('ac'));

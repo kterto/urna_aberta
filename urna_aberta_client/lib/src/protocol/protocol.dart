@@ -20,6 +20,7 @@ import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
     as _ivdor3em;
 import 'package:urna_aberta_client/src/protocol/timeline_point.dart'
     as _ipzn9brv;
+import 'candidate.dart' as _irnb9urg;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'candidate_votes.dart' as _iurxdm15;
 import 'data_origin.dart' as _i2ilnjuc;
@@ -31,6 +32,7 @@ import 'result_snapshot.dart' as _i4dv59av;
 import 'tally_frame.dart' as _iiyd8otz;
 import 'timeline_point.dart' as _i4neo0h8;
 import 'uf_progress.dart' as _icbf2ppq;
+export 'candidate.dart';
 export 'candidate_tally.dart';
 export 'candidate_votes.dart';
 export 'data_origin.dart';
@@ -78,6 +80,9 @@ class Protocol extends _isc.SerializationManager {
       }
     }
 
+    if (t == _irnb9urg.Candidate) {
+      return _irnb9urg.Candidate.fromJson(data) as T;
+    }
     if (t == _ixvsuy9r.CandidateTally) {
       return _ixvsuy9r.CandidateTally.fromJson(data) as T;
     }
@@ -110,6 +115,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _icbf2ppq.UfProgress) {
       return _icbf2ppq.UfProgress.fromJson(data) as T;
+    }
+    if (t == _isc.getType<_irnb9urg.Candidate?>()) {
+      return (data != null ? _irnb9urg.Candidate.fromJson(data) : null) as T;
     }
     if (t == _isc.getType<_ixvsuy9r.CandidateTally?>()) {
       return (data != null ? _ixvsuy9r.CandidateTally.fromJson(data) : null)
@@ -204,6 +212,7 @@ class Protocol extends _isc.SerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _irnb9urg.Candidate => 'Candidate',
       _ixvsuy9r.CandidateTally => 'CandidateTally',
       _iurxdm15.CandidateVotes => 'CandidateVotes',
       _i2ilnjuc.DataOrigin => 'DataOrigin',
@@ -229,6 +238,8 @@ class Protocol extends _isc.SerializationManager {
     }
 
     switch (data) {
+      case _irnb9urg.Candidate():
+        return 'Candidate';
       case _ixvsuy9r.CandidateTally():
         return 'CandidateTally';
       case _iurxdm15.CandidateVotes():
@@ -272,6 +283,9 @@ class Protocol extends _isc.SerializationManager {
     var dataClassName = data['className'];
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
+    }
+    if (dataClassName == 'Candidate') {
+      return deserialize<_irnb9urg.Candidate>(data['data']);
     }
     if (dataClassName == 'CandidateTally') {
       return deserialize<_ixvsuy9r.CandidateTally>(data['data']);

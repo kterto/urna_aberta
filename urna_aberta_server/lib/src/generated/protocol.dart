@@ -21,6 +21,7 @@ import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
 import 'package:urna_aberta_server/src/generated/timeline_point.dart'
     as _ir3q3hqp;
+import 'candidate.dart' as _irnb9urg;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'candidate_votes.dart' as _iurxdm15;
 import 'data_origin.dart' as _i2ilnjuc;
@@ -32,6 +33,7 @@ import 'result_snapshot.dart' as _i4dv59av;
 import 'tally_frame.dart' as _iiyd8otz;
 import 'timeline_point.dart' as _i4neo0h8;
 import 'uf_progress.dart' as _icbf2ppq;
+export 'candidate.dart';
 export 'candidate_tally.dart';
 export 'candidate_votes.dart';
 export 'data_origin.dart';
@@ -52,6 +54,86 @@ class Protocol extends _is.DatabaseSerializationManager {
   static final Protocol _instance = Protocol._().._registerHostProtocols();
 
   static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
+      name: 'candidate',
+      dartName: 'Candidate',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'electionCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'officeCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'scopeCode',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'number',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'ballotName',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'party',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'candidate_identity_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'electionCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'officeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'scopeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'number',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     _isp.TableDefinition(
       name: 'candidate_tally',
       dartName: 'CandidateTally',
@@ -362,6 +444,9 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
 
+    if (t == _irnb9urg.Candidate) {
+      return _irnb9urg.Candidate.fromJson(data) as T;
+    }
     if (t == _ixvsuy9r.CandidateTally) {
       return _ixvsuy9r.CandidateTally.fromJson(data) as T;
     }
@@ -394,6 +479,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _icbf2ppq.UfProgress) {
       return _icbf2ppq.UfProgress.fromJson(data) as T;
+    }
+    if (t == _is.getType<_irnb9urg.Candidate?>()) {
+      return (data != null ? _irnb9urg.Candidate.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_ixvsuy9r.CandidateTally?>()) {
       return (data != null ? _ixvsuy9r.CandidateTally.fromJson(data) : null)
@@ -491,6 +579,7 @@ class Protocol extends _is.DatabaseSerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _irnb9urg.Candidate => 'Candidate',
       _ixvsuy9r.CandidateTally => 'CandidateTally',
       _iurxdm15.CandidateVotes => 'CandidateVotes',
       _i2ilnjuc.DataOrigin => 'DataOrigin',
@@ -516,6 +605,8 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
 
     switch (data) {
+      case _irnb9urg.Candidate():
+        return 'Candidate';
       case _ixvsuy9r.CandidateTally():
         return 'CandidateTally';
       case _iurxdm15.CandidateVotes():
@@ -563,6 +654,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     var dataClassName = data['className'];
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
+    }
+    if (dataClassName == 'Candidate') {
+      return deserialize<_irnb9urg.Candidate>(data['data']);
     }
     if (dataClassName == 'CandidateTally') {
       return deserialize<_ixvsuy9r.CandidateTally>(data['data']);
@@ -638,6 +732,8 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
     switch (t) {
+      case _irnb9urg.Candidate:
+        return _irnb9urg.Candidate.t;
       case _ixvsuy9r.CandidateTally:
         return _ixvsuy9r.CandidateTally.t;
       case _i3f5hnmb.DivergenceEvent:

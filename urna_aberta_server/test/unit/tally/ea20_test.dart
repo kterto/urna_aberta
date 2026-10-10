@@ -23,6 +23,13 @@ void main() {
       expect(ac.votes[22], 302807);
     });
 
+    test('reads each candidate ballot name and party', () {
+      final c = president('ac').candidates[22]!;
+      expect(c.ballotName, 'FLAVIO BOLSONARO');
+      expect(c.party, 'PL');
+      expect(president('br').candidates, hasLength(12));
+    });
+
     test('generation time is Brasília time (UTC-3), stored as UTC', () {
       // dg 05/10/2026, hg 12:51:40 in the Acre file.
       expect(
@@ -55,8 +62,9 @@ void main() {
               {
                 'par': [
                   {
+                    'sg': 'PL',
                     'cand': [
-                      {'n': '22', 'vap': '7'},
+                      {'n': '22', 'nmu': 'FULANO', 'vap': '7'},
                     ],
                   },
                 ],
@@ -72,6 +80,7 @@ void main() {
       final r = parseEa20(ea20({}));
       expect(r.sectionsTotalizedPct, 50);
       expect(r.votes, {22: 7});
+      expect(r.candidates[22]!.ballotName, 'FULANO');
     });
 
     test('missing section counts', () {

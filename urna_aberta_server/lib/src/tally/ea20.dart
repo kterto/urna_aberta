@@ -19,16 +19,22 @@ ScopeResult parseEa20(List<int> bytes) {
   }
 
   final votes = <int, int>{};
+  final candidates = <int, CandidateInfo>{};
   for (final carg in _list(json['carg'], 'carg')) {
     for (final agr in _list(_map(carg, 'carg[]')['agr'], 'agr')) {
       for (final par in _list(_map(agr, 'agr[]')['par'], 'par')) {
-        for (final cand in _list(_map(par, 'par[]')['cand'], 'cand')) {
+        final party = _string(_map(par, 'par[]')['sg'], 'par.sg');
+        for (final cand in _list(par['cand'], 'cand')) {
           final c = _map(cand, 'cand[]');
           final n = _int(c['n'], 'cand.n');
           if (votes.containsKey(n)) {
             throw FormatException('EA20: candidate $n listed twice');
           }
           votes[n] = _int(c['vap'], 'cand.vap');
+          candidates[n] = CandidateInfo(
+            ballotName: _string(c['nmu'], 'cand.nmu'),
+            party: party,
+          );
         }
       }
     }
@@ -40,6 +46,7 @@ ScopeResult parseEa20(List<int> bytes) {
     sectionsTotalized: totalized,
     votes: votes,
     generatedAt: _brasilia(json['dg'], json['hg']),
+    candidates: candidates,
   );
 }
 

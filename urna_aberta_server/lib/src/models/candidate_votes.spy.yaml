@@ -4,3 +4,6 @@ fields:
   candidateNumber: int
   national: int
   states: int
+  ### Null when no stored file lists this number.
+  ballotName: String?
+  party: String?

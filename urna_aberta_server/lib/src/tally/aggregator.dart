@@ -8,6 +8,7 @@ class ScopeResult {
     required this.sectionsTotalized,
     required this.votes,
     this.generatedAt,
+    this.candidates = const {},
   });
 
   /// Lowercase scope code: a UF, `zz` or `br`.
@@ -21,8 +22,19 @@ class ScopeResult {
   /// When TSE generated the file, in UTC.
   final DateTime? generatedAt;
 
+  /// Ballot name and party by candidate number.
+  final Map<int, CandidateInfo> candidates;
+
   double get sectionsTotalizedPct =>
       sectionsTotal == 0 ? 0 : sectionsTotalized * 100 / sectionsTotal;
+}
+
+/// How a candidacy appears on the ballot.
+class CandidateInfo {
+  const CandidateInfo({required this.ballotName, required this.party});
+
+  final String ballotName;
+  final String party;
 }
 
 /// The independent national figure: the sum of the per-UF files.

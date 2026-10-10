@@ -105,6 +105,8 @@ abstract final class ReplayService {
             candidateNumber: n,
             national: national.votes[n] ?? 0,
             states: sum.votes[n] ?? 0,
+            ballotName: l.national.candidates[n]?.ballotName,
+            party: l.national.candidates[n]?.party,
           ),
       ]..sort((a, b) => b.states.compareTo(a.states)),
       ufs: [

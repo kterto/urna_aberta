@@ -1,0 +1,18 @@
+### A candidacy as listed in an EA20 file. Never given a color in the UI.
+class: Candidate
+table: candidate
+fields:
+  electionCode: int
+  officeCode: int
+  ### Scope of the file that lists it: `br` for President, a UF otherwise.
+  scopeCode: String
+  ### Ballot number.
+  number: int
+  ### Name on the ballot (`nmu`), as TSE writes it.
+  ballotName: String
+  ### Party abbreviation (`sg`).
+  party: String
+indexes:
+  candidate_identity_idx:
+    fields: electionCode, officeCode, scopeCode, number
+    unique: true

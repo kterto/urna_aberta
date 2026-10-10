@@ -38,6 +38,7 @@ abstract final class SnapshotStore {
             t.rawSha256.equals(sha),
         transaction: tx,
       );
+      await _recordCandidates(session, tx, electionCode, office, result);
       if (existing != null) return (snapshot: existing, isNew: false);
 
       final snapshot = await ResultSnapshot.db.insertRow(
@@ -85,6 +86,18 @@ abstract final class SnapshotStore {
       orderBy: (t) => t.tseGeneratedAt.desc(),
       include: ResultSnapshot.include(tallies: CandidateTally.includeList()),
     );
+    final names = <String, Map<int, CandidateInfo>>{};
+    for (final c in await Candidate.db.find(
+      session,
+      where: (t) =>
+          t.electionCode.equals(electionCode) &
+          t.officeCode.equals(office.code),
+    )) {
+      (names[c.scopeCode] ??= {})[c.number] = CandidateInfo(
+        ballotName: c.ballotName,
+        party: c.party,
+      );
+    }
     final byScope = <String, ResultSnapshot>{};
     for (final r in rows) {
       byScope.putIfAbsent(r.scopeCode, () => r);
@@ -97,8 +110,41 @@ abstract final class SnapshotStore {
           sectionsTotalized: s.sectionsTotalized,
           votes: {for (final t in s.tallies!) t.candidateNumber: t.votes},
           generatedAt: s.tseGeneratedAt,
+          candidates: names[s.scopeCode] ?? const {},
         ),
     ];
+  }
+
+  /// Adds candidacies not yet known for this election, office and scope.
+  /// A later file never renames one already stored.
+  static Future<void> _recordCandidates(
+    Session session,
+    Transaction tx,
+    int electionCode,
+    Office office,
+    ScopeResult result,
+  ) async {
+    final known = await Candidate.db.find(
+      session,
+      where: (t) =>
+          t.electionCode.equals(electionCode) &
+          t.officeCode.equals(office.code) &
+          t.scopeCode.equals(result.scope),
+      transaction: tx,
+    );
+    final numbers = {for (final c in known) c.number};
+    await Candidate.db.insert(session, [
+      for (final MapEntry(key: n, value: c) in result.candidates.entries)
+        if (!numbers.contains(n))
+          Candidate(
+            electionCode: electionCode,
+            officeCode: office.code,
+            scopeCode: result.scope,
+            number: n,
+            ballotName: c.ballotName,
+            party: c.party,
+          ),
+    ], transaction: tx);
   }
 
   /// The file names its election (`ele`) and office (`carg[].cd`); a caller

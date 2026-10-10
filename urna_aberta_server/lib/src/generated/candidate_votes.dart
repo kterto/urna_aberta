@@ -19,12 +19,16 @@ abstract class CandidateVotes
     required this.candidateNumber,
     required this.national,
     required this.states,
+    this.ballotName,
+    this.party,
   });
 
   factory CandidateVotes({
     required int candidateNumber,
     required int national,
     required int states,
+    String? ballotName,
+    String? party,
   }) = _CandidateVotesImpl;
 
   factory CandidateVotes.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -32,6 +36,8 @@ abstract class CandidateVotes
       candidateNumber: jsonSerialization['candidateNumber'] as int,
       national: jsonSerialization['national'] as int,
       states: jsonSerialization['states'] as int,
+      ballotName: jsonSerialization['ballotName'] as String?,
+      party: jsonSerialization['party'] as String?,
     );
   }
 
@@ -41,6 +47,11 @@ abstract class CandidateVotes
 
   int states;
 
+  /// Null when no stored file lists this number.
+  String? ballotName;
+
+  String? party;
+
   /// Returns a shallow copy of this [CandidateVotes]
   /// with some or all fields replaced by the given arguments.
   @_is.useResult
@@ -48,6 +59,8 @@ abstract class CandidateVotes
     int? candidateNumber,
     int? national,
     int? states,
+    String? ballotName,
+    String? party,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -56,6 +69,8 @@ abstract class CandidateVotes
       'candidateNumber': candidateNumber,
       'national': national,
       'states': states,
+      if (ballotName != null) 'ballotName': ballotName,
+      if (party != null) 'party': party,
     };
   }
 
@@ -66,6 +81,8 @@ abstract class CandidateVotes
       'candidateNumber': candidateNumber,
       'national': national,
       'states': states,
+      if (ballotName != null) 'ballotName': ballotName,
+      if (party != null) 'party': party,
     };
   }
 
@@ -75,15 +92,21 @@ abstract class CandidateVotes
   }
 }
 
+class _Undefined {}
+
 class _CandidateVotesImpl extends CandidateVotes {
   _CandidateVotesImpl({
     required int candidateNumber,
     required int national,
     required int states,
+    String? ballotName,
+    String? party,
   }) : super._(
          candidateNumber: candidateNumber,
          national: national,
          states: states,
+         ballotName: ballotName,
+         party: party,
        );
 
   /// Returns a shallow copy of this [CandidateVotes]
@@ -94,11 +117,15 @@ class _CandidateVotesImpl extends CandidateVotes {
     int? candidateNumber,
     int? national,
     int? states,
+    Object? ballotName = _Undefined,
+    Object? party = _Undefined,
   }) {
     return CandidateVotes(
       candidateNumber: candidateNumber ?? this.candidateNumber,
       national: national ?? this.national,
       states: states ?? this.states,
+      ballotName: ballotName is String? ? ballotName : this.ballotName,
+      party: party is String? ? party : this.party,
     );
   }
 }
