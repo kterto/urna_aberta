@@ -1,0 +1,6 @@
+### One candidate's votes in the national file and in the sum of states.
+class: CandidateVotes
+fields:
+  candidateNumber: int
+  national: int
+  states: int

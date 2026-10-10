@@ -1,0 +1,6 @@
+### Sections totalized in one UF (or exterior, `zz`).
+class: UfProgress
+fields:
+  scopeCode: String
+  sectionsTotal: int
+  sectionsTotalized: int

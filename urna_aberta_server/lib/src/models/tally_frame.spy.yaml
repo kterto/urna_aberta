@@ -1,0 +1,13 @@
+### The national file and the independent sum of states at one moment.
+class: TallyFrame
+fields:
+  at: DateTime
+  origin: DataOrigin
+  ### % sections totalized in the national (`br`) file.
+  nationalPct: double
+  ### % sections totalized across the per-UF files.
+  statesPct: double
+  ### Expected scopes with no file yet; the sum never estimates them.
+  missingScopes: List<String>
+  candidates: List<CandidateVotes>
+  ufs: List<UfProgress>

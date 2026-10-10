@@ -1,0 +1,11 @@
+### Where a stored figure came from. Anything but [live] is shown with the
+### simulation stamp.
+enum: DataOrigin
+serialized: byName
+values:
+  ### Fetched from TSE during the count.
+  - live
+  ### An archived TSE file replayed on a virtual clock.
+  - replay
+  ### Interpolated between real files; never an official figure.
+  - synthetic

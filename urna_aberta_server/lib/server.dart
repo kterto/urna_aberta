@@ -6,6 +6,7 @@ import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 
 import 'src/cache_busting.dart';
 import 'src/generated/serverpod.dart';
+import 'src/replay/fixture_seeder.dart';
 import 'src/web/routes/app_config_route.dart';
 import 'src/web/routes/root.dart';
 
@@ -100,4 +101,29 @@ void run(List<String> args) async {
 
   // Start the server.
   await pod.start();
+
+  await _seedReplayFixtures(pod);
+}
+
+/// Stores the archived 1st-round files so the replay works offline.
+Future<void> _seedReplayFixtures(Serverpod pod) async {
+  final root = Directory('../fixtures/2026-1t');
+  final session = await pod.createSession();
+  try {
+    if (!root.existsSync()) {
+      session.log('Replay fixtures not found at ${root.path}; replay is off.');
+      return;
+    }
+    final added = await FixtureSeeder.seed(session, root);
+    session.log('Replay fixtures: $added new snapshots from ${root.path}.');
+  } catch (e, st) {
+    session.log(
+      'Replay fixtures failed to load',
+      level: LogLevel.error,
+      exception: e,
+      stackTrace: st,
+    );
+  } finally {
+    await session.close();
+  }
 }

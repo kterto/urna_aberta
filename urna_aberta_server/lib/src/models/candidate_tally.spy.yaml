@@ -1,0 +1,12 @@
+### Votes for one candidate in one [ResultSnapshot].
+class: CandidateTally
+table: candidate_tally
+fields:
+  snapshotId: int
+  snapshot: ResultSnapshot?, relation(name=snapshot_tallies, field=snapshotId, onDelete=Cascade)
+  candidateNumber: int
+  votes: int
+indexes:
+  candidate_tally_snapshot_idx:
+    fields: snapshotId, candidateNumber
+    unique: true

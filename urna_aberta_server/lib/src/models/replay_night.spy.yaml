@@ -1,0 +1,13 @@
+### The replayable night: clock bounds and the simulated national freeze.
+class: ReplayNight
+fields:
+  origin: DataOrigin
+  electionCode: int
+  officeCode: int
+  start: DateTime
+  ### From here on every figure equals the archived final files.
+  end: DateTime
+  freezeStart: DateTime
+  freezeEnd: DateTime
+  ### When TSE generated the newest archived final file.
+  finalsGeneratedAt: DateTime

@@ -16,8 +16,32 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _iaic;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
+    as _ivdor3em;
+import 'package:urna_aberta_client/src/protocol/timeline_point.dart'
+    as _ipzn9brv;
+import 'candidate_tally.dart' as _ixvsuy9r;
+import 'candidate_votes.dart' as _iurxdm15;
+import 'data_origin.dart' as _i2ilnjuc;
+import 'divergence_event.dart' as _i3f5hnmb;
 import 'greetings/greeting.dart' as _izw8z7ou;
+import 'replay_night.dart' as _i1vi4thm;
+import 'replay_unavailable.dart' as _i6npibdt;
+import 'result_snapshot.dart' as _i4dv59av;
+import 'tally_frame.dart' as _iiyd8otz;
+import 'timeline_point.dart' as _i4neo0h8;
+import 'uf_progress.dart' as _icbf2ppq;
+export 'candidate_tally.dart';
+export 'candidate_votes.dart';
+export 'data_origin.dart';
+export 'divergence_event.dart';
 export 'greetings/greeting.dart';
+export 'replay_night.dart';
+export 'replay_unavailable.dart';
+export 'result_snapshot.dart';
+export 'tally_frame.dart';
+export 'timeline_point.dart';
+export 'uf_progress.dart';
 export 'client.dart';
 
 class Protocol extends _isc.SerializationManager {
@@ -54,11 +78,120 @@ class Protocol extends _isc.SerializationManager {
       }
     }
 
+    if (t == _ixvsuy9r.CandidateTally) {
+      return _ixvsuy9r.CandidateTally.fromJson(data) as T;
+    }
+    if (t == _iurxdm15.CandidateVotes) {
+      return _iurxdm15.CandidateVotes.fromJson(data) as T;
+    }
+    if (t == _i2ilnjuc.DataOrigin) {
+      return _i2ilnjuc.DataOrigin.fromJson(data) as T;
+    }
+    if (t == _i3f5hnmb.DivergenceEvent) {
+      return _i3f5hnmb.DivergenceEvent.fromJson(data) as T;
+    }
     if (t == _izw8z7ou.Greeting) {
       return _izw8z7ou.Greeting.fromJson(data) as T;
     }
+    if (t == _i1vi4thm.ReplayNight) {
+      return _i1vi4thm.ReplayNight.fromJson(data) as T;
+    }
+    if (t == _i6npibdt.ReplayUnavailableException) {
+      return _i6npibdt.ReplayUnavailableException.fromJson(data) as T;
+    }
+    if (t == _i4dv59av.ResultSnapshot) {
+      return _i4dv59av.ResultSnapshot.fromJson(data) as T;
+    }
+    if (t == _iiyd8otz.TallyFrame) {
+      return _iiyd8otz.TallyFrame.fromJson(data) as T;
+    }
+    if (t == _i4neo0h8.TimelinePoint) {
+      return _i4neo0h8.TimelinePoint.fromJson(data) as T;
+    }
+    if (t == _icbf2ppq.UfProgress) {
+      return _icbf2ppq.UfProgress.fromJson(data) as T;
+    }
+    if (t == _isc.getType<_ixvsuy9r.CandidateTally?>()) {
+      return (data != null ? _ixvsuy9r.CandidateTally.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_iurxdm15.CandidateVotes?>()) {
+      return (data != null ? _iurxdm15.CandidateVotes.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_i2ilnjuc.DataOrigin?>()) {
+      return (data != null ? _i2ilnjuc.DataOrigin.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_i3f5hnmb.DivergenceEvent?>()) {
+      return (data != null ? _i3f5hnmb.DivergenceEvent.fromJson(data) : null)
+          as T;
+    }
     if (t == _isc.getType<_izw8z7ou.Greeting?>()) {
       return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_i1vi4thm.ReplayNight?>()) {
+      return (data != null ? _i1vi4thm.ReplayNight.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_i6npibdt.ReplayUnavailableException?>()) {
+      return (data != null
+              ? _i6npibdt.ReplayUnavailableException.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _isc.getType<_i4dv59av.ResultSnapshot?>()) {
+      return (data != null ? _i4dv59av.ResultSnapshot.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_iiyd8otz.TallyFrame?>()) {
+      return (data != null ? _iiyd8otz.TallyFrame.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_i4neo0h8.TimelinePoint?>()) {
+      return (data != null ? _i4neo0h8.TimelinePoint.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_icbf2ppq.UfProgress?>()) {
+      return (data != null ? _icbf2ppq.UfProgress.fromJson(data) : null) as T;
+    }
+    if (t == List<_ixvsuy9r.CandidateTally>) {
+      return (data as List)
+              .map((e) => deserialize<_ixvsuy9r.CandidateTally>(e))
+              .toList()
+          as T;
+    }
+    if (t == _isc.getType<List<_ixvsuy9r.CandidateTally>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_ixvsuy9r.CandidateTally>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<_iurxdm15.CandidateVotes>) {
+      return (data as List)
+              .map((e) => deserialize<_iurxdm15.CandidateVotes>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_icbf2ppq.UfProgress>) {
+      return (data as List)
+              .map((e) => deserialize<_icbf2ppq.UfProgress>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ipzn9brv.TimelinePoint>) {
+      return (data as List)
+              .map((e) => deserialize<_ipzn9brv.TimelinePoint>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ivdor3em.DivergenceEvent>) {
+      return (data as List)
+              .map((e) => deserialize<_ivdor3em.DivergenceEvent>(e))
+              .toList()
+          as T;
     }
     try {
       return _iaic.Protocol().deserialize<T>(data, t);
@@ -71,7 +204,17 @@ class Protocol extends _isc.SerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _ixvsuy9r.CandidateTally => 'CandidateTally',
+      _iurxdm15.CandidateVotes => 'CandidateVotes',
+      _i2ilnjuc.DataOrigin => 'DataOrigin',
+      _i3f5hnmb.DivergenceEvent => 'DivergenceEvent',
       _izw8z7ou.Greeting => 'Greeting',
+      _i1vi4thm.ReplayNight => 'ReplayNight',
+      _i6npibdt.ReplayUnavailableException => 'ReplayUnavailableException',
+      _i4dv59av.ResultSnapshot => 'ResultSnapshot',
+      _iiyd8otz.TallyFrame => 'TallyFrame',
+      _i4neo0h8.TimelinePoint => 'TimelinePoint',
+      _icbf2ppq.UfProgress => 'UfProgress',
       _ => null,
     };
   }
@@ -86,8 +229,28 @@ class Protocol extends _isc.SerializationManager {
     }
 
     switch (data) {
+      case _ixvsuy9r.CandidateTally():
+        return 'CandidateTally';
+      case _iurxdm15.CandidateVotes():
+        return 'CandidateVotes';
+      case _i2ilnjuc.DataOrigin():
+        return 'DataOrigin';
+      case _i3f5hnmb.DivergenceEvent():
+        return 'DivergenceEvent';
       case _izw8z7ou.Greeting():
         return 'Greeting';
+      case _i1vi4thm.ReplayNight():
+        return 'ReplayNight';
+      case _i6npibdt.ReplayUnavailableException():
+        return 'ReplayUnavailableException';
+      case _i4dv59av.ResultSnapshot():
+        return 'ResultSnapshot';
+      case _iiyd8otz.TallyFrame():
+        return 'TallyFrame';
+      case _i4neo0h8.TimelinePoint():
+        return 'TimelinePoint';
+      case _icbf2ppq.UfProgress():
+        return 'UfProgress';
     }
     className = _iaic.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -110,8 +273,38 @@ class Protocol extends _isc.SerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'CandidateTally') {
+      return deserialize<_ixvsuy9r.CandidateTally>(data['data']);
+    }
+    if (dataClassName == 'CandidateVotes') {
+      return deserialize<_iurxdm15.CandidateVotes>(data['data']);
+    }
+    if (dataClassName == 'DataOrigin') {
+      return deserialize<_i2ilnjuc.DataOrigin>(data['data']);
+    }
+    if (dataClassName == 'DivergenceEvent') {
+      return deserialize<_i3f5hnmb.DivergenceEvent>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
       return deserialize<_izw8z7ou.Greeting>(data['data']);
+    }
+    if (dataClassName == 'ReplayNight') {
+      return deserialize<_i1vi4thm.ReplayNight>(data['data']);
+    }
+    if (dataClassName == 'ReplayUnavailableException') {
+      return deserialize<_i6npibdt.ReplayUnavailableException>(data['data']);
+    }
+    if (dataClassName == 'ResultSnapshot') {
+      return deserialize<_i4dv59av.ResultSnapshot>(data['data']);
+    }
+    if (dataClassName == 'TallyFrame') {
+      return deserialize<_iiyd8otz.TallyFrame>(data['data']);
+    }
+    if (dataClassName == 'TimelinePoint') {
+      return deserialize<_i4neo0h8.TimelinePoint>(data['data']);
+    }
+    if (dataClassName == 'UfProgress') {
+      return deserialize<_icbf2ppq.UfProgress>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);

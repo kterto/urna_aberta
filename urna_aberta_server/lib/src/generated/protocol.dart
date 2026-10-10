@@ -17,8 +17,32 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
+import 'package:urna_aberta_server/src/generated/divergence_event.dart'
+    as _it5gv87d;
+import 'package:urna_aberta_server/src/generated/timeline_point.dart'
+    as _ir3q3hqp;
+import 'candidate_tally.dart' as _ixvsuy9r;
+import 'candidate_votes.dart' as _iurxdm15;
+import 'data_origin.dart' as _i2ilnjuc;
+import 'divergence_event.dart' as _i3f5hnmb;
 import 'greetings/greeting.dart' as _izw8z7ou;
+import 'replay_night.dart' as _i1vi4thm;
+import 'replay_unavailable.dart' as _i6npibdt;
+import 'result_snapshot.dart' as _i4dv59av;
+import 'tally_frame.dart' as _iiyd8otz;
+import 'timeline_point.dart' as _i4neo0h8;
+import 'uf_progress.dart' as _icbf2ppq;
+export 'candidate_tally.dart';
+export 'candidate_votes.dart';
+export 'data_origin.dart';
+export 'divergence_event.dart';
 export 'greetings/greeting.dart';
+export 'replay_night.dart';
+export 'replay_unavailable.dart';
+export 'result_snapshot.dart';
+export 'tally_frame.dart';
+export 'timeline_point.dart';
+export 'uf_progress.dart';
 
 class Protocol extends _is.DatabaseSerializationManager {
   Protocol._();
@@ -28,6 +52,284 @@ class Protocol extends _is.DatabaseSerializationManager {
   static final Protocol _instance = Protocol._().._registerHostProtocols();
 
   static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
+      name: 'candidate_tally',
+      dartName: 'CandidateTally',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'snapshotId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'candidateNumber',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'votes',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+      ],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'candidate_tally_fk_0',
+          columns: ['snapshotId'],
+          referenceTable: 'result_snapshot',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.cascade,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'candidate_tally_snapshot_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'snapshotId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'candidateNumber',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'divergence_event',
+      dartName: 'DivergenceEvent',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'origin',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:DataOrigin',
+        ),
+        _isp.ColumnDefinition(
+          name: 'electionCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'startedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'endedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'nationalPctAtStart',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: false,
+          dartType: 'double',
+        ),
+        _isp.ColumnDefinition(
+          name: 'maxGap',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: false,
+          dartType: 'double',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'divergence_event_election_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'origin',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'electionCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'startedAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'result_snapshot',
+      dartName: 'ResultSnapshot',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'origin',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:DataOrigin',
+        ),
+        _isp.ColumnDefinition(
+          name: 'electionCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'officeCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'scopeCode',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'sectionsTotal',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'sectionsTotalized',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'tseGeneratedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'fetchedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'rawSha256',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'signatureValid',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: true,
+          dartType: 'bool?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'result_snapshot_version_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'origin',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'electionCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'officeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'scopeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'rawSha256',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'result_snapshot_timeline_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'origin',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'electionCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'officeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'scopeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'tseGeneratedAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     ..._iais.Protocol.targetTableDefinitions,
     ..._iacs.Protocol.targetTableDefinitions,
     ..._isp.Protocol.targetTableDefinitions,
@@ -60,11 +362,120 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
 
+    if (t == _ixvsuy9r.CandidateTally) {
+      return _ixvsuy9r.CandidateTally.fromJson(data) as T;
+    }
+    if (t == _iurxdm15.CandidateVotes) {
+      return _iurxdm15.CandidateVotes.fromJson(data) as T;
+    }
+    if (t == _i2ilnjuc.DataOrigin) {
+      return _i2ilnjuc.DataOrigin.fromJson(data) as T;
+    }
+    if (t == _i3f5hnmb.DivergenceEvent) {
+      return _i3f5hnmb.DivergenceEvent.fromJson(data) as T;
+    }
     if (t == _izw8z7ou.Greeting) {
       return _izw8z7ou.Greeting.fromJson(data) as T;
     }
+    if (t == _i1vi4thm.ReplayNight) {
+      return _i1vi4thm.ReplayNight.fromJson(data) as T;
+    }
+    if (t == _i6npibdt.ReplayUnavailableException) {
+      return _i6npibdt.ReplayUnavailableException.fromJson(data) as T;
+    }
+    if (t == _i4dv59av.ResultSnapshot) {
+      return _i4dv59av.ResultSnapshot.fromJson(data) as T;
+    }
+    if (t == _iiyd8otz.TallyFrame) {
+      return _iiyd8otz.TallyFrame.fromJson(data) as T;
+    }
+    if (t == _i4neo0h8.TimelinePoint) {
+      return _i4neo0h8.TimelinePoint.fromJson(data) as T;
+    }
+    if (t == _icbf2ppq.UfProgress) {
+      return _icbf2ppq.UfProgress.fromJson(data) as T;
+    }
+    if (t == _is.getType<_ixvsuy9r.CandidateTally?>()) {
+      return (data != null ? _ixvsuy9r.CandidateTally.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_iurxdm15.CandidateVotes?>()) {
+      return (data != null ? _iurxdm15.CandidateVotes.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i2ilnjuc.DataOrigin?>()) {
+      return (data != null ? _i2ilnjuc.DataOrigin.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i3f5hnmb.DivergenceEvent?>()) {
+      return (data != null ? _i3f5hnmb.DivergenceEvent.fromJson(data) : null)
+          as T;
+    }
     if (t == _is.getType<_izw8z7ou.Greeting?>()) {
       return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i1vi4thm.ReplayNight?>()) {
+      return (data != null ? _i1vi4thm.ReplayNight.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i6npibdt.ReplayUnavailableException?>()) {
+      return (data != null
+              ? _i6npibdt.ReplayUnavailableException.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _is.getType<_i4dv59av.ResultSnapshot?>()) {
+      return (data != null ? _i4dv59av.ResultSnapshot.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_iiyd8otz.TallyFrame?>()) {
+      return (data != null ? _iiyd8otz.TallyFrame.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i4neo0h8.TimelinePoint?>()) {
+      return (data != null ? _i4neo0h8.TimelinePoint.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_icbf2ppq.UfProgress?>()) {
+      return (data != null ? _icbf2ppq.UfProgress.fromJson(data) : null) as T;
+    }
+    if (t == List<_ixvsuy9r.CandidateTally>) {
+      return (data as List)
+              .map((e) => deserialize<_ixvsuy9r.CandidateTally>(e))
+              .toList()
+          as T;
+    }
+    if (t == _is.getType<List<_ixvsuy9r.CandidateTally>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_ixvsuy9r.CandidateTally>(e))
+                    .toList()
+              : null)
+          as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<_iurxdm15.CandidateVotes>) {
+      return (data as List)
+              .map((e) => deserialize<_iurxdm15.CandidateVotes>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_icbf2ppq.UfProgress>) {
+      return (data as List)
+              .map((e) => deserialize<_icbf2ppq.UfProgress>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ir3q3hqp.TimelinePoint>) {
+      return (data as List)
+              .map((e) => deserialize<_ir3q3hqp.TimelinePoint>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_it5gv87d.DivergenceEvent>) {
+      return (data as List)
+              .map((e) => deserialize<_it5gv87d.DivergenceEvent>(e))
+              .toList()
+          as T;
     }
     try {
       return _iais.Protocol().deserialize<T>(data, t);
@@ -80,7 +491,17 @@ class Protocol extends _is.DatabaseSerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _ixvsuy9r.CandidateTally => 'CandidateTally',
+      _iurxdm15.CandidateVotes => 'CandidateVotes',
+      _i2ilnjuc.DataOrigin => 'DataOrigin',
+      _i3f5hnmb.DivergenceEvent => 'DivergenceEvent',
       _izw8z7ou.Greeting => 'Greeting',
+      _i1vi4thm.ReplayNight => 'ReplayNight',
+      _i6npibdt.ReplayUnavailableException => 'ReplayUnavailableException',
+      _i4dv59av.ResultSnapshot => 'ResultSnapshot',
+      _iiyd8otz.TallyFrame => 'TallyFrame',
+      _i4neo0h8.TimelinePoint => 'TimelinePoint',
+      _icbf2ppq.UfProgress => 'UfProgress',
       _ => null,
     };
   }
@@ -95,8 +516,28 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
 
     switch (data) {
+      case _ixvsuy9r.CandidateTally():
+        return 'CandidateTally';
+      case _iurxdm15.CandidateVotes():
+        return 'CandidateVotes';
+      case _i2ilnjuc.DataOrigin():
+        return 'DataOrigin';
+      case _i3f5hnmb.DivergenceEvent():
+        return 'DivergenceEvent';
       case _izw8z7ou.Greeting():
         return 'Greeting';
+      case _i1vi4thm.ReplayNight():
+        return 'ReplayNight';
+      case _i6npibdt.ReplayUnavailableException():
+        return 'ReplayUnavailableException';
+      case _i4dv59av.ResultSnapshot():
+        return 'ResultSnapshot';
+      case _iiyd8otz.TallyFrame():
+        return 'TallyFrame';
+      case _i4neo0h8.TimelinePoint():
+        return 'TimelinePoint';
+      case _icbf2ppq.UfProgress():
+        return 'UfProgress';
     }
     className = _iais.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -123,8 +564,38 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'CandidateTally') {
+      return deserialize<_ixvsuy9r.CandidateTally>(data['data']);
+    }
+    if (dataClassName == 'CandidateVotes') {
+      return deserialize<_iurxdm15.CandidateVotes>(data['data']);
+    }
+    if (dataClassName == 'DataOrigin') {
+      return deserialize<_i2ilnjuc.DataOrigin>(data['data']);
+    }
+    if (dataClassName == 'DivergenceEvent') {
+      return deserialize<_i3f5hnmb.DivergenceEvent>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
       return deserialize<_izw8z7ou.Greeting>(data['data']);
+    }
+    if (dataClassName == 'ReplayNight') {
+      return deserialize<_i1vi4thm.ReplayNight>(data['data']);
+    }
+    if (dataClassName == 'ReplayUnavailableException') {
+      return deserialize<_i6npibdt.ReplayUnavailableException>(data['data']);
+    }
+    if (dataClassName == 'ResultSnapshot') {
+      return deserialize<_i4dv59av.ResultSnapshot>(data['data']);
+    }
+    if (dataClassName == 'TallyFrame') {
+      return deserialize<_iiyd8otz.TallyFrame>(data['data']);
+    }
+    if (dataClassName == 'TimelinePoint') {
+      return deserialize<_i4neo0h8.TimelinePoint>(data['data']);
+    }
+    if (dataClassName == 'UfProgress') {
+      return deserialize<_icbf2ppq.UfProgress>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
@@ -165,6 +636,14 @@ class Protocol extends _is.DatabaseSerializationManager {
       if (table != null) {
         return table;
       }
+    }
+    switch (t) {
+      case _ixvsuy9r.CandidateTally:
+        return _ixvsuy9r.CandidateTally.t;
+      case _i3f5hnmb.DivergenceEvent:
+        return _i3f5hnmb.DivergenceEvent.t;
+      case _i4dv59av.ResultSnapshot:
+        return _i4dv59av.ResultSnapshot.t;
     }
     return null;
   }

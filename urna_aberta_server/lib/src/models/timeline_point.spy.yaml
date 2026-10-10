@@ -1,0 +1,6 @@
+### One sample of the national-vs-states timeline.
+class: TimelinePoint
+fields:
+  at: DateTime
+  nationalPct: double
+  statesPct: double

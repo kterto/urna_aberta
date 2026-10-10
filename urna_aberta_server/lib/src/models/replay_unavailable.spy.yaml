@@ -1,0 +1,4 @@
+### No archived final files are stored, so there is nothing to replay.
+exception: ReplayUnavailableException
+fields:
+  message: String

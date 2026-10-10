@@ -1,2 +1,7 @@
 tags:
   integration: {}
+
+# Integration tests share one database. Files running in parallel insert the
+# same unique snapshot rows inside open rollback transactions and block each
+# other, so run test files one at a time.
+concurrency: 1

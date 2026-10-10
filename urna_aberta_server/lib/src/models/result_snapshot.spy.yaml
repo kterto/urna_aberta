@@ -1,0 +1,27 @@
+### One immutable version of a TSE EA20 result file.
+class: ResultSnapshot
+table: result_snapshot
+fields:
+  origin: DataOrigin
+  ### TSE election code, e.g. 6257 (Federal, 1st round 2026).
+  electionCode: int
+  ### TSE office code: 1 President, 3 Governor, 5 Senator.
+  officeCode: int
+  ### Lowercase scope: `br`, a UF, or `zz` (exterior).
+  scopeCode: String
+  sectionsTotal: int
+  sectionsTotalized: int
+  ### When TSE generated the file (UTC).
+  tseGeneratedAt: DateTime
+  fetchedAt: DateTime
+  ### SHA-256 of the raw file bytes, hex.
+  rawSha256: String
+  ### JWS check result; null until verified.
+  signatureValid: bool?
+  tallies: List<CandidateTally>?, relation(name=snapshot_tallies)
+indexes:
+  result_snapshot_version_idx:
+    fields: origin, electionCode, officeCode, scopeCode, rawSha256
+    unique: true
+  result_snapshot_timeline_idx:
+    fields: origin, electionCode, officeCode, scopeCode, tseGeneratedAt

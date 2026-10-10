@@ -17,8 +17,15 @@ import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
+import 'package:urna_aberta_server/src/generated/divergence_event.dart'
+    as _it5gv87d;
 import 'package:urna_aberta_server/src/generated/greetings/greeting.dart'
     as _i13zhb17;
+import 'package:urna_aberta_server/src/generated/replay_night.dart'
+    as _igasjbde;
+import 'package:urna_aberta_server/src/generated/tally_frame.dart' as _i5xgbeon;
+import 'package:urna_aberta_server/src/generated/timeline_point.dart'
+    as _ir3q3hqp;
 import 'package:urna_aberta_server/src/generated/protocol.dart';
 import 'package:urna_aberta_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -152,6 +159,8 @@ class TestEndpoints {
   late final _JwtRefreshEndpoint jwtRefresh;
 
   late final _GreetingEndpoint greeting;
+
+  late final _TallyEndpoint tally;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -170,6 +179,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     greeting = _GreetingEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    tally = _TallyEndpoint(
       endpoints,
       serializationManager,
     );
@@ -528,6 +541,146 @@ class _GreetingEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_i13zhb17.Greeting>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _TallyEndpoint {
+  _TallyEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_igasjbde.ReplayNight> night(
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tally',
+            method: 'night',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tally',
+          methodName: 'night',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_igasjbde.ReplayNight>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_i5xgbeon.TallyFrame> frame(
+    _ist.TestSessionBuilder sessionBuilder,
+    DateTime at,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tally',
+            method: 'frame',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tally',
+          methodName: 'frame',
+          parameters: _ist.testObjectToJson({'at': at}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i5xgbeon.TallyFrame>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<_ir3q3hqp.TimelinePoint>> timeline(
+    _ist.TestSessionBuilder sessionBuilder,
+    DateTime from,
+    DateTime to,
+    int stepSeconds,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tally',
+            method: 'timeline',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tally',
+          methodName: 'timeline',
+          parameters: _ist.testObjectToJson({
+            'from': from,
+            'to': to,
+            'stepSeconds': stepSeconds,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_ir3q3hqp.TimelinePoint>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<_it5gv87d.DivergenceEvent>> divergence(
+    _ist.TestSessionBuilder sessionBuilder,
+    DateTime at,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tally',
+            method: 'divergence',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tally',
+          methodName: 'divergence',
+          parameters: _ist.testObjectToJson({'at': at}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_it5gv87d.DivergenceEvent>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

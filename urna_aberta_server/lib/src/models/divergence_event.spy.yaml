@@ -1,0 +1,16 @@
+### A period when the national file lagged the sum of the per-UF files.
+class: DivergenceEvent
+table: divergence_event
+fields:
+  origin: DataOrigin
+  electionCode: int
+  startedAt: DateTime
+  ### Null while the gap is still open.
+  endedAt: DateTime?
+  ### % sections totalized in the national file when the lag began.
+  nationalPctAtStart: double
+  ### Largest gap seen, in percentage points.
+  maxGap: double
+indexes:
+  divergence_event_election_idx:
+    fields: origin, electionCode, startedAt

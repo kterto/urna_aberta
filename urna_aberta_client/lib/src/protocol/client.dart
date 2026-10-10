@@ -17,8 +17,14 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _iaic;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
+    as _ivdor3em;
 import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
     as _i0ezu2ai;
+import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
+import 'package:urna_aberta_client/src/protocol/tally_frame.dart' as _iirfdrc4;
+import 'package:urna_aberta_client/src/protocol/timeline_point.dart'
+    as _ipzn9brv;
 import 'protocol.dart' as _il2as5qe;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
@@ -264,6 +270,54 @@ class EndpointGreeting extends _isc.EndpointRef {
       );
 }
 
+/// National file vs independent sum of states, on the replay clock.
+///
+/// The client owns the clock: it asks for the frame at its own virtual time,
+/// so viewers never share play/pause state.
+/// {@category Endpoint}
+class EndpointTally extends _isc.EndpointRef {
+  EndpointTally(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'tally';
+
+  _ida.Future<_i47uhwzn.ReplayNight> night() =>
+      caller.callServerEndpoint<_i47uhwzn.ReplayNight>(
+        'tally',
+        'night',
+        {},
+      );
+
+  _ida.Future<_iirfdrc4.TallyFrame> frame(DateTime at) =>
+      caller.callServerEndpoint<_iirfdrc4.TallyFrame>(
+        'tally',
+        'frame',
+        {'at': at},
+      );
+
+  /// At most [ReplayService.maxTimelinePoints] samples from [from] to [to].
+  _ida.Future<List<_ipzn9brv.TimelinePoint>> timeline(
+    DateTime from,
+    DateTime to,
+    int stepSeconds,
+  ) => caller.callServerEndpoint<List<_ipzn9brv.TimelinePoint>>(
+    'tally',
+    'timeline',
+    {
+      'from': from,
+      'to': to,
+      'stepSeconds': stepSeconds,
+    },
+  );
+
+  _ida.Future<List<_ivdor3em.DivergenceEvent>> divergence(DateTime at) =>
+      caller.callServerEndpoint<List<_ivdor3em.DivergenceEvent>>(
+        'tally',
+        'divergence',
+        {'at': at},
+      );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _iaic.Caller(client);
@@ -305,6 +359,7 @@ class Client extends _isc.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
+    tally = EndpointTally(this);
     modules = Modules(this);
   }
 
@@ -314,6 +369,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointGreeting greeting;
 
+  late final EndpointTally tally;
+
   late final Modules modules;
 
   @override
@@ -321,6 +378,7 @@ class Client extends _isc.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
+    'tally': tally,
   };
 
   @override

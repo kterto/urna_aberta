@@ -18,6 +18,7 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
 import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../greetings/greeting_endpoint.dart' as _il624ik7;
+import '../replay/tally_endpoint.dart' as _iphjbc6w;
 
 class Endpoints extends _is.EndpointDispatch {
   @override
@@ -39,6 +40,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'greeting',
+          null,
+        ),
+      'tally': _iphjbc6w.TallyEndpoint()
+        ..initialize(
+          server,
+          'tally',
           null,
         ),
     };
@@ -269,6 +276,91 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['greeting'] as _il624ik7.GreetingEndpoint).hello(
                     session,
                     params['name'],
+                  ),
+        ),
+      },
+    );
+    connectors['tally'] = _is.EndpointConnector(
+      name: 'tally',
+      endpoint: endpoints['tally']!,
+      methodConnectors: {
+        'night': _is.MethodConnector(
+          name: 'night',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['tally'] as _iphjbc6w.TallyEndpoint).night(
+                session,
+              ),
+        ),
+        'frame': _is.MethodConnector(
+          name: 'frame',
+          params: {
+            'at': _is.ParameterDescription(
+              name: 'at',
+              type: _is.getType<DateTime>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['tally'] as _iphjbc6w.TallyEndpoint).frame(
+                session,
+                params['at'],
+              ),
+        ),
+        'timeline': _is.MethodConnector(
+          name: 'timeline',
+          params: {
+            'from': _is.ParameterDescription(
+              name: 'from',
+              type: _is.getType<DateTime>(),
+              nullable: false,
+            ),
+            'to': _is.ParameterDescription(
+              name: 'to',
+              type: _is.getType<DateTime>(),
+              nullable: false,
+            ),
+            'stepSeconds': _is.ParameterDescription(
+              name: 'stepSeconds',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['tally'] as _iphjbc6w.TallyEndpoint).timeline(
+                    session,
+                    params['from'],
+                    params['to'],
+                    params['stepSeconds'],
+                  ),
+        ),
+        'divergence': _is.MethodConnector(
+          name: 'divergence',
+          params: {
+            'at': _is.ParameterDescription(
+              name: 'at',
+              type: _is.getType<DateTime>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['tally'] as _iphjbc6w.TallyEndpoint).divergence(
+                    session,
+                    params['at'],
                   ),
         ),
       },
