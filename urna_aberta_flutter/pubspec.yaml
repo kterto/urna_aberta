@@ -1,5 +1,5 @@
 name: urna_aberta_flutter
-description: A new Flutter project with Serverpod.
+description: Urna Aberta, independent verification of Brazilian election results.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -34,6 +34,7 @@ dependencies:
     path: ../urna_aberta_client
   serverpod_flutter: 4.0.0
   serverpod_auth_idp_flutter: 4.0.0
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   # Used for agents to drive the app through the Dart MCP
@@ -69,6 +70,19 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
   assets:
     - assets/config.json
+    - assets/geo/
+
+  fonts:
+    - family: Archivo
+      fonts:
+        - asset: assets/fonts/Archivo.ttf
+        - asset: assets/fonts/Archivo-Italic.ttf
+          style: italic
+    - family: SourceSerif4
+      fonts:
+        - asset: assets/fonts/SourceSerif4.ttf
+        - asset: assets/fonts/SourceSerif4-Italic.ttf
+          style: italic
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
