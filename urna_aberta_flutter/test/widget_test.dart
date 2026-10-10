@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:urna_aberta_flutter/app/app.dart';
 import 'package:urna_aberta_flutter/app/shell.dart';
+import 'package:urna_aberta_flutter/l10n/l10n.dart';
 import 'package:urna_aberta_flutter/design/geo/brasil_geo.dart';
-import 'package:urna_aberta_flutter/design/theme.dart';
 import 'package:urna_aberta_flutter/design/tokens.dart';
 import 'package:urna_aberta_flutter/replay/replay_controller.dart';
 
@@ -12,6 +13,7 @@ import 'package:urna_aberta_flutter/verificar/verificar_controller.dart';
 import 'screens/apuracao_screen_test.dart' show StubSource;
 import 'secao/fake_secao_source.dart';
 import 'verificar/fake_verificar_source.dart';
+import 'support/test_app.dart';
 
 Widget _app(Brightness b) => TallyScope(
   source: StubSource(),
@@ -19,7 +21,7 @@ Widget _app(Brightness b) => TallyScope(
     source: FakeSecaoSource(),
     child: VerificarScope(
       source: FakeVerificarSource(),
-      child: MaterialApp(theme: atlasTheme(b), home: const AppShell()),
+      child: testApp(brightness: b, home: const AppShell()),
     ),
   ),
 );
@@ -57,4 +59,31 @@ void main() {
       expect(find.text('Conferir neste aparelho'), findsOneWidget);
     });
   }
+
+  testWidgets('the language menu switches the whole app to English', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    addTearDown(() => localeNotifier.value = null);
+    localeNotifier.value = const Locale('pt');
+    await tester.pumpWidget(
+      UrnaAbertaApp(
+        tallySource: StubSource(),
+        secaoSource: FakeSecaoSource(),
+        verificarSource: FakeVerificarSource(),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('Minha seção'), findsWidgets);
+    await tester.tap(find.byTooltip('Idioma').first);
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.widgetWithText(CheckedPopupMenuItem<int>, 'English'));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(localeNotifier.value, const Locale('en'));
+    expect(find.text('My section'), findsWidgets);
+    expect(find.text('Minha seção'), findsNothing);
+  });
 }

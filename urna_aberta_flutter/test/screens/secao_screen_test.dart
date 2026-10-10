@@ -3,19 +3,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
-import 'package:urna_aberta_flutter/design/theme.dart';
 import 'package:urna_aberta_flutter/screens/secao_screen.dart';
 import 'package:urna_aberta_flutter/secao/secao_controller.dart';
 
 import '../secao/fake_secao_source.dart';
+import '../support/test_app.dart';
 
-Future<void> pumpScreen(WidgetTester tester, FakeSecaoSource source) async {
-  tester.view.physicalSize = const Size(1300, 2600);
+Future<void> pumpScreen(
+  WidgetTester tester,
+  FakeSecaoSource source, {
+  Locale locale = const Locale('pt'),
+  Size size = const Size(1300, 2600),
+}) async {
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    MaterialApp(
-      theme: atlasTheme(Brightness.light),
+    testApp(
+      locale: locale,
       home: SecaoScope(
         source: source,
         child: const Scaffold(body: SecaoScreen()),
@@ -53,6 +58,15 @@ Future<void> lookUp77(WidgetTester tester) async {
   await choose(tester, 'Zona', '0004');
   await choose(tester, 'Seção', '0077');
   await tester.tap(find.text('Buscar boletim de urna'));
+  await tester.pumpAndSettle();
+}
+
+Future<void> lookUp77InEnglish(WidgetTester tester) async {
+  await choose(tester, 'State', 'AC');
+  await choose(tester, 'Municipality', 'PORTO WALTER');
+  await choose(tester, 'Zone', '0004');
+  await choose(tester, 'Section', '0077');
+  await tester.tap(find.text('Find the ballot box report'));
   await tester.pumpAndSettle();
 }
 
@@ -108,7 +122,8 @@ void main() {
       );
     await pumpScreen(tester, source);
     await lookUp77(tester);
-    expect(find.text('O TSE não respondeu agora.'), findsOneWidget);
+    // The server's own (Portuguese) message is not shown; the type is.
+    expect(find.textContaining('O TSE não respondeu agora'), findsOneWidget);
     source.fail = null;
     await tester.tap(find.text('Tentar de novo'));
     await tester.pumpAndSettle();
@@ -177,5 +192,84 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Buscando os arquivos'), findsNothing);
     expect(find.text('22 · FLAVIO BOLSONARO'), findsOneWidget);
+  });
+
+  group('in English', () {
+    const en = Locale('en');
+
+    testWidgets('finds the section and shows the checked report', (
+      tester,
+    ) async {
+      final source = FakeSecaoSource()
+        ..report = () => sampleReport(aptos: 1289);
+      await pumpScreen(tester, source, locale: en);
+      expect(find.text('My polling section'), findsWidgets);
+      await lookUp77InEnglish(tester);
+      expect(find.text('Ballot box report: file vs paper'), findsOneWidget);
+      expect(find.text('President'), findsOneWidget);
+      expect(find.text('Governor'), findsOneWidget);
+      expect(find.text('Blank'), findsOneWidget);
+      expect(find.text('Hash matches'), findsOneWidget);
+      expect(find.text('Signature not verified'), findsOneWidget);
+      expect(
+        find.textContaining('1,289 eligible voters, 234 voted'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('ballot box clock'), findsOneWidget);
+      expect(find.textContaining('18:34 (Brasília time)'), findsOneWidget);
+    });
+
+    testWidgets('Portuguese keeps its own number format', (tester) async {
+      final source = FakeSecaoSource()
+        ..report = () => sampleReport(aptos: 1289);
+      await pumpScreen(tester, source);
+      await lookUp77(tester);
+      expect(find.textContaining('1.289 eleitores aptos'), findsOneWidget);
+    });
+
+    testWidgets('a differing paper number is flagged', (tester) async {
+      await pumpScreen(tester, FakeSecaoSource(), locale: en);
+      await lookUp77InEnglish(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Paper').first,
+        '100',
+      );
+      await tester.pump();
+      expect(find.textContaining('One row does not match'), findsOneWidget);
+    });
+
+    testWidgets('TSE unavailable: localized message, not the server text', (
+      tester,
+    ) async {
+      final source = FakeSecaoSource()
+        ..fail = SectionUnavailableException(message: 'O TSE não respondeu.');
+      await pumpScreen(tester, source, locale: en);
+      await lookUp77InEnglish(tester);
+      expect(find.textContaining('TSE did not respond'), findsOneWidget);
+      expect(find.text('O TSE não respondeu.'), findsNothing);
+      expect(find.text('Try again'), findsOneWidget);
+    });
+
+    testWidgets('the picker search is in English', (tester) async {
+      await pumpScreen(tester, FakeSecaoSource(), locale: en);
+      await choose(tester, 'State', 'AC');
+      await openField(tester, 'Municipality');
+      expect(find.text('Search municipality'), findsOneWidget);
+      await tester.enterText(find.byType(TextField).last, 'zzz');
+      await tester.pumpAndSettle();
+      expect(find.text('Nothing found for “zzz”.'), findsOneWidget);
+    });
+
+    testWidgets('a phone fits the English report', (tester) async {
+      await pumpScreen(
+        tester,
+        FakeSecaoSource(),
+        locale: en,
+        size: const Size(390, 3000),
+      );
+      await lookUp77InEnglish(tester);
+      expect(find.text('Ballot box report: file vs paper'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 }

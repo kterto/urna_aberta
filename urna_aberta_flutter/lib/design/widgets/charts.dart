@@ -3,22 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../l10n/format.dart';
+import '../../l10n/l10n.dart';
 import '../tokens.dart';
 import '../typography.dart';
 import 'atlas_components.dart';
-
-String fmtPct(double v, [int digits = 2]) =>
-    v.toStringAsFixed(digits).replaceAll('.', ',');
-
-String fmtInt(int v) {
-  final s = v.toString();
-  final b = StringBuffer();
-  for (var i = 0; i < s.length; i++) {
-    if (i > 0 && (s.length - i) % 3 == 0) b.write('.');
-    b.write(s[i]);
-  }
-  return b.toString();
-}
 
 /// The two sources mirrored on one center rule: TSE national file on the
 /// left growing leftward, independent sum of states on the right growing
@@ -43,13 +32,14 @@ class SourceDuo extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.atlas;
     final t = Theme.of(context).textTheme;
+    final l = context.l10n;
     final fig = (compact ? AtlasType.figureL : AtlasType.figureXL).copyWith(
       color: p.ink,
     );
     Widget side(bool left) {
       final v = left ? national : states;
       final color = left ? p.sourceNational : p.sourceStates;
-      final label = left ? 'Arquivo nacional do TSE' : 'Soma dos estados';
+      final label = left ? l.chartNationalFileTse : l.chartStatesSum;
       final swatch = Container(width: 10, height: 10, color: color);
       return Column(
         crossAxisAlignment: left
@@ -84,7 +74,10 @@ class SourceDuo extends StatelessWidget {
           const SizedBox(height: Space.x1),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(compact ? fmtPct(v) : '${fmtPct(v)}%', style: fig),
+            child: Text(
+              compact ? context.decimal(v, 2) : context.percent(v),
+              style: fig,
+            ),
           ),
           Text(
             left ? nationalNote : statesNote,
@@ -111,9 +104,10 @@ class SourceDuo extends StatelessWidget {
     }
 
     return Semantics(
-      label:
-          'Arquivo nacional do TSE ${fmtPct(national)} por cento; '
-          'soma dos estados ${fmtPct(states)} por cento',
+      label: l.chartDuoSemantics(
+        context.decimal(national, 2),
+        context.decimal(states, 2),
+      ),
       excludeSemantics: true,
       child: Column(
         children: [
@@ -135,16 +129,18 @@ class SourceDuo extends StatelessWidget {
               TextSpan(
                 style: t.bodySmall?.copyWith(color: p.inkSecondary),
                 children: [
-                  const TextSpan(text: 'Diferença: '),
+                  TextSpan(text: l.chartDifference),
                   TextSpan(
-                    text: '${fmtPct((states - national).abs())} p.p.',
+                    text: l.chartPoints(
+                      context.decimal((states - national).abs(), 2),
+                    ),
                     style: AtlasType.tableFigure.copyWith(
                       color: p.ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 13,
                     ),
                   ),
-                  const TextSpan(text: ' de seções totalizadas'),
+                  TextSpan(text: l.chartDifferenceOf),
                 ],
               ),
             ),
@@ -175,6 +171,7 @@ class MirroredBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.atlas;
     final t = Theme.of(context).textTheme;
+    final l = context.l10n;
     final max = rows.map((r) => math.max(r.left, r.right)).fold(1, math.max);
     final scale = compact ? 0.96 : 1.0;
     // Compact keeps a short label between the bars; the full layout puts
@@ -189,7 +186,7 @@ class MirroredBars extends StatelessWidget {
         builder: (context, c) {
           final px = math.max(0.0, c.maxWidth - valueRoom) * w;
           final value = Text(
-            compact ? '' : fmtInt(v),
+            compact ? '' : context.integer(v),
             maxLines: 1,
             overflow: TextOverflow.clip,
             softWrap: false,
@@ -224,7 +221,7 @@ class MirroredBars extends StatelessWidget {
     }
 
     return Semantics(
-      label: 'Votos por candidatura nas duas fontes',
+      label: l.chartVotesSemantics,
       child: Column(
         children: [
           if (!compact)
@@ -238,7 +235,7 @@ class MirroredBars extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Arquivo nacional',
+                      l.chartNationalFile,
                       textAlign: TextAlign.end,
                       style: t.labelSmall?.copyWith(color: p.inkSecondary),
                     ),
@@ -246,7 +243,7 @@ class MirroredBars extends StatelessWidget {
                   const SizedBox(width: Space.x4),
                   Expanded(
                     child: Text(
-                      'Soma dos estados',
+                      l.chartStatesSum,
                       style: t.labelSmall?.copyWith(color: p.inkSecondary),
                     ),
                   ),
@@ -256,8 +253,11 @@ class MirroredBars extends StatelessWidget {
           for (final r in rows)
             MergeSemantics(
               child: Semantics(
-                label:
-                    '${r.label}: ${fmtInt(r.left)} no arquivo nacional, ${fmtInt(r.right)} na soma dos estados',
+                label: l.chartRowSemantics(
+                  r.label,
+                  context.integer(r.left),
+                  context.integer(r.right),
+                ),
                 excludeSemantics: true,
                 child: Column(
                   children: [
@@ -358,6 +358,7 @@ class _TimelineChartState extends State<TimelineChart> {
   Widget build(BuildContext context) {
     final p = context.atlas;
     final t = Theme.of(context).textTheme;
+    final l = context.l10n;
     final s = widget.samples;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,8 +366,8 @@ class _TimelineChartState extends State<TimelineChart> {
         Wrap(
           spacing: Space.x4,
           children: [
-            _legendLine(context, p.sourceNational, 'Arquivo nacional'),
-            _legendLine(context, p.sourceStates, 'Soma dos estados'),
+            _legendLine(context, p.sourceNational, l.chartNationalFile),
+            _legendLine(context, p.sourceStates, l.chartStatesSum),
           ],
         ),
         const SizedBox(height: Space.x2),
@@ -389,8 +390,12 @@ class _TimelineChartState extends State<TimelineChart> {
               setState(() => _index = f ? s.length - 1 : null),
           child: Semantics(
             label: _index == null
-                ? 'Linha do tempo das duas fontes. Use as setas para explorar.'
-                : '${_hhmm(s[_index!].time)}: arquivo nacional ${fmtPct(s[_index!].national)}%, soma dos estados ${fmtPct(s[_index!].states)}%',
+                ? l.chartTimelineSemantics
+                : l.chartTimelinePointSemantics(
+                    _hhmm(s[_index!].time),
+                    context.percent(s[_index!].national),
+                    context.percent(s[_index!].states),
+                  ),
             child: LayoutBuilder(
               builder: (context, c) {
                 final size = Size(c.maxWidth, widget.height);
@@ -429,6 +434,8 @@ class _TimelineChartState extends State<TimelineChart> {
                             freezeValue: widget.freezeValue,
                             now: widget.now,
                             margin: _m,
+                            l10n: l,
+                            pctText: (v) => context.percent(v),
                           ),
                         ),
                         if (i != null)
@@ -460,7 +467,7 @@ class _TimelineChartState extends State<TimelineChart> {
                                       Text(
                                         _hhmm(s[i].time) +
                                             (_frozen(s[i].time)
-                                                ? ' · nacional parado'
+                                                ? l.chartNationalFrozenSuffix
                                                 : ''),
                                         style: t.labelMedium?.copyWith(
                                           color: p.paper,
@@ -468,12 +475,12 @@ class _TimelineChartState extends State<TimelineChart> {
                                       ),
                                       const SizedBox(height: 2),
                                       _tipRow(
-                                        'Arquivo nacional',
-                                        '${fmtPct(s[i].national)}%',
+                                        l.chartNationalFile,
+                                        context.percent(s[i].national),
                                       ),
                                       _tipRow(
-                                        'Soma dos estados',
-                                        '${fmtPct(s[i].states)}%',
+                                        l.chartStatesSum,
+                                        context.percent(s[i].states),
                                       ),
                                     ],
                                   ),
@@ -526,9 +533,13 @@ class _TimelinePainter extends CustomPainter {
     required this.freezeValue,
     required this.now,
     required this.margin,
+    required this.l10n,
+    required this.pctText,
   });
 
   final int? now;
+  final AppLocalizations l10n;
+  final String Function(double) pctText;
 
   final List<TimelineSample> samples;
   final AtlasPalette palette;
@@ -575,7 +586,7 @@ class _TimelinePainter extends CustomPainter {
           ..strokeWidth = 1.5,
       );
       text(
-        'Nacional parado · ${freezeEnd!.difference(freezeStart!).inMinutes} min',
+        l10n.chartFreezeBand(freezeEnd!.difference(freezeStart!).inMinutes),
         color: palette.alertInk,
         w: FontWeight.w600,
       ).paint(canvas, Offset(a + 6, margin.top + 4));
@@ -606,7 +617,7 @@ class _TimelinePainter extends CustomPainter {
       at = at.add(const Duration(hours: 1))
     ) {
       if (at.isBefore(t0)) continue;
-      final tp = text('${at.hour}h');
+      final tp = text(l10n.chartHourTick(at.hour));
       tp.paint(
         canvas,
         Offset(xt(at) - tp.width / 2, size.height - margin.bottom + 8),
@@ -659,7 +670,7 @@ class _TimelinePainter extends CustomPainter {
 
     if (freezeValue != null && freezeStart != null) {
       final tp = text(
-        '${fmtPct(freezeValue!)}%',
+        pctText(freezeValue!),
         color: palette.ink,
         w: FontWeight.w700,
       );
@@ -693,7 +704,8 @@ class _TimelinePainter extends CustomPainter {
       old.index != index ||
       old.now != now ||
       old.palette != palette ||
-      old.samples != samples;
+      old.samples != samples ||
+      old.l10n != l10n;
 }
 
 /// One mini curve per UF, all on the same 0–100 scale, grouped by region.
@@ -745,7 +757,7 @@ class UfSmallMultiples extends StatelessWidget {
                             ),
                             const SizedBox(width: Space.x2),
                             Text(
-                              r.nomePt.toUpperCase(),
+                              r.nome(context).toUpperCase(),
                               style: AtlasType.mapRegionLabel.copyWith(
                                 color: p.ink,
                               ),
@@ -775,7 +787,10 @@ class UfSmallMultiples extends StatelessWidget {
       children: [
         for (final uf in ufs)
           Semantics(
-            label: '$uf: ${fmtPct(finalPct[uf]!, 1)}% das seções totalizadas',
+            label: context.l10n.chartUfSemantics(
+              uf,
+              context.percent(finalPct[uf]!, 1),
+            ),
             excludeSemantics: true,
             child: Container(
               width: 96,
@@ -798,7 +813,7 @@ class UfSmallMultiples extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        fmtPct(finalPct[uf]!, 1),
+                        context.decimal(finalPct[uf]!, 1),
                         style: AtlasType.tableFigure.copyWith(
                           color: p.inkSecondary,
                           fontSize: 12,

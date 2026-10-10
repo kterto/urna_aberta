@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../design/theme.dart';
+import '../l10n/l10n.dart';
 import '../replay/replay_controller.dart';
 import '../secao/secao_controller.dart';
 import '../verificar/verificar_controller.dart';
@@ -23,9 +25,9 @@ class UrnaAbertaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeModeNotifier,
-      builder: (context, mode, _) => TallyScope(
+    return ListenableBuilder(
+      listenable: Listenable.merge([themeModeNotifier, localeNotifier]),
+      builder: (context, _) => TallyScope(
         source: tallySource,
         child: SecaoScope(
           source: secaoSource,
@@ -33,10 +35,18 @@ class UrnaAbertaApp extends StatelessWidget {
             source: verificarSource,
             child: MaterialApp(
               title: 'Urna Aberta',
+              locale: localeNotifier.value,
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
               debugShowCheckedModeBanner: false,
               theme: atlasTheme(Brightness.light),
               darkTheme: atlasTheme(Brightness.dark),
-              themeMode: mode,
+              themeMode: themeModeNotifier.value,
               home: const AppShell(),
             ),
           ),

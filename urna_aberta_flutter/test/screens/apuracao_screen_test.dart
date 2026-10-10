@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
-import 'package:urna_aberta_flutter/design/theme.dart';
 import 'package:urna_aberta_flutter/design/widgets/atlas_components.dart';
 import 'package:urna_aberta_flutter/replay/replay_controller.dart';
 import 'package:urna_aberta_flutter/screens/apuracao_screen.dart';
+import '../support/test_app.dart';
 
 DateTime brt(int day, int hour, int minute) =>
     DateTime.utc(2026, 10, day, hour + 3, minute);
@@ -64,13 +64,18 @@ class StubSource implements TallySource {
   ];
 }
 
-Future<void> pumpScreen(WidgetTester tester, TallySource source) async {
-  tester.view.physicalSize = const Size(400, 2400);
+Future<void> pumpScreen(
+  WidgetTester tester,
+  TallySource source, {
+  Locale locale = const Locale('pt'),
+  Size size = const Size(400, 2400),
+}) async {
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    MaterialApp(
-      theme: atlasTheme(Brightness.light),
+    testApp(
+      locale: locale,
       home: TallyScope(
         source: source,
         child: const Scaffold(body: ApuracaoScreen()),
@@ -126,4 +131,24 @@ void main() {
     await tester.pump();
     expect(find.textContaining('FULANO DE TAL'), findsOneWidget);
   });
+
+  for (final size in const [Size(400, 2400), Size(1300, 2400)]) {
+    testWidgets('in English, with English numbers (${size.width.toInt()}px)', (
+      tester,
+    ) async {
+      await pumpScreen(
+        tester,
+        StubSource(),
+        locale: const Locale('en'),
+        size: size,
+      );
+      expect(find.text('The two sources compared · President'), findsOneWidget);
+      expect(find.text('TSE national file'), findsOneWidget);
+      expect(find.text('64.81%'), findsWidgets);
+      expect(find.textContaining('64,81'), findsNothing);
+      expect(find.text('Simulated replay'.toUpperCase()), findsOneWidget);
+      expect(find.text('frozen since 21:02'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
 }

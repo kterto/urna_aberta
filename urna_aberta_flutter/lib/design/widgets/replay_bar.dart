@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../platform.dart';
 import '../tokens.dart';
 import '../typography.dart';
@@ -27,6 +28,7 @@ class ReplayBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
+    final l = context.l10n;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: p.plate,
@@ -44,7 +46,7 @@ class ReplayBar extends StatelessWidget {
           runSpacing: Space.x1,
           children: [
             IconButton.filled(
-              tooltip: playing ? 'Pausar replay' : 'Reproduzir replay',
+              tooltip: playing ? l.replayPause : l.replayPlay,
               onPressed: onPlayPause,
               icon: Icon(
                 playing ? AtlasIcons.pause(context) : AtlasIcons.play(context),
@@ -55,7 +57,7 @@ class ReplayBar extends StatelessWidget {
               ),
             ),
             Semantics(
-              label: 'Relógio do replay $clock',
+              label: l.replayClock(clock),
               excludeSemantics: true,
               child: Text(
                 clock,
@@ -69,9 +71,9 @@ class ReplayBar extends StatelessWidget {
             ),
             TextButton(
               onPressed: onJumpToFreeze,
-              child: const Text('Ir para a pausa'),
+              child: Text(l.replayJumpToFreeze),
             ),
-            const SimulationStamp(label: 'Replay simulado'),
+            SimulationStamp(label: l.replaySimulated),
           ],
         ),
       ),

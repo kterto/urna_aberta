@@ -37,6 +37,9 @@ dependencies:
   url_launcher: ^6.3.3
   cryptography: ^2.9.0
   crypto: ^3.0.7
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
 dev_dependencies:
   # Used for agents to drive the app through the Dart MCP
@@ -54,6 +57,7 @@ dependency_overrides:
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

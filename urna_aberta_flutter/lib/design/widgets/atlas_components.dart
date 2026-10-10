@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../l10n/l10n.dart';
 import '../platform.dart';
 import '../tokens.dart';
 import '../typography.dart';
@@ -71,6 +72,12 @@ class Plate extends StatelessWidget {
   }
 }
 
+/// The region's name in the viewer's language.
+extension RegiaoName on Regiao {
+  String nome(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'pt' ? nomePt : nomeEn;
+}
+
 class FonteLine extends StatelessWidget {
   const FonteLine({
     super.key,
@@ -106,7 +113,7 @@ class FonteLine extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              'Prancha $plateNumber',
+              context.l10n.atlasPlate(plateNumber),
               style: style.copyWith(
                 color: p.inkSecondary,
                 fontWeight: FontWeight.w600,
@@ -164,11 +171,11 @@ class FileCode extends StatelessWidget {
       ),
     );
     if (url == null) {
-      return Semantics(label: 'Arquivo $code', child: chip);
+      return Semantics(label: context.l10n.atlasFile(code), child: chip);
     }
     return Semantics(
       link: true,
-      label: 'Abrir arquivo $code',
+      label: context.l10n.atlasOpenFile(code),
       child: Tooltip(
         message: url.toString(),
         child: InkWell(
@@ -186,15 +193,17 @@ class FileCode extends StatelessWidget {
 
 /// Required stamp on any data that is not official TSE data.
 class SimulationStamp extends StatelessWidget {
-  const SimulationStamp({super.key, this.label = 'Simulação'});
+  const SimulationStamp({super.key, this.label});
 
-  final String label;
+  /// Defaults to "Simulação" in the viewer's language.
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
+    final label = this.label ?? context.l10n.atlasSimulation;
     return Semantics(
-      label: '$label: dados não oficiais',
+      label: context.l10n.atlasSimulationSemantics(label),
       child: CustomPaint(
         painter: _DashedRectPainter(p.statusPending),
         child: Padding(
@@ -253,11 +262,12 @@ class StatusBadge extends StatelessWidget {
   final VerificationStatus status;
   final String? label;
 
-  static String defaultLabel(VerificationStatus s) => switch (s) {
-    VerificationStatus.valid => 'Assinatura válida',
-    VerificationStatus.invalid => 'Assinatura inválida',
-    VerificationStatus.pending => 'Não verificado',
-  };
+  static String defaultLabel(AppLocalizations l, VerificationStatus s) =>
+      switch (s) {
+        VerificationStatus.valid => l.atlasSignatureValid,
+        VerificationStatus.invalid => l.atlasSignatureInvalid,
+        VerificationStatus.pending => l.atlasNotVerified,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +294,7 @@ class StatusBadge extends StatelessWidget {
             // Wraps inside a narrow column instead of overflowing it.
             Flexible(
               child: Text(
-                label ?? defaultLabel(status),
+                label ?? defaultLabel(context.l10n, status),
                 style: Theme.of(
                   context,
                 ).textTheme.labelMedium?.copyWith(color: c),
@@ -313,7 +323,7 @@ class DivergenceBanner extends StatelessWidget {
         : TextButton(
             onPressed: onLearnMore,
             style: TextButton.styleFrom(foregroundColor: p.alertInk),
-            child: const Text('Entenda por quê'),
+            child: Text(context.l10n.atlasLearnWhy),
           );
     return Semantics(
       liveRegion: true,
@@ -340,12 +350,12 @@ class DivergenceBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'A divulgação nacional está atrás dos estados.',
+                      context.l10n.atlasDivergenceTitle,
                       style: t.titleSmall?.copyWith(color: p.alertInk),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'A contagem continua: os arquivos por UF seguem sendo atualizados.',
+                      context.l10n.atlasDivergenceBody,
                       style: t.bodySmall?.copyWith(color: p.alertInk),
                     ),
                     if (link != null && !compact) link,
@@ -384,9 +394,16 @@ class HashRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
+            // Long labels wrap on narrow screens instead of overflowing.
+            Flexible(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+            ),
             const SizedBox(width: Space.x3),
             Expanded(
+              flex: 3,
               child: SelectableText(
                 hash,
                 style: TextStyle(
@@ -398,14 +415,14 @@ class HashRow extends StatelessWidget {
               ),
             ),
             IconButton(
-              tooltip: 'Copiar hash',
+              tooltip: context.l10n.atlasCopyHash,
               icon: Icon(AtlasIcons.copy(context), size: 18),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: hash));
                 selectionHaptic();
                 if (context.mounted) {
                   ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                    const SnackBar(content: Text('Hash copiado')),
+                    SnackBar(content: Text(context.l10n.atlasHashCopied)),
                   );
                 }
               },

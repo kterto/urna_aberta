@@ -9,6 +9,8 @@ import '../design/widgets/atlas_page.dart';
 import '../design/widgets/charts.dart';
 import '../design/widgets/map_plate.dart';
 import '../design/widgets/replay_bar.dart';
+import '../l10n/format.dart';
+import '../l10n/l10n.dart';
 import '../replay/replay_controller.dart';
 import '../showcase/design_system_screen.dart';
 
@@ -46,24 +48,19 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     super.dispose();
   }
 
-  String _clock(DateTime t) {
-    final b = brasilia(t);
-    return '${b.hour.toString().padLeft(2, '0')}:${b.minute.toString().padLeft(2, '0')}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= Breakpoint.expanded;
+    final l = context.l10n;
     return ListenableBuilder(
       listenable: _replay!,
       builder: (context, _) => AtlasPage(
-        title: wide ? 'A contagem não parou.' : 'Apuração',
-        lede:
-            'Presidente, 1º turno. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Cada número leva ao arquivo de onde veio.',
+        title: wide ? l.apuracaoHeadline : l.navApuracao,
+        lede: l.apuracaoLede,
         actions: [
           if (!isWideLayout(context) || shellKindOf(context) != ShellKind.web)
             IconButton(
-              tooltip: 'Sistema de design',
+              tooltip: l.apuracaoDesignSystem,
               icon: Icon(AtlasIcons.sistema(context)),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(
@@ -79,6 +76,8 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
 
   List<Widget> _body(BuildContext context, bool wide) {
     final r = _replay!;
+    final l = context.l10n;
+    String clock(DateTime t) => context.hm(t);
     final night = r.night, frame = r.frame, now = r.now;
     if (night == null || frame == null || now == null) {
       return [
@@ -98,7 +97,7 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     final diverging = frame.statesPct - frame.nationalPct > _divergenceGap;
 
     final replay = ReplayBar(
-      clock: _clock(now),
+      clock: clock(now),
       playing: r.playing,
       speed: r.speed,
       onPlayPause: r.togglePlay,
@@ -107,12 +106,11 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     );
 
     final duo = Plate(
-      title: 'Comparação das duas fontes · Presidente',
+      title: l.apuracaoDuoTitle,
       trailing: simulation ? const SimulationStamp() : null,
       fonte: FonteLine(
         plateNumber: 5,
-        source:
-            '% de seções totalizadas. Fonte: TSE. Soma calculada pela Urna Aberta.',
+        source: l.apuracaoDuoSource,
         codes: [_brFile, _ufFiles],
       ),
       child: Column(
@@ -133,9 +131,9 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
             national: frame.nationalPct,
             states: frame.statesPct,
             nationalNote: frozen
-                ? 'parado desde ${_clock(night.freezeStart)}'
-                : 'atualizado ${_clock(frame.at)}',
-            statesNote: 'atualizado ${_clock(frame.at)}',
+                ? l.apuracaoFrozenSince(clock(night.freezeStart))
+                : l.apuracaoUpdatedAt(clock(frame.at)),
+            statesNote: l.apuracaoUpdatedAt(clock(frame.at)),
           ),
         ],
       ),
@@ -149,35 +147,34 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
                 ? 0
                 : u.sectionsTotalized * 100 / u.sectionsTotal,
       },
-      momentLabel: _clock(frame.at),
+      momentLabel: clock(frame.at),
       simulation: simulation,
     );
 
     final votes = Plate(
-      title: 'Votos por candidatura, nas duas fontes',
+      title: l.apuracaoVotesTitle,
       fonte: FonteLine(
         plateNumber: 6,
         source: frame.origin == DataOrigin.synthetic
-            ? 'Mesma tinta para todas as candidaturas. Votos intermediários proporcionais aos arquivos finais do TSE.'
-            : 'Mesma tinta para todas as candidaturas. Fonte: TSE.',
+            ? l.apuracaoVotesSourceSynthetic
+            : l.apuracaoVotesSource,
         codes: [_brFile],
         simulation: simulation,
       ),
       child: MirroredBars(
         rows: [
           for (final c in frame.candidates)
-            MirroredRow(_candidateLabel(c), c.national, c.states),
+            MirroredRow(_candidateLabel(l, c), c.national, c.states),
         ],
       ),
     );
 
     final freezeIndex = night.freezeStart.difference(night.start).inMinutes;
     final timeline = Plate(
-      title: 'A noite de 4 de outubro',
+      title: l.apuracaoTimelineTitle,
       fonte: FonteLine(
         plateNumber: 7,
-        source:
-            'Curva sintética que termina nos arquivos finais reais do TSE, com a pausa nacional de 64,81% simulada.',
+        source: l.apuracaoTimelineSource(context.percent(64.81)),
         simulation: night.origin != DataOrigin.live,
       ),
       child: TimelineChart(
@@ -219,9 +216,9 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     ];
   }
 
-  static String _candidateLabel(CandidateVotes c) {
+  static String _candidateLabel(AppLocalizations l, CandidateVotes c) {
     final name = c.ballotName;
-    if (name == null) return 'Número ${c.candidateNumber}';
+    if (name == null) return l.apuracaoCandidateNumber(c.candidateNumber);
     return '${c.candidateNumber} · $name (${c.party})';
   }
 }
@@ -235,9 +232,10 @@ class _LoadError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = context.l10n;
     final message = error is ReplayUnavailableException
-        ? 'Os arquivos do 1º turno ainda não foram carregados no servidor.'
-        : 'Não foi possível falar com o servidor da Urna Aberta.';
+        ? l.apuracaoReplayUnavailable
+        : l.apuracaoServerUnreachable;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Space.x6),
       child: Column(
@@ -245,7 +243,7 @@ class _LoadError extends StatelessWidget {
         children: [
           Text(message, style: t.bodyLarge),
           const SizedBox(height: Space.x4),
-          FilledButton(onPressed: onRetry, child: const Text('Tentar de novo')),
+          FilledButton(onPressed: onRetry, child: Text(l.apuracaoRetry)),
         ],
       ),
     );

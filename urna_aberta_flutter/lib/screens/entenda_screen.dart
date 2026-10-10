@@ -6,6 +6,7 @@ import '../design/tokens.dart';
 import '../design/typography.dart';
 import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
+import '../l10n/l10n.dart';
 
 class _Chapter {
   const _Chapter(this.title, this.summary);
@@ -14,32 +15,14 @@ class _Chapter {
   final String summary;
 }
 
-const _chapters = [
-  _Chapter(
-    'O caminho do voto',
-    'Da urna ao boletim afixado, da transmissão à divulgação.',
-  ),
-  _Chapter(
-    'O Boletim de Urna',
-    'O que ele contém, por que é público e como conferir.',
-  ),
-  _Chapter('Os arquivos da urna', 'BU, RDV e log: para que serve cada um.'),
-  _Chapter(
-    'Assinaturas e hashes',
-    'O que as verificações deste app realmente checam.',
-  ),
-  _Chapter(
-    'Protocolos de segurança',
-    'Testes públicos, cerimônias e inspeção do código.',
-  ),
-  _Chapter(
-    '4 de outubro de 2026',
-    'O que parou, o que não parou, e como o replay mostra isso.',
-  ),
-  _Chapter(
-    'O que este app prova',
-    'E, com a mesma clareza, o que ele não prova.',
-  ),
+List<_Chapter> _chapters(AppLocalizations l) => [
+  _Chapter(l.entendaCh1Title, l.entendaCh1Summary),
+  _Chapter(l.entendaCh2Title, l.entendaCh2Summary),
+  _Chapter(l.entendaCh3Title, l.entendaCh3Summary),
+  _Chapter(l.entendaCh4Title, l.entendaCh4Summary),
+  _Chapter(l.entendaCh5Title, l.entendaCh5Summary),
+  _Chapter(l.entendaCh6Title, l.entendaCh6Summary),
+  _Chapter(l.entendaCh7Title, l.entendaCh7Summary),
 ];
 
 /// Learn: chapter index plus the reading experience.
@@ -51,11 +34,13 @@ class EntendaScreen extends StatelessWidget {
     final p = context.atlas;
     final t = Theme.of(context).textTheme;
     final wide = isWideLayout(context);
+    final l = context.l10n;
+    final chapters = _chapters(l);
 
     final index = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (var i = 0; i < _chapters.length; i++)
+        for (var i = 0; i < chapters.length; i++)
           InkWell(
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => _ChapterScreen(index: i)),
@@ -85,7 +70,7 @@ class EntendaScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _chapters[i].title,
+                          chapters[i].title,
                           style: AtlasType.headlineSerif.copyWith(
                             color: p.ink,
                             fontSize: wide ? 26 : 21,
@@ -93,7 +78,7 @@ class EntendaScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: Space.x1),
                         Text(
-                          _chapters[i].summary,
+                          chapters[i].summary,
                           style: t.bodyMedium?.copyWith(color: p.inkSecondary),
                         ),
                       ],
@@ -108,9 +93,8 @@ class EntendaScreen extends StatelessWidget {
     );
 
     return AtlasPage(
-      title: 'Entenda o processo',
-      lede:
-          'Capítulos curtos sobre como o resultado sai da urna e chega até você. Cada afirmação cita uma fonte oficial do TSE.',
+      title: l.entendaTitle,
+      lede: l.entendaLede,
       maxWidth: 880,
       children: [index],
     );
@@ -126,7 +110,8 @@ class _ChapterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.atlas;
     final t = Theme.of(context).textTheme;
-    final ch = _chapters[index];
+    final l = context.l10n;
+    final ch = _chapters(l)[index];
     final reading = AtlasType.reading.copyWith(color: p.ink);
     final wide = isWideLayout(context);
 
@@ -149,7 +134,7 @@ class _ChapterScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Capítulo ${index + 1}',
+                  l.entendaChapterLabel(index + 1),
                   style: t.labelMedium?.copyWith(color: p.inkMuted),
                 ),
                 const SizedBox(height: Space.x2),
@@ -159,14 +144,14 @@ class _ChapterScreen extends StatelessWidget {
                       .copyWith(color: p.ink),
                 ),
                 const SizedBox(height: Space.x3),
-                const SimulationStamp(label: 'Rascunho · revisar fontes'),
+                SimulationStamp(label: l.entendaDraftStamp),
                 const SizedBox(height: Space.x6),
                 if (index == 5) ...[
                   para(
-                    'Na noite de 4 de outubro de 2026, a página nacional de resultados para Presidente ficou parada em 64,81% por cerca de 50 a 60 minutos. Depois, saltou para perto de 84%.',
+                    l.entendaPausePara1,
                   ),
                   para(
-                    'Segundo o TSE, um gargalo no processamento travou o módulo que gera os arquivos de publicação "Brasil". Os arquivos de cada estado continuaram sendo atualizados normalmente durante todo o tempo.',
+                    l.entendaPausePara2,
                   ),
                   Container(
                     margin: const EdgeInsets.only(bottom: Space.x4),
@@ -176,7 +161,8 @@ class _ChapterScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(Corner.plate),
                     ),
                     child: Text(
-                      'Totalização é a contagem oficial. Divulgação é a publicação dessa contagem. O que parou foi a divulgação nacional.',
+                      l.entendaPauseCallout,
+
                       style: AtlasType.headlineSerif.copyWith(
                         color: p.ink,
                         fontSize: 21,
@@ -185,17 +171,17 @@ class _ChapterScreen extends StatelessWidget {
                     ),
                   ),
                   para(
-                    'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay: as duas fontes lado a lado.',
+                    l.entendaPausePara3,
                   ),
                 ] else
                   para(
-                    'Este capítulo está em produção. O texto será escrito a partir das fontes oficiais do TSE e revisado em português e inglês.',
+                    l.entendaInProduction,
                   ),
                 const SizedBox(height: Space.x4),
-                Text('Fontes', style: t.titleSmall),
+                Text(l.entendaSources, style: t.titleSmall),
                 const SizedBox(height: Space.x2),
                 _Source(
-                  'TSE · Informações técnicas sobre a divulgação de resultados',
+                  l.entendaSourceDivulgacao,
                   'https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divulgacao-de-resultados',
                 ),
               ],

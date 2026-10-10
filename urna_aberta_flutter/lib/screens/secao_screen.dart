@@ -8,7 +8,8 @@ import '../design/tokens.dart';
 import '../design/typography.dart';
 import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
-import '../replay/replay_controller.dart' show brasilia;
+import '../l10n/format.dart';
+import '../l10n/l10n.dart';
 import '../secao/secao_controller.dart';
 
 /// My polling section: locate it, read the official BU, compare with paper.
@@ -41,10 +42,10 @@ class _SecaoScreenState extends State<SecaoScreen> {
       listenable: c,
       builder: (context, _) {
         final wide = isWideLayout(context);
+        final l = context.l10n;
         return AtlasPage(
-          title: 'Minha seção',
-          lede:
-              'Encontre o Boletim de Urna oficial da sua seção e compare com o boletim impresso e afixado no local de votação.',
+          title: l.secaoTitle,
+          lede: l.secaoLede,
           maxWidth: 1040,
           children: [
             _form(context, c, wide),
@@ -63,45 +64,47 @@ class _SecaoScreenState extends State<SecaoScreen> {
 
   Widget _form(BuildContext context, SecaoController c, bool wide) {
     String two(int v, int w) => v.toString().padLeft(w, '0');
+    final l = context.l10n;
     final fields = <Widget>[
       _PickerField(
-        label: 'UF',
+        label: l.secaoFieldUf,
         value: c.uf,
         options: SecaoController.ufs,
-        display: (o) => o == 'zz' ? 'Exterior' : (o as String).toUpperCase(),
+        display: (o) =>
+            o == 'zz' ? l.secaoUfExterior : (o as String).toUpperCase(),
         onChanged: (v) => c.selectUf(v as String),
       ),
       _PickerField(
-        label: 'Município',
+        label: l.secaoFieldMunicipio,
         value: c.municipio,
         options: c.municipios,
         display: (o) => (o as MunicipioRef).nome,
         filter: true,
         loading: c.loading == SecaoLoad.municipios
-            ? 'Carregando municípios…'
+            ? l.secaoLoadingMunicipios
             : null,
         onChanged: (v) => c.selectMunicipio(v as MunicipioRef),
       ),
       _PickerField(
-        label: 'Zona',
+        label: l.secaoFieldZona,
         value: c.zona,
         options: c.zonas,
         display: (o) => two(o as int, 4),
-        loading: c.loading == SecaoLoad.zonas ? 'Carregando zonas…' : null,
+        loading: c.loading == SecaoLoad.zonas ? l.secaoLoadingZonas : null,
         onChanged: (v) => c.selectZona(v as int),
       ),
       _PickerField(
-        label: 'Seção',
+        label: l.secaoFieldSecao,
         value: c.secao,
         options: c.secoes,
         display: (o) => two(o as int, 4),
         filter: true,
-        loading: c.loading == SecaoLoad.secoes ? 'Carregando seções…' : null,
+        loading: c.loading == SecaoLoad.secoes ? l.secaoLoadingSecoes : null,
         onChanged: (v) => c.selectSecao(v as int),
       ),
     ];
     return Plate(
-      title: 'Localizar seção',
+      title: l.secaoLocatePlate,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -122,7 +125,7 @@ class _SecaoScreenState extends State<SecaoScreen> {
             ],
           const SizedBox(height: Space.x2),
           Text(
-            'Zona e seção estão no seu título de eleitor ou no e-Título. A lista vem do arquivo de seções do TSE.',
+            l.secaoFormHint,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: context.atlas.inkMuted),
@@ -133,8 +136,8 @@ class _SecaoScreenState extends State<SecaoScreen> {
               Flexible(
                 child: FilledButton(
                   onPressed: c.canConsult && !c.busy ? c.consultar : null,
-                  child: const Text(
-                    'Buscar boletim de urna',
+                  child: Text(
+                    l.secaoSearchButton,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -148,7 +151,7 @@ class _SecaoScreenState extends State<SecaoScreen> {
                   child: Semantics(
                     liveRegion: true,
                     child: Text(
-                      'Buscando os arquivos da seção no TSE…',
+                      l.secaoSearchingTse,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: context.atlas.inkMuted,
                       ),
@@ -164,23 +167,9 @@ class _SecaoScreenState extends State<SecaoScreen> {
   }
 }
 
-String _hhmm(DateTime utc) {
-  final b = brasilia(utc);
-  return '${b.hour.toString().padLeft(2, '0')}:${b.minute.toString().padLeft(2, '0')}';
-}
-
-/// `YYYY-MM-DDThh:mm:ss` (urna local clock) → `hh:mm`.
+/// `YYYY-MM-DDThh:mm:ss` on the urna's own clock (local to the urna, not
+/// Brasília) → `hh:mm`.
 String _urnaHhmm(String iso) => iso.substring(11, 16);
-
-String _fmt(int v) {
-  final s = v.toString();
-  final b = StringBuffer();
-  for (var i = 0; i < s.length; i++) {
-    if (i > 0 && (s.length - i) % 3 == 0) b.write('.');
-    b.write(s[i]);
-  }
-  return b.toString();
-}
 
 class _Result extends StatefulWidget {
   const _Result({super.key, required this.report});
@@ -212,14 +201,20 @@ class _ResultState extends State<_Result> {
     final wide = isWideLayout(context);
     final t = Theme.of(context).textTheme;
     final p = context.atlas;
+    final l = context.l10n;
+    final sectionTitle = l.secaoSectionTitle(
+      '${r.zona}',
+      '${r.secao}',
+      r.municipioNome,
+    );
 
     if (r.status == 'Aguardando' || r.buCheck == BuCheck.missing) {
       return Plate(
-        title: 'Seção ${r.zona}/${r.secao}, ${r.municipioNome}',
+        title: sectionTitle,
         child: Text(
           r.status == 'Aguardando'
-              ? 'O TSE ainda não publicou os arquivos desta seção. Volte depois do envio da urna.'
-              : 'O TSE publicou a seção (${r.status}), mas sem boletim de urna para conferir.',
+              ? l.secaoNotPublished
+              : l.secaoNoBu(r.status),
           style: t.bodyMedium,
         ),
       );
@@ -227,23 +222,17 @@ class _ResultState extends State<_Result> {
 
     if (r.buCheck != BuCheck.matches) {
       return Plate(
-        title: 'Seção ${r.zona}/${r.secao}, ${r.municipioNome}',
+        title: sectionTitle,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const StatusBadge(
-              VerificationStatus.invalid,
-              label: 'Hash não confere',
-            ),
+            StatusBadge(VerificationStatus.invalid, label: l.secaoHashMismatch),
             const SizedBox(height: Space.x3),
             Text(
               switch (r.buCheck) {
-                BuCheck.differs =>
-                  'O boletim recebido não confere com a lista de arquivos assinada pela urna. Os votos não são exibidos.',
-                BuCheck.notListed =>
-                  'A urna não listou este boletim entre os arquivos que assinou. Os votos não são exibidos.',
-                _ =>
-                  'A lista de arquivos da urna não confere com o que ela assinou. Os votos não são exibidos.',
+                BuCheck.differs => l.secaoBuDiffers,
+                BuCheck.notListed => l.secaoBuNotListed,
+                _ => l.secaoListingAltered,
               },
               style: t.bodyMedium,
             ),
@@ -262,7 +251,7 @@ class _ResultState extends State<_Result> {
       for (final v in cargo.votos)
         (
           key: '${cargo.eleicao}-${cargo.codigo}-${v.tipo}-${v.numero}',
-          label: _label(v),
+          label: _label(l, v),
           votos: v.votos,
         ),
     ];
@@ -275,13 +264,17 @@ class _ResultState extends State<_Result> {
     final bu = r.files.where((f) => f.kind == 'bu').firstOrNull;
 
     final compare = Plate(
-      title: 'Boletim de Urna: arquivo vs papel',
+      title: l.secaoComparePlate,
       fonte: FonteLine(
         plateNumber: 9,
-        source:
-            'Seção ${r.zona.toString().padLeft(4, '0')}/${r.secao.toString().padLeft(4, '0')}, '
-            '${r.municipioNome} (${r.uf.toUpperCase()}). Boletim emitido às ${_urnaHhmm(r.emitidoEm!)} '
-            '(relógio da urna); recebido pelo TSE às ${_hhmm(r.receivedAt!)} (Brasília).',
+        source: l.secaoCompareSource(
+          r.zona.toString().padLeft(4, '0'),
+          r.secao.toString().padLeft(4, '0'),
+          r.municipioNome,
+          r.uf.toUpperCase(),
+          _urnaHhmm(r.emitidoEm!),
+          context.hm(r.receivedAt!),
+        ),
         codes: [if (bu != null) FileCode(bu.name, url: Uri.parse(bu.url))],
       ),
       child: Column(
@@ -293,7 +286,7 @@ class _ResultState extends State<_Result> {
             children: [
               for (final (i, c) in r.cargos.indexed)
                 ChoiceChip(
-                  label: Text(c.nome),
+                  label: Text(_cargoNome(l, c)),
                   selected: i == _cargo,
                   onSelected: (_) => setState(() => _cargo = i),
                 ),
@@ -301,8 +294,10 @@ class _ResultState extends State<_Result> {
           ),
           const SizedBox(height: Space.x3),
           Text(
-            '${_fmt(r.aptos ?? 0)} eleitores aptos, ${_fmt(cargo.comparecimento)} votaram. '
-            'Digite os números do boletim impresso na coluna Papel.',
+            l.secaoTurnout(
+              context.integer(r.aptos ?? 0),
+              context.integer(cargo.comparecimento),
+            ),
             style: t.bodySmall?.copyWith(color: p.inkSecondary),
           ),
           const SizedBox(height: Space.x3),
@@ -321,24 +316,22 @@ class _ResultState extends State<_Result> {
                   border: Border(bottom: BorderSide(color: p.ink, width: 1.5)),
                 ),
                 children: [
-                  for (final h in [
-                    'Candidatura',
-                    'Arquivo',
-                    'Papel',
-                    'Confere',
-                  ])
+                  for (final (i, h) in [
+                    l.secaoColCandidatura,
+                    l.secaoColArquivo,
+                    l.secaoColPapel,
+                    l.secaoColConfere,
+                  ].indexed)
                     Padding(
                       padding: EdgeInsets.only(
                         top: Space.x2,
                         bottom: Space.x2,
-                        right: h == 'Arquivo' ? Space.x4 : 0,
+                        right: i == 1 ? Space.x4 : 0,
                       ),
                       child: Text(
                         h,
                         style: t.labelMedium?.copyWith(color: p.inkSecondary),
-                        textAlign: h == 'Arquivo'
-                            ? TextAlign.end
-                            : TextAlign.start,
+                        textAlign: i == 1 ? TextAlign.end : TextAlign.start,
                       ),
                     ),
                 ],
@@ -353,7 +346,7 @@ class _ResultState extends State<_Result> {
                     Padding(
                       padding: const EdgeInsets.only(right: Space.x4),
                       child: Text(
-                        _fmt(row.votos),
+                        context.integer(row.votos),
                         textAlign: TextAlign.end,
                         style: AtlasType.tableFigure.copyWith(color: p.ink),
                       ),
@@ -368,10 +361,10 @@ class _ResultState extends State<_Result> {
                         ],
                         textAlign: TextAlign.end,
                         style: AtlasType.tableFigure.copyWith(color: p.ink),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           isDense: true,
-                          hintText: 'Papel',
-                          contentPadding: EdgeInsets.symmetric(
+                          hintText: l.secaoPaperHint,
+                          contentPadding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 10,
                           ),
@@ -392,14 +385,12 @@ class _ResultState extends State<_Result> {
           const SizedBox(height: Space.x4),
           if (mismatches.isNotEmpty)
             Text(
-              '${mismatches.length == 1 ? 'Uma linha não confere' : '${mismatches.length} linhas não conferem'}. '
-              'Primeiro confira se digitou o número do papel corretamente. Se a diferença continuar, '
-              'fotografe o boletim afixado e procure o cartório eleitoral da sua zona.',
+              l.secaoMismatch(mismatches.length),
               style: t.bodyMedium?.copyWith(color: p.ink),
             )
           else if (rows.every((row) => _field(row.key).text.isNotEmpty))
             Text(
-              'Todos os números conferem com o arquivo oficial.',
+              l.secaoAllMatch,
               style: t.bodyMedium?.copyWith(color: p.statusValid),
             ),
         ],
@@ -407,52 +398,45 @@ class _ResultState extends State<_Result> {
     );
 
     final files = Plate(
-      title: 'Arquivos da seção',
-      fonte: const FonteLine(
-        plateNumber: 10,
-        source:
-            'Arquivo auxiliar da seção (EA18), boletim de urna e assinaturas da urna, como publicados pelo TSE.',
-      ),
+      title: l.secaoFilesPlate,
+      fonte: FonteLine(plateNumber: 10, source: l.secaoFilesSource),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Wrap(
             spacing: Space.x3,
             runSpacing: Space.x2,
-            children: const [
-              StatusBadge(VerificationStatus.valid, label: 'Hash confere'),
+            children: [
+              StatusBadge(VerificationStatus.valid, label: l.secaoHashMatches),
               StatusBadge(
                 VerificationStatus.pending,
-                label: 'Assinatura não verificada',
+                label: l.secaoSignatureUnverified,
               ),
             ],
           ),
           const SizedBox(height: Space.x3),
           for (final f in r.files) ...[
-            HashRow(label: '${_kindLabel(f.kind)} · SHA-256', hash: f.sha256),
+            HashRow(
+              label: l.secaoHashLabel(_kindLabel(l, f.kind)),
+              hash: f.sha256,
+            ),
             const SizedBox(height: Space.x2),
           ],
           const SizedBox(height: Space.x2),
           Text.rich(
             TextSpan(
               style: t.bodySmall?.copyWith(color: p.inkSecondary),
-              children: const [
+              children: [
                 TextSpan(
-                  text: 'O que isto prova: ',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  text: l.secaoProvesLabel,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
+                TextSpan(text: l.secaoProves),
                 TextSpan(
-                  text:
-                      'o boletim publicado é exatamente o arquivo que a urna listou na sua lista de arquivos assinada. ',
+                  text: l.secaoNotYetLabel,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                TextSpan(
-                  text: 'O que ainda não prova: ',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                TextSpan(
-                  text:
-                      'a assinatura digital da urna sobre essa lista ainda não é verificada pela Urna Aberta. E nada aqui diz algo sobre a urna em si.',
-                ),
+                TextSpan(text: l.secaoNotYet),
               ],
             ),
           ),
@@ -479,18 +463,30 @@ class _ResultState extends State<_Result> {
     );
   }
 
-  static String _label(VotoResult v) => switch (v.tipo) {
-    'branco' => 'Branco',
-    'nulo' => 'Nulo',
-    'legenda' => 'Legenda ${v.numero ?? v.partido}',
-    'cargoSemCandidato' => 'Cargo sem candidatura',
+  static String _label(AppLocalizations l, VotoResult v) => switch (v.tipo) {
+    'branco' => l.secaoVoteBranco,
+    'nulo' => l.secaoVoteNulo,
+    'legenda' => l.secaoVoteLegenda('${v.numero ?? v.partido}'),
+    'cargoSemCandidato' => l.secaoVoteCargoSemCandidato,
     _ => v.nome == null ? '${v.numero}' : '${v.numero} · ${v.nome}',
   };
 
-  static String _kindLabel(String kind) => switch (kind) {
-    'aux' => 'Arquivo auxiliar',
-    'bu' => 'Boletim de urna',
-    'vota' => 'Assinaturas da urna',
+  /// Office names by TSE code; any other office keeps the server's name.
+  static String _cargoNome(AppLocalizations l, CargoResult c) =>
+      switch (c.codigo) {
+        1 => l.secaoCargoPresidente,
+        3 => l.secaoCargoGovernador,
+        5 => l.secaoCargoSenador,
+        6 => l.secaoCargoDeputadoFederal,
+        7 => l.secaoCargoDeputadoEstadual,
+        8 => l.secaoCargoDeputadoDistrital,
+        _ => c.nome,
+      };
+
+  static String _kindLabel(AppLocalizations l, String kind) => switch (kind) {
+    'aux' => l.secaoKindAux,
+    'bu' => l.secaoKindBu,
+    'vota' => l.secaoKindVota,
     _ => kind,
   };
 }
@@ -503,19 +499,21 @@ class _ErrorPlate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    // The server's messages are Portuguese; the type says what happened.
     final message = switch (error) {
-      SectionUnavailableException(:final message) => message,
-      SectionNotFoundException(:final message) => message,
-      _ => 'Não foi possível falar com o servidor da Urna Aberta.',
+      SectionUnavailableException() => l.secaoErrorUnavailable,
+      SectionNotFoundException() => l.secaoErrorNotFound,
+      _ => l.secaoErrorServer,
     };
     return Plate(
-      title: 'Não foi possível buscar a seção',
+      title: l.secaoErrorTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(message, style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: Space.x4),
-          FilledButton(onPressed: onRetry, child: const Text('Tentar de novo')),
+          FilledButton(onPressed: onRetry, child: Text(l.secaoRetry)),
         ],
       ),
     );
@@ -541,7 +539,7 @@ class _Match extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          ok ? 'Sim' : 'Não',
+          ok ? context.l10n.secaoMatchYes : context.l10n.secaoMatchNo,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(color: c),
         ),
       ],
@@ -679,7 +677,7 @@ class _PickerField extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: CupertinoButton(
-                  child: const Text('OK'),
+                  child: Text(context.l10n.secaoWheelOk),
                   onPressed: () {
                     onChanged(options[picked]);
                     Navigator.of(ctx).pop();
@@ -788,7 +786,7 @@ class _OptionListState extends State<_OptionList> {
     // Keyboard straight away on web/desktop; on touch devices the user
     // may just want to scroll.
     final autofocus = isWideLayout(context);
-    final hint = 'Buscar ${widget.label.toLowerCase()}';
+    final hint = context.l10n.secaoSearchHint(widget.label.toLowerCase());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -831,7 +829,7 @@ class _OptionListState extends State<_OptionList> {
               ? Padding(
                   padding: const EdgeInsets.all(Space.x5),
                   child: Text(
-                    'Nada encontrado para “$_query”.',
+                    context.l10n.secaoNothingFound(_query),
                     style: t.bodyMedium?.copyWith(
                       color: context.atlas.inkMuted,
                     ),

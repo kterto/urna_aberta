@@ -6,6 +6,7 @@ import 'package:urna_aberta_flutter/secao/secao_controller.dart';
 SectionReport sampleReport({
   BuCheck check = BuCheck.matches,
   String status = 'Totalizada',
+  int aptos = 289,
 }) => SectionReport(
   uf: 'ac',
   municipio: 1066,
@@ -19,7 +20,7 @@ SectionReport sampleReport({
   abertura: '2026-10-04T06:06:52',
   encerramento: '2026-10-04T15:40:41',
   local: 1031,
-  aptos: 289,
+  aptos: aptos,
   comparecimento: 234,
   buCheck: check,
   signatureVerified: false,

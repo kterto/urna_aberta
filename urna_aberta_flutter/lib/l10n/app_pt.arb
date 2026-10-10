@@ -1,0 +1,565 @@
+{
+  "@@locale": "pt",
+  "atlasPlate": "Prancha {number}",
+  "@atlasPlate": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "atlasFile": "Arquivo {code}",
+  "@atlasFile": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "atlasOpenFile": "Abrir arquivo {code}",
+  "@atlasOpenFile": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "atlasSimulation": "Simulação",
+  "atlasSimulationSemantics": "{label}: dados não oficiais",
+  "@atlasSimulationSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "atlasSignatureValid": "Assinatura válida",
+  "atlasSignatureInvalid": "Assinatura inválida",
+  "atlasNotVerified": "Não verificado",
+  "atlasLearnWhy": "Entenda por quê",
+  "atlasDivergenceTitle": "A divulgação nacional está atrás dos estados.",
+  "atlasDivergenceBody": "A contagem continua: os arquivos por UF seguem sendo atualizados.",
+  "atlasCopyHash": "Copiar hash",
+  "atlasHashCopied": "Hash copiado",
+  "replayPause": "Pausar replay",
+  "replayPlay": "Reproduzir replay",
+  "replayClock": "Relógio do replay {clock}",
+  "@replayClock": {
+    "placeholders": {
+      "clock": {
+        "type": "String"
+      }
+    }
+  },
+  "replayJumpToFreeze": "Ir para a pausa",
+  "replaySimulated": "Replay simulado",
+  "mapTitle": "Seções totalizadas por UF",
+  "mapSimulationAt": "Simulação · {moment}",
+  "@mapSimulationAt": {
+    "placeholders": {
+      "moment": {
+        "type": "String"
+      }
+    }
+  },
+  "mapSource": "Malhas: IBGE. Dados: TSE, EA20 por UF. Escala aproximada.",
+  "mapLayerRegions": "Regiões",
+  "mapLayerCounted": "Seções totalizadas",
+  "mapShowMap": "Ver mapa",
+  "mapShowTable": "Ver em tabela",
+  "mapClearSelection": "Limpar seleção",
+  "mapUfCount": "{count} UF",
+  "@mapUfCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapUfUpdated": "{region} · atualizado {moment}",
+  "@mapUfUpdated": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "moment": {
+        "type": "String"
+      }
+    }
+  },
+  "mapCountedCaption": "seções totalizadas",
+  "mapHint": "Toque em um estado ou em uma chave da legenda.",
+  "mapNoUfInBand": "Nenhuma UF nesta faixa",
+  "mapAverageCaption": "média simples das UFs",
+  "mapColumnRegion": "Região",
+  "mapColumnCounted": "% seções totalizadas",
+  "mapColumnFile": "Arquivo",
+  "mapLongitudeWest": "{degrees}°O",
+  "@mapLongitudeWest": {
+    "placeholders": {
+      "degrees": {
+        "type": "int"
+      }
+    }
+  },
+  "mapLatitudeSouth": "{degrees}°S",
+  "@mapLatitudeSouth": {
+    "placeholders": {
+      "degrees": {
+        "type": "int"
+      }
+    }
+  },
+  "mapTropic": "Trópico de Capricórnio",
+  "mapEquator": "Equador",
+  "mapUfSemantics": "{uf}, {region}, {pct} das seções totalizadas",
+  "@mapUfSemantics": {
+    "placeholders": {
+      "uf": {
+        "type": "String"
+      },
+      "region": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "chartNationalFileTse": "Arquivo nacional do TSE",
+  "chartNationalFile": "Arquivo nacional",
+  "chartStatesSum": "Soma dos estados",
+  "chartDuoSemantics": "Arquivo nacional do TSE {national} por cento; soma dos estados {states} por cento",
+  "@chartDuoSemantics": {
+    "placeholders": {
+      "national": {
+        "type": "String"
+      },
+      "states": {
+        "type": "String"
+      }
+    }
+  },
+  "chartDifference": "Diferença: ",
+  "chartPoints": "{value} p.p.",
+  "@chartPoints": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "chartDifferenceOf": " de seções totalizadas",
+  "chartVotesSemantics": "Votos por candidatura nas duas fontes",
+  "chartRowSemantics": "{label}: {national} no arquivo nacional, {states} na soma dos estados",
+  "@chartRowSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "national": {
+        "type": "String"
+      },
+      "states": {
+        "type": "String"
+      }
+    }
+  },
+  "chartTimelineSemantics": "Linha do tempo das duas fontes. Use as setas para explorar.",
+  "chartTimelinePointSemantics": "{time}: arquivo nacional {national}, soma dos estados {states}",
+  "@chartTimelinePointSemantics": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "national": {
+        "type": "String"
+      },
+      "states": {
+        "type": "String"
+      }
+    }
+  },
+  "chartNationalFrozenSuffix": " · nacional parado",
+  "chartFreezeBand": "Nacional parado · {minutes} min",
+  "@chartFreezeBand": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "chartHourTick": "{hour}h",
+  "@chartHourTick": {
+    "placeholders": {
+      "hour": {
+        "type": "int"
+      }
+    }
+  },
+  "chartUfSemantics": "{uf}: {pct} das seções totalizadas",
+  "@chartUfSemantics": {
+    "placeholders": {
+      "uf": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "apuracaoHeadline": "A contagem não parou.",
+  "apuracaoLede": "Presidente, 1º turno. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Cada número leva ao arquivo de onde veio.",
+  "apuracaoDesignSystem": "Sistema de design",
+  "apuracaoDuoTitle": "Comparação das duas fontes · Presidente",
+  "apuracaoDuoSource": "% de seções totalizadas. Fonte: TSE. Soma calculada pela Urna Aberta.",
+  "apuracaoFrozenSince": "parado desde {time}",
+  "@apuracaoFrozenSince": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "apuracaoUpdatedAt": "atualizado {time}",
+  "@apuracaoUpdatedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "apuracaoVotesTitle": "Votos por candidatura, nas duas fontes",
+  "apuracaoVotesSourceSynthetic": "Mesma tinta para todas as candidaturas. Votos intermediários proporcionais aos arquivos finais do TSE.",
+  "apuracaoVotesSource": "Mesma tinta para todas as candidaturas. Fonte: TSE.",
+  "apuracaoTimelineTitle": "A noite de 4 de outubro",
+  "apuracaoTimelineSource": "Curva sintética que termina nos arquivos finais reais do TSE, com a pausa nacional de {pct} simulada.",
+  "@apuracaoTimelineSource": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "apuracaoCandidateNumber": "Número {number}",
+  "@apuracaoCandidateNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "apuracaoReplayUnavailable": "Os arquivos do 1º turno ainda não foram carregados no servidor.",
+  "apuracaoServerUnreachable": "Não foi possível falar com o servidor da Urna Aberta.",
+  "apuracaoRetry": "Tentar de novo",
+  "navApuracao": "Apuração",
+  "navSecao": "Minha seção",
+  "navVerificar": "Verificar",
+  "navEntenda": "Entenda",
+  "navSistema": "Sistema",
+  "themeLight": "Claro",
+  "themeSystem": "Sistema",
+  "themeDark": "Escuro",
+  "language": "Idioma",
+  "languageDevice": "Do aparelho",
+  "languagePortuguese": "Português",
+  "languageEnglish": "English",
+  "entendaTitle": "Entenda o processo",
+  "entendaLede": "Capítulos curtos sobre como o resultado sai da urna e chega até você. Cada afirmação cita uma fonte oficial do TSE.",
+  "entendaCh1Title": "O caminho do voto",
+  "entendaCh1Summary": "Da urna ao boletim afixado, da transmissão à divulgação.",
+  "entendaCh2Title": "O Boletim de Urna",
+  "entendaCh2Summary": "O que ele contém, por que é público e como conferir.",
+  "entendaCh3Title": "Os arquivos da urna",
+  "entendaCh3Summary": "BU, RDV e log: para que serve cada um.",
+  "entendaCh4Title": "Assinaturas e hashes",
+  "entendaCh4Summary": "O que as verificações deste app realmente checam.",
+  "entendaCh5Title": "Protocolos de segurança",
+  "entendaCh5Summary": "Testes públicos, cerimônias e inspeção do código.",
+  "entendaCh6Title": "4 de outubro de 2026",
+  "entendaCh6Summary": "O que parou, o que não parou, e como o replay mostra isso.",
+  "entendaCh7Title": "O que este app prova",
+  "entendaCh7Summary": "E, com a mesma clareza, o que ele não prova.",
+  "entendaChapterLabel": "Capítulo {number}",
+  "@entendaChapterLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "entendaDraftStamp": "Rascunho · revisar fontes",
+  "entendaPausePara1": "Na noite de 4 de outubro de 2026, a página nacional de resultados para Presidente ficou parada em 64,81% por cerca de 50 a 60 minutos. Depois, saltou para perto de 84%.",
+  "entendaPausePara2": "Segundo o TSE, um gargalo no processamento travou o módulo que gera os arquivos de publicação \"Brasil\". Os arquivos de cada estado continuaram sendo atualizados normalmente durante todo o tempo.",
+  "entendaPauseCallout": "Totalização é a contagem oficial. Divulgação é a publicação dessa contagem. O que parou foi a divulgação nacional.",
+  "entendaPausePara3": "Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay: as duas fontes lado a lado.",
+  "entendaInProduction": "Este capítulo está em produção. O texto será escrito a partir das fontes oficiais do TSE e revisado em português e inglês.",
+  "entendaSources": "Fontes",
+  "entendaSourceDivulgacao": "TSE · Informações técnicas sobre a divulgação de resultados",
+  "secaoTitle": "Minha seção",
+  "secaoLede": "Encontre o Boletim de Urna oficial da sua seção e compare com o boletim impresso e afixado no local de votação.",
+  "secaoFieldUf": "UF",
+  "secaoUfExterior": "Exterior",
+  "secaoFieldMunicipio": "Município",
+  "secaoFieldZona": "Zona",
+  "secaoFieldSecao": "Seção",
+  "secaoLoadingMunicipios": "Carregando municípios…",
+  "secaoLoadingZonas": "Carregando zonas…",
+  "secaoLoadingSecoes": "Carregando seções…",
+  "secaoLocatePlate": "Localizar seção",
+  "secaoFormHint": "Zona e seção estão no seu título de eleitor ou no e-Título. A lista vem do arquivo de seções do TSE.",
+  "secaoSearchButton": "Buscar boletim de urna",
+  "secaoSearchingTse": "Buscando os arquivos da seção no TSE…",
+  "secaoSectionTitle": "Seção {zona}/{secao}, {municipio}",
+  "@secaoSectionTitle": {
+    "placeholders": {
+      "zona": {
+        "type": "String"
+      },
+      "secao": {
+        "type": "String"
+      },
+      "municipio": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoNotPublished": "O TSE ainda não publicou os arquivos desta seção. Volte depois do envio da urna.",
+  "secaoNoBu": "O TSE publicou a seção ({status}), mas sem boletim de urna para conferir.",
+  "@secaoNoBu": {
+    "description": "status is TSE's own status word, e.g. Totalizada",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoHashMismatch": "Hash não confere",
+  "secaoBuDiffers": "O boletim recebido não confere com a lista de arquivos assinada pela urna. Os votos não são exibidos.",
+  "secaoBuNotListed": "A urna não listou este boletim entre os arquivos que assinou. Os votos não são exibidos.",
+  "secaoListingAltered": "A lista de arquivos da urna não confere com o que ela assinou. Os votos não são exibidos.",
+  "secaoComparePlate": "Boletim de Urna: arquivo vs papel",
+  "secaoCompareSource": "Seção {zona}/{secao}, {municipio} ({uf}). Boletim emitido às {emitido} (relógio da urna); recebido pelo TSE às {recebido} (Brasília).",
+  "@secaoCompareSource": {
+    "placeholders": {
+      "zona": {
+        "type": "String"
+      },
+      "secao": {
+        "type": "String"
+      },
+      "municipio": {
+        "type": "String"
+      },
+      "uf": {
+        "type": "String"
+      },
+      "emitido": {
+        "type": "String"
+      },
+      "recebido": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoTurnout": "{aptos} eleitores aptos, {votaram} votaram. Digite os números do boletim impresso na coluna Papel.",
+  "@secaoTurnout": {
+    "description": "Both numbers are already formatted.",
+    "placeholders": {
+      "aptos": {
+        "type": "String"
+      },
+      "votaram": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoColCandidatura": "Candidatura",
+  "secaoColArquivo": "Arquivo",
+  "secaoColPapel": "Papel",
+  "secaoColConfere": "Confere",
+  "secaoPaperHint": "Papel",
+  "secaoMismatch": "{count, plural, =1{Uma linha não confere} other{{count} linhas não conferem}}. Primeiro confira se digitou o número do papel corretamente. Se a diferença continuar, fotografe o boletim afixado e procure o cartório eleitoral da sua zona.",
+  "@secaoMismatch": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secaoAllMatch": "Todos os números conferem com o arquivo oficial.",
+  "secaoFilesPlate": "Arquivos da seção",
+  "secaoFilesSource": "Arquivo auxiliar da seção (EA18), boletim de urna e assinaturas da urna, como publicados pelo TSE.",
+  "secaoHashMatches": "Hash confere",
+  "secaoSignatureUnverified": "Assinatura não verificada",
+  "secaoHashLabel": "{kind} · SHA-256",
+  "@secaoHashLabel": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoKindAux": "Arquivo auxiliar",
+  "secaoKindBu": "Boletim de urna",
+  "secaoKindVota": "Assinaturas da urna",
+  "secaoProvesLabel": "O que isto prova: ",
+  "secaoProves": "o boletim publicado é exatamente o arquivo que a urna listou na sua lista de arquivos assinada. ",
+  "secaoNotYetLabel": "O que ainda não prova: ",
+  "secaoNotYet": "a assinatura digital da urna sobre essa lista ainda não é verificada pela Urna Aberta. E nada aqui diz algo sobre a urna em si.",
+  "secaoVoteBranco": "Branco",
+  "secaoVoteNulo": "Nulo",
+  "secaoVoteLegenda": "Legenda {numero}",
+  "@secaoVoteLegenda": {
+    "placeholders": {
+      "numero": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoVoteCargoSemCandidato": "Cargo sem candidatura",
+  "secaoCargoPresidente": "Presidente",
+  "secaoCargoGovernador": "Governador",
+  "secaoCargoSenador": "Senador",
+  "secaoCargoDeputadoFederal": "Deputado Federal",
+  "secaoCargoDeputadoEstadual": "Deputado Estadual",
+  "secaoCargoDeputadoDistrital": "Deputado Distrital",
+  "secaoErrorTitle": "Não foi possível buscar a seção",
+  "secaoErrorNotFound": "O TSE não lista esta seção. Confira a zona e a seção no seu título de eleitor.",
+  "secaoErrorUnavailable": "O TSE não respondeu agora ou publicou um arquivo que não pôde ser lido. Tente de novo mais tarde.",
+  "secaoErrorServer": "Não foi possível falar com o servidor da Urna Aberta.",
+  "secaoRetry": "Tentar de novo",
+  "secaoMatchYes": "Sim",
+  "secaoMatchNo": "Não",
+  "secaoWheelOk": "OK",
+  "secaoSearchHint": "Buscar {field}",
+  "@secaoSearchHint": {
+    "description": "field is the picker's label in lowercase",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "secaoNothingFound": "Nada encontrado para “{query}”.",
+  "@secaoNothingFound": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "ufBrasil": "Brasil",
+  "ufExterior": "Exterior",
+  "verificarTitle": "Verificar",
+  "verificarLede": "O TSE assina cada arquivo de resultado que publica. A Urna Aberta confere a assinatura ao guardar o arquivo, e este aparelho pode conferir de novo por conta própria, sem confiar no nosso servidor.",
+  "verificarOfficePresidente": "Presidente",
+  "verificarOfficeGovernador": "Governador",
+  "verificarOfficeSenador": "Senador",
+  "verificarSummaryTitle": "Assinaturas dos arquivos de resultado",
+  "verificarSummarySource": "Assinatura JWS (EdDSA, Ed25519) conforme o Manual de verificação dos arquivos JWS do TSE. Chave pública do ambiente oficial, Apêndice B.",
+  "verificarFilesStored": "arquivos guardados",
+  "verificarValidOnServer": "válidos no servidor",
+  "verificarValidOnDevice": "válidos neste aparelho",
+  "verificarCheckedHere": "conferidos aqui",
+  "verificarDeviceBad": "{count, plural, =1{Um arquivo não confere neste aparelho. Não use os números dele.} other{{count} arquivos não conferem neste aparelho. Não use os números deles.}}",
+  "@verificarDeviceBad": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verificarAllChecked": "Todos conferidos neste aparelho",
+  "verificarCheckOnDevice": "Conferir neste aparelho",
+  "verificarChecking": "Conferindo {done} de {total}…",
+  "@verificarChecking": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "verificarCheckExplain": "Baixa cada arquivo assinado e confere a assinatura com a chave do TSE que vem dentro do app.",
+  "verificarGroupTitle": "{office} · {count, plural, =1{1 arquivo} other{{count} arquivos}}",
+  "@verificarGroupTitle": {
+    "placeholders": {
+      "office": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "verificarGroupSource": "Arquivos finais do TSE, o mais recente gerado em {when} (Brasília).",
+  "@verificarGroupSource": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "verificarColumnServer": "No servidor",
+  "verificarColumnDevice": "Neste aparelho",
+  "verificarGenerated": "gerado {when}",
+  "@verificarGenerated": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "verificarOnServer": "Servidor: {status}",
+  "@verificarOnServer": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "verificarOnDevice": "Aparelho: {status}",
+  "@verificarOnDevice": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "verificarStatusValid": "assinatura válida",
+  "verificarStatusInvalid": "assinatura inválida",
+  "verificarStatusUnknownKey": "chave desconhecida",
+  "verificarStatusUnsigned": "sem assinatura",
+  "verificarStatusChecking": "conferindo…",
+  "verificarStatusDownloadFailed": "não foi possível baixar",
+  "verificarStatusDifferentFile": "outro arquivo",
+  "verificarStatusUnreadable": "arquivo ilegível",
+  "verificarStatusNotChecked": "não conferido",
+  "verificarYourselfTitle": "Confira você mesmo",
+  "verificarYourselfSource": "Chave: TSE, Manual de verificação dos arquivos JWS, Apêndice B. Receita testada com OpenSSL 3 em 10/10/2026.",
+  "verificarYourselfIntro": "Não precisa confiar na Urna Aberta. Cada arquivo .jws traz o próprio conteúdo e a assinatura do TSE; com a chave pública abaixo, qualquer computador confere.",
+  "verificarKeyId": "Chave (kid)",
+  "verificarStep1": "Baixe um arquivo .jws pelo link de qualquer linha acima (o mesmo nome do .json, com outra terminação).",
+  "verificarStep2": "Salve a chave abaixo como tse.pem.",
+  "verificarStep3": "Rode os comandos no terminal. \"Signature Verified Successfully\" quer dizer que confere; conteudo.json é o arquivo que o TSE assinou.",
+  "verificarTerminal": "Terminal (macOS ou Linux)",
+  "verificarKeyNote": "A chave fica dentro do app e do servidor, nunca é lida do próprio arquivo: uma chave que viesse junto com o arquivo não provaria nada.",
+  "verificarCopy": "Copiar",
+  "verificarCopied": "Copiado",
+  "verificarMeaningTitle": "O que cada estado significa",
+  "verificarMeaningValidLabel": "Assinatura válida",
+  "verificarMeaningValid": "O arquivo é exatamente o que o TSE assinou: veio do TSE e não foi alterado no caminho.",
+  "verificarMeaningInvalidLabel": "Assinatura inválida",
+  "verificarMeaningInvalid": "A assinatura não confere com o conteúdo. Não use estes números.",
+  "verificarMeaningDifferentLabel": "Outro arquivo",
+  "verificarMeaningDifferent": "A assinatura confere, mas o arquivo não é o que o servidor da Urna Aberta disse ter usado.",
+  "verificarMeaningNotCheckedLabel": "Não conferido",
+  "verificarMeaningNotChecked": "Este aparelho ainda não conferiu o arquivo. O resultado do servidor continua valendo, mas depende de você confiar nele.",
+  "verificarProves": "A assinatura prova a origem e a integridade do arquivo publicado. Ela não prova nada sobre o funcionamento da urna nem sobre a totalização.",
+  "verificarUrnaNote": "Os arquivos de cada urna (boletim de urna) têm outra assinatura, conferida em Minha seção pelo hash; a assinatura da própria urna ainda não é verificada pela Urna Aberta.",
+  "verificarLoadError": "Não foi possível falar com o servidor da Urna Aberta.",
+  "verificarRetry": "Tentar de novo"
+}

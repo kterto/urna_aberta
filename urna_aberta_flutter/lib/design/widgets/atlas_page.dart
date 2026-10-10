@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/language_menu.dart';
 import '../platform.dart';
 import '../tokens.dart';
 
@@ -32,6 +33,8 @@ class AtlasPage extends StatelessWidget {
     final kind = shellKindOf(context);
     final wide = isWideLayout(context);
     final gutter = wide ? Space.x6 : Space.x4;
+    // The web masthead has its own language switch.
+    final barActions = [...actions, const LanguageMenu()];
 
     Widget content(List<Widget> extra) => SliverPadding(
       padding: EdgeInsets.fromLTRB(gutter, 0, gutter, Space.x8),
@@ -88,13 +91,11 @@ class AtlasPage extends StatelessWidget {
             largeTitle: Text(title),
             backgroundColor: p.paper.withValues(alpha: 0.92),
             border: Border(bottom: BorderSide(color: p.rule, width: 0.5)),
-            trailing: actions.isEmpty
-                ? null
-                : Row(mainAxisSize: MainAxisSize.min, children: actions),
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: barActions),
           )
         : SliverAppBar.large(
             title: Text(title),
-            actions: actions,
+            actions: barActions,
             backgroundColor: p.paper,
           );
 

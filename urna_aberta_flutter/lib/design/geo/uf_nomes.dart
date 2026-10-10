@@ -1,3 +1,5 @@
+import '../../l10n/l10n.dart';
+
 /// UF names by TSE's lowercase code, from IBGE (`assets/geo/brasil_uf.json`).
 const ufNomes = {
   'ac': 'Acre',
@@ -27,9 +29,12 @@ const ufNomes = {
   'se': 'Sergipe',
   'sp': 'São Paulo',
   'to': 'Tocantins',
-  'zz': 'Exterior',
 };
 
-/// `br` → Brasil, a UF code → its name.
-String scopeNome(String code) =>
-    code == 'br' ? 'Brasil' : ufNomes[code] ?? code.toUpperCase();
+/// `br` → Brasil / Brazil, `zz` → Exterior / Abroad; UF names are proper
+/// names and stay in Portuguese.
+String scopeNome(String code, AppLocalizations l) => switch (code) {
+  'br' => l.ufBrasil,
+  'zz' => l.ufExterior,
+  _ => ufNomes[code] ?? code.toUpperCase(),
+};

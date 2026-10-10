@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../design/platform.dart';
 import '../design/tokens.dart';
+import '../l10n/l10n.dart';
 import '../screens/apuracao_screen.dart';
 import '../screens/entenda_screen.dart';
 import '../screens/secao_screen.dart';
@@ -11,17 +12,19 @@ import '../showcase/design_system_screen.dart';
 import 'app.dart';
 
 class Destination {
-  const Destination(this.label, this.icon);
+  const Destination(this._label, this.icon);
 
-  final String label;
+  final String Function(AppLocalizations) _label;
   final IconData Function(BuildContext) icon;
+
+  String label(BuildContext context) => _label(context.l10n);
 }
 
 final destinations = <Destination>[
-  const Destination('Apuração', AtlasIcons.apuracao),
-  const Destination('Minha seção', AtlasIcons.secao),
-  const Destination('Verificar', AtlasIcons.verificar),
-  const Destination('Entenda', AtlasIcons.entenda),
+  Destination((l) => l.navApuracao, AtlasIcons.apuracao),
+  Destination((l) => l.navSecao, AtlasIcons.secao),
+  Destination((l) => l.navVerificar, AtlasIcons.verificar),
+  Destination((l) => l.navEntenda, AtlasIcons.entenda),
 ];
 
 /// Lets any screen switch the top-level section (e.g. banner → Entenda).
@@ -99,7 +102,7 @@ class _AppShellState extends State<AppShell> {
                 for (final d in destinations)
                   NavigationRailDestination(
                     icon: Icon(d.icon(context)),
-                    label: Text(d.label),
+                    label: Text(d.label(context)),
                   ),
               ],
             ),
@@ -119,7 +122,7 @@ class _AppShellState extends State<AppShell> {
             for (final d in destinations)
               BottomNavigationBarItem(
                 icon: Icon(d.icon(context)),
-                label: d.label,
+                label: d.label(context),
               ),
           ],
         ),
@@ -133,7 +136,10 @@ class _AppShellState extends State<AppShell> {
         onDestinationSelected: _go,
         destinations: [
           for (final d in destinations)
-            NavigationDestination(icon: Icon(d.icon(context)), label: d.label),
+            NavigationDestination(
+              icon: Icon(d.icon(context)),
+              label: d.label(context),
+            ),
         ],
       ),
     );
@@ -227,7 +233,6 @@ class _Masthead extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
-    final t = Theme.of(context).textTheme;
     return Material(
       color: p.shell,
       child: SafeArea(
@@ -246,12 +251,12 @@ class _Masthead extends StatelessWidget {
                   const Spacer(),
                   for (var i = 0; i < destinations.length; i++)
                     _MastLink(
-                      label: destinations[i].label,
+                      label: destinations[i].label(context),
                       selected: i == index,
                       onTap: () => onSelect(i),
                     ),
                   _MastLink(
-                    label: 'Sistema',
+                    label: context.l10n.navSistema,
                     selected: false,
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -262,43 +267,23 @@ class _Masthead extends StatelessWidget {
                   const SizedBox(width: Space.x4),
                   ValueListenableBuilder<ThemeMode>(
                     valueListenable: themeModeNotifier,
-                    builder: (context, mode, _) => SegmentedButton<ThemeMode>(
-                      showSelectedIcon: false,
-                      style: ButtonStyle(
-                        visualDensity: VisualDensity.compact,
-                        side: WidgetStatePropertyAll(
-                          BorderSide(color: p.onShell.withValues(alpha: 0.3)),
-                        ),
-                        backgroundColor: WidgetStateProperty.resolveWith(
-                          (s) => s.contains(WidgetState.selected)
-                              ? p.onShell
-                              : Colors.transparent,
-                        ),
-                        foregroundColor: WidgetStateProperty.resolveWith(
-                          (s) => s.contains(WidgetState.selected)
-                              ? p.shell
-                              : p.onShellMuted,
-                        ),
-                        textStyle: WidgetStatePropertyAll(t.labelSmall),
-                      ),
-                      segments: const [
-                        ButtonSegment(
-                          value: ThemeMode.light,
-                          label: Text('Claro'),
-                        ),
-                        ButtonSegment(
-                          value: ThemeMode.system,
-                          label: Text('Sistema'),
-                        ),
-                        ButtonSegment(
-                          value: ThemeMode.dark,
-                          label: Text('Escuro'),
-                        ),
+                    builder: (context, mode, _) => _MastSegmented<ThemeMode>(
+                      segments: [
+                        (ThemeMode.light, context.l10n.themeLight),
+                        (ThemeMode.system, context.l10n.themeSystem),
+                        (ThemeMode.dark, context.l10n.themeDark),
                       ],
-                      selected: {mode},
-                      onSelectionChanged: (s) =>
-                          themeModeNotifier.value = s.first,
+                      selected: mode,
+                      onSelected: (m) => themeModeNotifier.value = m,
                     ),
+                  ),
+                  const SizedBox(width: Space.x2),
+                  // Device language until the viewer picks one.
+                  _MastSegmented<String>(
+                    segments: const [('pt', 'PT'), ('en', 'EN')],
+                    selected: Localizations.localeOf(context).languageCode,
+                    onSelected: (code) => localeNotifier.value = Locale(code),
+                    semanticsLabel: context.l10n.language,
                   ),
                 ],
               ),
@@ -307,6 +292,52 @@ class _Masthead extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _MastSegmented<T extends Object> extends StatelessWidget {
+  const _MastSegmented({
+    required this.segments,
+    required this.selected,
+    required this.onSelected,
+    this.semanticsLabel,
+  });
+
+  final List<(T, String)> segments;
+  final T selected;
+  final ValueChanged<T> onSelected;
+  final String? semanticsLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.atlas;
+    final t = Theme.of(context).textTheme;
+    final control = SegmentedButton<T>(
+      showSelectedIcon: false,
+      style: ButtonStyle(
+        visualDensity: VisualDensity.compact,
+        side: WidgetStatePropertyAll(
+          BorderSide(color: p.onShell.withValues(alpha: 0.3)),
+        ),
+        backgroundColor: WidgetStateProperty.resolveWith(
+          (s) =>
+              s.contains(WidgetState.selected) ? p.onShell : Colors.transparent,
+        ),
+        foregroundColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? p.shell : p.onShellMuted,
+        ),
+        textStyle: WidgetStatePropertyAll(t.labelSmall),
+      ),
+      segments: [
+        for (final (value, label) in segments)
+          ButtonSegment(value: value, label: Text(label)),
+      ],
+      selected: {selected},
+      onSelectionChanged: (s) => onSelected(s.first),
+    );
+    return semanticsLabel == null
+        ? control
+        : Semantics(label: semanticsLabel, child: control);
   }
 }
 

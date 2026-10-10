@@ -8,7 +8,8 @@ import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
-import '../replay/replay_controller.dart' show brasilia;
+import '../l10n/format.dart';
+import '../l10n/l10n.dart';
 import '../verificar/device_check.dart';
 import '../verificar/verificar_controller.dart';
 
@@ -39,23 +40,23 @@ class _VerificarScreenState extends State<VerificarScreen> {
   @override
   Widget build(BuildContext context) {
     final c = _c!;
+    final l = context.l10n;
     return ListenableBuilder(
       listenable: c,
       builder: (context, _) => AtlasPage(
-        title: 'Verificar',
-        lede:
-            'O TSE assina cada arquivo de resultado que publica. A Urna Aberta confere a assinatura ao guardar o arquivo, e este aparelho pode conferir de novo por conta própria, sem confiar no nosso servidor.',
+        title: l.verificarTitle,
+        lede: l.verificarLede,
         maxWidth: 1040,
         children: [
           if (c.files case final files?) ...[
             _Summary(controller: c, files: files),
             const SizedBox(height: Space.x5),
-            for (final (code, nome) in const [
-              (1, 'Presidente'),
-              (3, 'Governador'),
-              (5, 'Senador'),
+            for (final (code, nome) in [
+              (1, l.verificarOfficePresidente),
+              (3, l.verificarOfficeGovernador),
+              (5, l.verificarOfficeSenador),
             ])
-              if (_byName(files.where((f) => f.officeCode == code))
+              if (_byName(files.where((f) => f.officeCode == code), l)
                   case final group when group.isNotEmpty) ...[
                 _FilesPlate(title: nome, files: group, controller: c),
                 const SizedBox(height: Space.x5),
@@ -77,7 +78,10 @@ class _VerificarScreenState extends State<VerificarScreen> {
 }
 
 /// Brasil first, then UFs by name, exterior last.
-List<FileVerification> _byName(Iterable<FileVerification> files) {
+List<FileVerification> _byName(
+  Iterable<FileVerification> files,
+  AppLocalizations l,
+) {
   int rank(String c) => switch (c) {
     'br' => 0,
     'zz' => 2,
@@ -87,14 +91,8 @@ List<FileVerification> _byName(Iterable<FileVerification> files) {
     final r = rank(a.scopeCode).compareTo(rank(b.scopeCode));
     return r != 0
         ? r
-        : scopeNome(a.scopeCode).compareTo(scopeNome(b.scopeCode));
+        : scopeNome(a.scopeCode, l).compareTo(scopeNome(b.scopeCode, l));
   });
-}
-
-String _when(DateTime utc) {
-  final b = brasilia(utc);
-  String two(int v) => v.toString().padLeft(2, '0');
-  return '${two(b.day)}/${two(b.month)} ${two(b.hour)}:${two(b.minute)}';
 }
 
 class _Summary extends StatelessWidget {
@@ -106,6 +104,7 @@ class _Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = controller;
+    final l = context.l10n;
     final t = Theme.of(context).textTheme;
     final p = context.atlas;
     final serverValid = files
@@ -129,12 +128,8 @@ class _Summary extends StatelessWidget {
     );
 
     return Plate(
-      title: 'Assinaturas dos arquivos de resultado',
-      fonte: const FonteLine(
-        plateNumber: 11,
-        source:
-            'Assinatura JWS (EdDSA, Ed25519) conforme o Manual de verificação dos arquivos JWS do TSE. Chave pública do ambiente oficial, Apêndice B.',
-      ),
+      title: l.verificarSummaryTitle,
+      fonte: FonteLine(plateNumber: 11, source: l.verificarSummarySource),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -142,20 +137,18 @@ class _Summary extends StatelessWidget {
             spacing: Space.x6,
             runSpacing: Space.x4,
             children: [
-              figure('${files.length}', 'arquivos guardados'),
-              figure('$serverValid', 'válidos no servidor'),
+              figure(context.integer(files.length), l.verificarFilesStored),
+              figure(context.integer(serverValid), l.verificarValidOnServer),
               figure(
-                '$deviceValid',
-                allChecked ? 'válidos neste aparelho' : 'conferidos aqui',
+                context.integer(deviceValid),
+                allChecked ? l.verificarValidOnDevice : l.verificarCheckedHere,
               ),
             ],
           ),
           const SizedBox(height: Space.x4),
           if (deviceBad > 0) ...[
             Text(
-              deviceBad == 1
-                  ? 'Um arquivo não confere neste aparelho. Não use os números dele.'
-                  : '$deviceBad arquivos não conferem neste aparelho. Não use os números deles.',
+              l.verificarDeviceBad(deviceBad),
               style: t.bodyMedium?.copyWith(
                 color: p.status(VerificationStatus.invalid),
               ),
@@ -169,8 +162,8 @@ class _Summary extends StatelessWidget {
                   onPressed: c.checkingAll || allChecked ? null : c.checkAll,
                   child: Text(
                     allChecked
-                        ? 'Todos conferidos neste aparelho'
-                        : 'Conferir neste aparelho',
+                        ? l.verificarAllChecked
+                        : l.verificarCheckOnDevice,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -184,7 +177,10 @@ class _Summary extends StatelessWidget {
                   child: Semantics(
                     liveRegion: true,
                     child: Text(
-                      'Conferindo ${c.checkedCount} de ${files.length}…',
+                      l.verificarChecking(
+                        context.integer(c.checkedCount),
+                        context.integer(files.length),
+                      ),
                       style: t.bodySmall?.copyWith(color: p.inkMuted),
                     ),
                   ),
@@ -194,7 +190,7 @@ class _Summary extends StatelessWidget {
           ),
           const SizedBox(height: Space.x2),
           Text(
-            'Baixa cada arquivo assinado e confere a assinatura com a chave do TSE que vem dentro do app.',
+            l.verificarCheckExplain,
             style: t.bodySmall?.copyWith(color: p.inkMuted),
           ),
         ],
@@ -217,6 +213,7 @@ class _FilesPlate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
+    final l = context.l10n;
     final t = Theme.of(context).textTheme;
     final wide = isWideLayout(context);
     final generated = files
@@ -225,14 +222,14 @@ class _FilesPlate extends StatelessWidget {
           (a, b) => a.isAfter(b) ? a : b,
         );
     return Plate(
-      title: '$title · ${files.length} arquivos',
+      title: l.verificarGroupTitle(title, files.length),
       padding: EdgeInsets.zero,
       fonte: FonteLine(
         plateNumber: 12,
-        source:
-            'Arquivos finais do TSE, o mais recente gerado em ${_when(generated)} (Brasília).',
+        source: l.verificarGroupSource(context.dayHm(generated)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (wide)
             Padding(
@@ -245,7 +242,10 @@ class _FilesPlate extends StatelessWidget {
               child: Row(
                 children: [
                   const Expanded(child: SizedBox()),
-                  for (final h in const ['No servidor', 'Neste aparelho'])
+                  for (final h in [
+                    l.verificarColumnServer,
+                    l.verificarColumnDevice,
+                  ])
                     SizedBox(
                       width: _badgeColumn,
                       child: Text(
@@ -282,12 +282,13 @@ class _FileRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
+    final l = context.l10n;
     final t = Theme.of(context).textTheme;
     final f = file;
     final name = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(scopeNome(f.scopeCode), style: t.titleSmall),
+        Text(scopeNome(f.scopeCode, l), style: t.titleSmall),
         const SizedBox(height: Space.x1),
         Wrap(
           spacing: Space.x2,
@@ -296,14 +297,14 @@ class _FileRow extends StatelessWidget {
           children: [
             FileCode(f.fileName, url: Uri.parse(f.url)),
             Text(
-              'gerado ${_when(f.tseGeneratedAt)}',
+              l.verificarGenerated(context.dayHm(f.tseGeneratedAt)),
               style: t.bodySmall?.copyWith(color: p.inkMuted),
             ),
           ],
         ),
       ],
     );
-    final server = _serverBadge(f.signature, wide: wide);
+    final server = _serverBadge(f.signature, l, wide: wide);
     final device = _deviceBadge(context, wide: wide);
     return Container(
       decoration: BoxDecoration(
@@ -343,31 +344,36 @@ class _FileRow extends StatelessWidget {
   }
 
   /// On a phone there is no column header, so each badge says where.
-  static Widget _serverBadge(SignatureStatus? s, {required bool wide}) {
-    String where(String text) => wide ? _cap(text) : 'Servidor: $text';
+  static Widget _serverBadge(
+    SignatureStatus? s,
+    AppLocalizations l, {
+    required bool wide,
+  }) {
+    String where(String text) => wide ? _cap(text) : l.verificarOnServer(text);
     return switch (s) {
       SignatureStatus.valid => StatusBadge(
         VerificationStatus.valid,
-        label: where('assinatura válida'),
+        label: where(l.verificarStatusValid),
       ),
       SignatureStatus.invalid => StatusBadge(
         VerificationStatus.invalid,
-        label: where('assinatura inválida'),
+        label: where(l.verificarStatusInvalid),
       ),
       SignatureStatus.unknownKey => StatusBadge(
         VerificationStatus.pending,
-        label: where('chave desconhecida'),
+        label: where(l.verificarStatusUnknownKey),
       ),
       null => StatusBadge(
         VerificationStatus.pending,
-        label: where('sem assinatura'),
+        label: where(l.verificarStatusUnsigned),
       ),
     };
   }
 
   Widget _deviceBadge(BuildContext context, {required bool wide}) {
     final id = file.snapshotId;
-    String where(String text) => wide ? _cap(text) : 'Aparelho: $text';
+    final l = context.l10n;
+    String where(String text) => wide ? _cap(text) : l.verificarOnDevice(text);
     if (controller.isChecking(id)) {
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -375,7 +381,7 @@ class _FileRow extends StatelessWidget {
           const _Spinner(),
           const SizedBox(width: Space.x2),
           Text(
-            where('conferindo…'),
+            where(l.verificarStatusChecking),
             style: Theme.of(
               context,
             ).textTheme.labelMedium?.copyWith(color: context.atlas.inkMuted),
@@ -386,33 +392,33 @@ class _FileRow extends StatelessWidget {
     if (controller.downloadFailed(id)) {
       return StatusBadge(
         VerificationStatus.pending,
-        label: where('não foi possível baixar'),
+        label: where(l.verificarStatusDownloadFailed),
       );
     }
     return switch (controller.deviceResult(id)) {
       DeviceCheck.valid => StatusBadge(
         VerificationStatus.valid,
-        label: where('assinatura válida'),
+        label: where(l.verificarStatusValid),
       ),
       DeviceCheck.invalid => StatusBadge(
         VerificationStatus.invalid,
-        label: where('assinatura inválida'),
+        label: where(l.verificarStatusInvalid),
       ),
       DeviceCheck.differentFile => StatusBadge(
         VerificationStatus.invalid,
-        label: where('outro arquivo'),
+        label: where(l.verificarStatusDifferentFile),
       ),
       DeviceCheck.unknownKey => StatusBadge(
         VerificationStatus.pending,
-        label: where('chave desconhecida'),
+        label: where(l.verificarStatusUnknownKey),
       ),
       DeviceCheck.unreadable => StatusBadge(
         VerificationStatus.invalid,
-        label: where('arquivo ilegível'),
+        label: where(l.verificarStatusUnreadable),
       ),
       null => StatusBadge(
         VerificationStatus.pending,
-        label: where('não conferido'),
+        label: where(l.verificarStatusNotChecked),
       ),
     };
   }
@@ -451,6 +457,7 @@ cut -d. -f2 "$f" | b64url > conteudo.json''';
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final p = context.atlas;
+    final l = context.l10n;
     Widget step(String n, String text) => Padding(
       padding: const EdgeInsets.only(bottom: Space.x2),
       child: Row(
@@ -462,40 +469,27 @@ cut -d. -f2 "$f" | b64url > conteudo.json''';
       ),
     );
     return Plate(
-      title: 'Confira você mesmo',
-      fonte: const FonteLine(
-        plateNumber: 13,
-        source:
-            'Chave: TSE, Manual de verificação dos arquivos JWS, Apêndice B. Receita testada com OpenSSL 3 em 10/10/2026.',
-      ),
+      title: l.verificarYourselfTitle,
+      fonte: FonteLine(plateNumber: 13, source: l.verificarYourselfSource),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Não precisa confiar na Urna Aberta. Cada arquivo .jws traz o próprio conteúdo e a assinatura do TSE; com a chave pública abaixo, qualquer computador confere.',
-            style: t.bodyMedium,
-          ),
+          Text(l.verificarYourselfIntro, style: t.bodyMedium),
           const SizedBox(height: Space.x4),
-          HashRow(label: 'Chave (kid)', hash: tseKeyId),
+          HashRow(label: l.verificarKeyId, hash: tseKeyId),
           const SizedBox(height: Space.x2),
           HashRow(label: 'Ed25519 (x)', hash: tsePublicKey),
           const SizedBox(height: Space.x4),
-          step(
-            '1',
-            'Baixe um arquivo .jws pelo link de qualquer linha acima (o mesmo nome do .json, com outra terminação).',
-          ),
-          step('2', 'Salve a chave abaixo como tse.pem.'),
-          step(
-            '3',
-            'Rode os comandos no terminal. "Signature Verified Successfully" quer dizer que confere; conteudo.json é o arquivo que o TSE assinou.',
-          ),
+          step('1', l.verificarStep1),
+          step('2', l.verificarStep2),
+          step('3', l.verificarStep3),
           const SizedBox(height: Space.x2),
           _CodeBlock(label: 'tse.pem', code: _pem),
           const SizedBox(height: Space.x3),
-          _CodeBlock(label: 'Terminal (macOS ou Linux)', code: _script),
+          _CodeBlock(label: l.verificarTerminal, code: _script),
           const SizedBox(height: Space.x2),
           Text(
-            'A chave fica dentro do app e do servidor, nunca é lida do próprio arquivo: uma chave que viesse junto com o arquivo não provaria nada.',
+            l.verificarKeyNote,
             style: t.bodySmall?.copyWith(color: p.inkMuted),
           ),
         ],
@@ -513,6 +507,7 @@ class _CodeBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
+    final l = context.l10n;
     final t = Theme.of(context).textTheme;
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -528,14 +523,14 @@ class _CodeBlock extends StatelessWidget {
               children: [
                 Expanded(child: Text(label, style: t.labelMedium)),
                 IconButton(
-                  tooltip: 'Copiar',
+                  tooltip: l.verificarCopy,
                   icon: Icon(AtlasIcons.copy(context), size: 18),
                   onPressed: () async {
                     await Clipboard.setData(ClipboardData(text: code));
                     selectionHaptic();
                     if (context.mounted) {
                       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                        const SnackBar(content: Text('Copiado')),
+                        SnackBar(content: Text(l.verificarCopied)),
                       );
                     }
                   },
@@ -575,31 +570,32 @@ class _MeaningPlate extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final p = context.atlas;
+    final l = context.l10n;
     return Plate(
-      title: 'O que cada estado significa',
+      title: l.verificarMeaningTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final (s, label, text) in const [
+          for (final (s, label, text) in [
             (
               VerificationStatus.valid,
-              'Assinatura válida',
-              'O arquivo é exatamente o que o TSE assinou: veio do TSE e não foi alterado no caminho.',
+              l.verificarMeaningValidLabel,
+              l.verificarMeaningValid,
             ),
             (
               VerificationStatus.invalid,
-              'Assinatura inválida',
-              'A assinatura não confere com o conteúdo. Não use estes números.',
+              l.verificarMeaningInvalidLabel,
+              l.verificarMeaningInvalid,
             ),
             (
               VerificationStatus.invalid,
-              'Outro arquivo',
-              'A assinatura confere, mas o arquivo não é o que o servidor da Urna Aberta disse ter usado.',
+              l.verificarMeaningDifferentLabel,
+              l.verificarMeaningDifferent,
             ),
             (
               VerificationStatus.pending,
-              'Não conferido',
-              'Este aparelho ainda não conferiu o arquivo. O resultado do servidor continua valendo, mas depende de você confiar nele.',
+              l.verificarMeaningNotCheckedLabel,
+              l.verificarMeaningNotChecked,
             ),
           ])
             Padding(
@@ -624,12 +620,12 @@ class _MeaningPlate extends StatelessWidget {
               ),
             ),
           Text(
-            'A assinatura prova a origem e a integridade do arquivo publicado. Ela não prova nada sobre o funcionamento da urna nem sobre a totalização.',
+            l.verificarProves,
             style: t.bodySmall?.copyWith(color: p.inkSecondary),
           ),
           const SizedBox(height: Space.x2),
           Text(
-            'Os arquivos de cada urna (boletim de urna) têm outra assinatura, conferida em Minha seção pelo hash; a assinatura da própria urna ainda não é verificada pela Urna Aberta.',
+            l.verificarUrnaNote,
             style: t.bodySmall?.copyWith(color: p.inkSecondary),
           ),
         ],
@@ -650,11 +646,14 @@ class _LoadError extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Não foi possível falar com o servidor da Urna Aberta.',
+          context.l10n.verificarLoadError,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         const SizedBox(height: Space.x4),
-        FilledButton(onPressed: onRetry, child: const Text('Tentar de novo')),
+        FilledButton(
+          onPressed: onRetry,
+          child: Text(context.l10n.verificarRetry),
+        ),
       ],
     ),
   );

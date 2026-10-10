@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
+import '../../l10n/format.dart';
+import '../../l10n/l10n.dart';
 import '../geo/brasil_geo.dart';
 import '../platform.dart';
 import '../tokens.dart';
 import '../typography.dart';
+import 'atlas_components.dart' show RegiaoName;
 
 enum MapLayer { regioes, totalizacao }
 
@@ -163,6 +166,9 @@ class _BrazilMapState extends State<BrazilMap> {
               furniture: widget.furniture,
               labels: widget.labels,
               onSelect: widget.onSelect == null ? null : _select,
+              l10n: context.l10n,
+              pctText: (v) => context.percent(v, 1),
+              regionName: (r) => r.nome(context),
             );
             return MouseRegion(
               cursor: _hover != null && widget.onSelect != null
@@ -183,7 +189,7 @@ class _BrazilMapState extends State<BrazilMap> {
                   message: _hover == null
                       ? ''
                       : '${widget.geo.bySigla(_hover!).nome} · '
-                            '${_fmtPct(widget.pct[_hover] ?? 0)}%',
+                            '${context.percent(widget.pct[_hover] ?? 0, 1)}',
                   child: CustomPaint(size: box, painter: painter),
                 ),
               ),
@@ -194,8 +200,6 @@ class _BrazilMapState extends State<BrazilMap> {
     );
   }
 }
-
-String _fmtPct(double v) => v.toStringAsFixed(1).replaceAll('.', ',');
 
 class _MapPainter extends CustomPainter {
   _MapPainter({
@@ -210,6 +214,9 @@ class _MapPainter extends CustomPainter {
     required this.furniture,
     required this.labels,
     required this.onSelect,
+    required this.l10n,
+    required this.pctText,
+    required this.regionName,
   });
 
   final BrasilGeo geo;
@@ -223,6 +230,9 @@ class _MapPainter extends CustomPainter {
   final bool furniture;
   final bool labels;
   final ValueChanged<String?>? onSelect;
+  final AppLocalizations l10n;
+  final String Function(double) pctText;
+  final String Function(Regiao) regionName;
 
   double get _scale => transform.storage[0];
 
@@ -293,7 +303,7 @@ class _MapPainter extends CustomPainter {
       canvas.drawLine(Offset(x, -6), Offset(x, h + 6), line);
       _text(
         canvas,
-        '${-lon}°O',
+        l10n.mapLongitudeWest(-lon),
         Offset(x, h + 24),
         s,
         center: true,
@@ -313,7 +323,7 @@ class _MapPainter extends CustomPainter {
       );
       _text(
         canvas,
-        lat == 0 ? '0°' : '${-lat}°S',
+        lat == 0 ? '0°' : l10n.mapLatitudeSouth(-lat),
         Offset(-10, y),
         s,
         alignRight: true,
@@ -322,10 +332,10 @@ class _MapPainter extends CustomPainter {
     }
     final ty = geo.project(0, -23.44).dy;
     _dashed(canvas, Offset(-6, ty), Offset(w + 6, ty), key, s, true);
-    _text(canvas, 'Trópico de Capricórnio', Offset(w + 8, ty), s, muted: true);
+    _text(canvas, l10n.mapTropic, Offset(w + 8, ty), s, muted: true);
     _text(
       canvas,
-      'Equador',
+      l10n.mapEquator,
       Offset(w + 8, geo.project(0, 0).dy),
       s,
       muted: true,
@@ -444,9 +454,11 @@ class _MapPainter extends CustomPainter {
         CustomPainterSemantics(
           rect: MatrixUtils.transformRect(transform, uf.path.getBounds()),
           properties: SemanticsProperties(
-            label:
-                '${uf.nome}, ${uf.regiao.nomePt}, '
-                '${_fmtPct(pct[uf.sigla] ?? 0)}% das seções totalizadas',
+            label: l10n.mapUfSemantics(
+              uf.nome,
+              regionName(uf.regiao),
+              pctText(pct[uf.sigla] ?? 0),
+            ),
             selected: uf.sigla == selected,
             button: onSelect != null,
             textDirection: TextDirection.ltr,
@@ -463,10 +475,13 @@ class _MapPainter extends CustomPainter {
       old.selected != selected ||
       old.hover != hover ||
       old.palette != palette ||
+      old.l10n != l10n ||
       old.transform != transform ||
       old.pct != pct;
 
   @override
   bool shouldRebuildSemantics(_MapPainter old) =>
-      old.selected != selected || old.transform != transform;
+      old.selected != selected ||
+      old.transform != transform ||
+      old.l10n != l10n;
 }

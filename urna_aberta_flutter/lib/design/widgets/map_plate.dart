@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/format.dart';
+import '../../l10n/l10n.dart';
 import '../geo/brasil_geo.dart';
 import '../platform.dart';
 import '../tokens.dart';
@@ -68,14 +70,16 @@ class _MapPlateState extends State<MapPlate> {
       builder: (context, snap) {
         final geo = snap.data;
         return Plate(
-          title: 'Seções totalizadas por UF',
+          title: context.l10n.mapTitle,
           padding: EdgeInsets.zero,
           trailing: widget.simulation
-              ? SimulationStamp(label: 'Simulação · ${widget.momentLabel}')
+              ? SimulationStamp(
+                  label: context.l10n.mapSimulationAt(widget.momentLabel),
+                )
               : null,
           fonte: FonteLine(
             plateNumber: widget.plateNumber,
-            source: 'Malhas: IBGE. Dados: TSE, EA20 por UF. Escala aproximada.',
+            source: context.l10n.mapSource,
             codes: const [FileCode('EA20 · c0001 · {uf}')],
           ),
           child: geo == null
@@ -134,9 +138,9 @@ class _MapPlateState extends State<MapPlate> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   AtlasSegmented<MapLayer>(
-                    segments: const {
-                      MapLayer.regioes: 'Regiões',
-                      MapLayer.totalizacao: 'Seções totalizadas',
+                    segments: {
+                      MapLayer.regioes: context.l10n.mapLayerRegions,
+                      MapLayer.totalizacao: context.l10n.mapLayerCounted,
                     },
                     selected: _layer,
                     onChanged: (l) => setState(() {
@@ -147,7 +151,11 @@ class _MapPlateState extends State<MapPlate> {
                   TextButton.icon(
                     onPressed: () => setState(() => _table = !_table),
                     icon: Icon(AtlasIcons.table(context), size: 18),
-                    label: Text(_table ? 'Ver mapa' : 'Ver em tabela'),
+                    label: Text(
+                      _table
+                          ? context.l10n.mapShowMap
+                          : context.l10n.mapShowTable,
+                    ),
                   ),
                 ],
               ),
@@ -186,7 +194,7 @@ class _MapPlateState extends State<MapPlate> {
                                   _selected = null;
                                   _focus = null;
                                 }),
-                                child: const Text('Limpar seleção'),
+                                child: Text(context.l10n.mapClearSelection),
                               ),
                             ),
                         ],
@@ -248,8 +256,10 @@ class _Legend extends StatelessWidget {
             for (final r in Regiao.values)
               LegendKey(
                 color: p.region(r),
-                label: r.nomePt,
-                trailing: '${geo.ufs.where((u) => u.regiao == r).length} UF',
+                label: r.nome(context),
+                trailing: context.l10n.mapUfCount(
+                  geo.ufs.where((u) => u.regiao == r).length,
+                ),
                 selected: focus == RegionFocus(r),
                 onTap: () => onFocus(RegionFocus(r)),
               ),
@@ -259,8 +269,11 @@ class _Legend extends StatelessWidget {
               LegendKey(
                 color: p.totalizacaoRamp[c],
                 label: '${c * 20}–${(c + 1) * 20}%',
-                trailing:
-                    '${geo.ufs.where((u) => ClassFocus.classOf(pct[u.sigla] ?? 0) == c).length} UF',
+                trailing: context.l10n.mapUfCount(
+                  geo.ufs
+                      .where((u) => ClassFocus.classOf(pct[u.sigla] ?? 0) == c)
+                      .length,
+                ),
                 selected: focus == ClassFocus(c),
                 onTap: () => onFocus(ClassFocus(c)),
               ),
@@ -269,7 +282,9 @@ class _Legend extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          layer == MapLayer.regioes ? 'Regiões' : 'Seções totalizadas',
+          layer == MapLayer.regioes
+              ? context.l10n.mapLayerRegions
+              : context.l10n.mapLayerCounted,
           style: t.titleSmall,
         ),
         const SizedBox(height: Space.x1),
@@ -295,11 +310,11 @@ class _UfDetail extends StatelessWidget {
       children: [
         Text(uf.nome, style: t.headlineSmall),
         Text(
-          '${uf.regiao.nomePt} · atualizado $moment',
+          context.l10n.mapUfUpdated(uf.regiao.nome(context), moment),
           style: t.bodySmall?.copyWith(color: p.inkMuted),
         ),
         const SizedBox(height: Space.x3),
-        _BigPct(pct: pct, caption: 'seções totalizadas'),
+        _BigPct(pct: pct, caption: context.l10n.mapCountedCaption),
         _ProgressBar(value: pct / 100),
         FileCode(
           'EA20 · $file',
@@ -334,7 +349,7 @@ class _FocusDetail extends StatelessWidget {
       return _DetailBox(
         children: [
           Text(
-            'Toque em um estado ou em uma chave da legenda.',
+            context.l10n.mapHint,
             style: t.bodyMedium?.copyWith(color: p.inkSecondary),
           ),
         ],
@@ -348,7 +363,7 @@ class _FocusDetail extends StatelessWidget {
         : list.map((u) => pct[u.sigla] ?? 0).reduce((a, b) => a + b) /
               list.length;
     final name = switch (f) {
-      RegionFocus(:final regiao) => regiao.nomePt,
+      RegionFocus(:final regiao) => regiao.nome(context),
       ClassFocus(:final index) => '${index * 20}–${(index + 1) * 20}%',
     };
     return _DetailBox(
@@ -356,14 +371,14 @@ class _FocusDetail extends StatelessWidget {
         Text(name, style: t.headlineSmall),
         Text(
           list.isEmpty
-              ? 'Nenhuma UF nesta faixa'
+              ? context.l10n.mapNoUfInBand
               : list.map((u) => u.sigla).join(' · '),
           style: t.bodySmall?.copyWith(color: p.inkMuted),
         ),
         const SizedBox(height: Space.x3),
-        _BigPct(pct: avg, caption: 'média simples das UFs'),
+        _BigPct(pct: avg, caption: context.l10n.mapAverageCaption),
         _ProgressBar(value: avg / 100),
-        FileCode('EA20 · c0001 · ${list.length} UF'),
+        FileCode('EA20 · c0001 · ${context.l10n.mapUfCount(list.length)}'),
       ],
     );
   }
@@ -407,7 +422,7 @@ class _BigPct extends StatelessWidget {
       TextSpan(
         children: [
           TextSpan(
-            text: '${pct.toStringAsFixed(1).replaceAll('.', ',')}%',
+            text: context.percent(pct, 1),
             style: AtlasType.figureL.copyWith(color: p.ink),
           ),
           TextSpan(
@@ -487,27 +502,21 @@ class _UfTableState extends State<_UfTable> {
         dataTextStyle: AtlasType.tableFigure.copyWith(color: context.atlas.ink),
         columns: [
           DataColumn(label: const Text('UF'), onSort: sort),
-          DataColumn(label: const Text('Região'), onSort: sort),
+          DataColumn(label: Text(context.l10n.mapColumnRegion), onSort: sort),
           DataColumn(
-            label: const Text('% seções totalizadas'),
+            label: Text(context.l10n.mapColumnCounted),
             numeric: true,
             onSort: sort,
           ),
-          const DataColumn(label: Text('Arquivo')),
+          DataColumn(label: Text(context.l10n.mapColumnFile)),
         ],
         rows: [
           for (final u in ufs)
             DataRow(
               cells: [
                 DataCell(Text('${u.nome} (${u.sigla})')),
-                DataCell(Text(u.regiao.nomePt)),
-                DataCell(
-                  Text(
-                    (widget.pct[u.sigla] ?? 0)
-                        .toStringAsFixed(1)
-                        .replaceAll('.', ','),
-                  ),
-                ),
+                DataCell(Text(u.regiao.nome(context))),
+                DataCell(Text(context.decimal(widget.pct[u.sigla] ?? 0, 1))),
                 DataCell(
                   FileCode('${u.sigla.toLowerCase()}-c0001-e006257-u.json'),
                 ),
