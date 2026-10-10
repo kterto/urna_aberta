@@ -110,7 +110,18 @@ void main() {
     expect(find.textContaining('64,81'), findsWidgets);
     expect(find.textContaining('74,8'), findsWidgets);
     expect(find.textContaining('FULANO DE TAL'), findsOneWidget);
-    expect(find.textContaining('19:52'), findsWidgets);
+    // The replay opens paused at the start of the count.
+    expect(find.text('17:00'), findsWidgets);
+  });
+
+  testWidgets('"jump to the pause" goes straight to the freeze', (
+    tester,
+  ) async {
+    await pumpScreen(tester, StubSource());
+    await tester.tap(find.text('Ir para a pausa'));
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('parado desde 19:14'), findsOneWidget);
   });
 
   testWidgets('no headline about one night, no design-system shortcut', (
@@ -166,6 +177,9 @@ void main() {
         locale: const Locale('en'),
         size: size,
       );
+      await tester.tap(find.text('Jump to the pause'));
+      await tester.pump();
+      await tester.pump();
       expect(find.text('The two sources compared · President'), findsOneWidget);
       expect(find.text('TSE national file'), findsOneWidget);
       expect(find.text('64.81%'), findsWidgets);

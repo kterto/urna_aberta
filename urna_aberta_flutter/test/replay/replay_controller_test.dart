@@ -112,14 +112,14 @@ void main() {
     );
   });
 
-  test('load opens inside the national freeze, paused', () async {
+  test('load opens at the start of the count, paused', () async {
     await c.load();
     expect(c.night, _night);
-    expect(c.now, brt(4, 19, 52));
+    expect(c.now, brt(4, 17, 0));
     expect(c.playing, isFalse);
-    expect(c.frame!.at, brt(4, 19, 52));
+    expect(c.frame!.at, brt(4, 17, 0));
     expect(c.timeline, hasLength(8 * 60 + 1));
-    expect(c.nowIndex, 2 * 60 + 52);
+    expect(c.nowIndex, 0);
   });
 
   test('a failed load keeps the error and can be retried', () async {
@@ -139,7 +139,7 @@ void main() {
     c.togglePlay();
     expect(timers.single.isActive, isTrue);
     c.advance(const Duration(seconds: 6));
-    expect(c.now, brt(4, 19, 53));
+    expect(c.now, brt(4, 17, 1));
   });
 
   test('a new frame is fetched once per virtual minute', () async {
@@ -149,7 +149,7 @@ void main() {
     source.frameRequests.clear();
     c.advance(const Duration(milliseconds: 500));
     c.advance(const Duration(milliseconds: 500));
-    expect(source.frameRequests, [brt(4, 19, 53)]);
+    expect(source.frameRequests, [brt(4, 17, 1)]);
   });
 
   test(
@@ -159,13 +159,13 @@ void main() {
       source.holdFrames = true;
       c.setSpeed(60);
       c.togglePlay();
-      c.advance(const Duration(seconds: 1)); // asks 19:53
-      c.advance(const Duration(seconds: 1)); // asks 19:54
-      source.pending[1].complete(frameAt(brt(4, 19, 54)));
+      c.advance(const Duration(seconds: 1)); // asks 17:01
+      c.advance(const Duration(seconds: 1)); // asks 17:02
+      source.pending[1].complete(frameAt(brt(4, 17, 2)));
       await pumpEventQueue();
-      source.pending[0].complete(frameAt(brt(4, 19, 53)));
+      source.pending[0].complete(frameAt(brt(4, 17, 1)));
       await pumpEventQueue();
-      expect(c.frame!.at, brt(4, 19, 54));
+      expect(c.frame!.at, brt(4, 17, 2));
     },
   );
 
@@ -203,7 +203,7 @@ void main() {
     // A background tab delivers one tick after 1 s instead of every 250 ms.
     wall = wall.add(const Duration(seconds: 1));
     timers.single.callback(timers.single);
-    expect(c.now, brt(4, 19, 53));
+    expect(c.now, brt(4, 17, 1));
   });
 
   test('pausing cancels the timer', () async {
