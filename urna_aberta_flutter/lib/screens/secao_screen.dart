@@ -77,6 +77,9 @@ class _SecaoScreenState extends State<SecaoScreen> {
         options: c.municipios,
         display: (o) => (o as MunicipioRef).nome,
         filter: true,
+        loading: c.loading == SecaoLoad.municipios
+            ? 'Carregando municípios…'
+            : null,
         onChanged: (v) => c.selectMunicipio(v as MunicipioRef),
       ),
       _PickerField(
@@ -84,6 +87,7 @@ class _SecaoScreenState extends State<SecaoScreen> {
         value: c.zona,
         options: c.zonas,
         display: (o) => two(o as int, 4),
+        loading: c.loading == SecaoLoad.zonas ? 'Carregando zonas…' : null,
         onChanged: (v) => c.selectZona(v as int),
       ),
       _PickerField(
@@ -92,6 +96,7 @@ class _SecaoScreenState extends State<SecaoScreen> {
         options: c.secoes,
         display: (o) => two(o as int, 4),
         filter: true,
+        loading: c.loading == SecaoLoad.secoes ? 'Carregando seções…' : null,
         onChanged: (v) => c.selectSecao(v as int),
       ),
     ];
@@ -134,11 +139,21 @@ class _SecaoScreenState extends State<SecaoScreen> {
                   ),
                 ),
               ),
-              if (c.busy) ...[
+              if (c.loading == SecaoLoad.report) ...[
                 const SizedBox(width: Space.x3),
-                const SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                const _Spinner(),
+                const SizedBox(width: Space.x2),
+                Flexible(
+                  flex: 2,
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      'Buscando os arquivos da seção no TSE…',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.atlas.inkMuted,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ],
@@ -534,9 +549,23 @@ class _Match extends StatelessWidget {
   }
 }
 
-/// iOS: tappable field that opens a native wheel picker. Elsewhere: a
-/// Material dropdown menu, filterable for long lists.
-class _PickerField extends StatefulWidget {
+/// Small progress mark: activity indicator on iOS, a thin ring elsewhere.
+class _Spinner extends StatelessWidget {
+  const _Spinner();
+
+  @override
+  Widget build(BuildContext context) => shellKindOf(context) == ShellKind.ios
+      ? const CupertinoActivityIndicator(radius: 8)
+      : const SizedBox.square(
+          dimension: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        );
+}
+
+/// A read-only field that opens the options. Short lists on iOS use the
+/// native wheel; everything else opens a searchable list that builds only
+/// the rows on screen (municípios run to ~850 per UF).
+class _PickerField extends StatelessWidget {
   const _PickerField({
     required this.label,
     required this.value,
@@ -544,6 +573,7 @@ class _PickerField extends StatefulWidget {
     required this.display,
     required this.onChanged,
     this.filter = false,
+    this.loading,
   });
 
   final String label;
@@ -553,106 +583,280 @@ class _PickerField extends StatefulWidget {
   final ValueChanged<Object> onChanged;
   final bool filter;
 
+  /// Shown in the field while its options load.
+  final String? loading;
+
   @override
-  State<_PickerField> createState() => _PickerFieldState();
+  Widget build(BuildContext context) {
+    final enabled = loading == null && options.isNotEmpty;
+    final muted = Theme.of(
+      context,
+    ).textTheme.bodyLarge?.copyWith(color: context.atlas.inkMuted);
+    return InkWell(
+      onTap: enabled ? () => _open(context) : null,
+      borderRadius: BorderRadius.circular(4),
+      child: InputDecorator(
+        isEmpty: value == null && loading == null,
+        decoration: InputDecoration(
+          labelText: label,
+          enabled: enabled,
+          suffixIcon: loading != null
+              ? const Padding(
+                  padding: EdgeInsets.all(Space.x3),
+                  child: _Spinner(),
+                )
+              : Icon(AtlasIcons.expand(context)),
+        ),
+        child: loading != null
+            ? Semantics(
+                liveRegion: true,
+                child: Text(
+                  loading!,
+                  style: muted,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              )
+            : Text(
+                value == null ? '' : display(value!),
+                overflow: TextOverflow.ellipsis,
+              ),
+      ),
+    );
+  }
+
+  Future<void> _open(BuildContext context) async {
+    final ios = shellKindOf(context) == ShellKind.ios;
+    if (ios && !filter) return _wheel(context);
+    final sheet = _OptionList(
+      label: label,
+      value: value,
+      options: options,
+      display: display,
+      filter: filter,
+    );
+    final picked = isWideLayout(context)
+        ? await showDialog<Object>(
+            context: context,
+            builder: (_) => Dialog(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 440,
+                  maxHeight: 560,
+                ),
+                child: sheet,
+              ),
+            ),
+          )
+        : await showModalBottomSheet<Object>(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            showDragHandle: !ios,
+            builder: (ctx) => SizedBox(
+              height: MediaQuery.sizeOf(ctx).height * 0.8,
+              child: sheet,
+            ),
+          );
+    if (picked != null) {
+      selectionHaptic();
+      onChanged(picked);
+    }
+  }
+
+  void _wheel(BuildContext context) {
+    var picked = value == null
+        ? 0
+        : options.indexOf(value!).clamp(0, options.length - 1);
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (ctx) => Container(
+        height: 280,
+        color: context.atlas.plate,
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: CupertinoButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    onChanged(options[picked]);
+                    Navigator.of(ctx).pop();
+                  },
+                ),
+              ),
+              Expanded(
+                child: CupertinoPicker.builder(
+                  itemExtent: 36,
+                  childCount: options.length,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: picked,
+                  ),
+                  onSelectedItemChanged: (i) => picked = i,
+                  itemBuilder: (_, i) =>
+                      Center(child: Text(display(options[i]))),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _PickerFieldState extends State<_PickerField> {
-  late final _text = TextEditingController(text: _shown(widget.value));
+/// The options as a lazily built list, with a search box for long lists.
+/// Search ignores case and accents, so "sao paulo" finds "SÃO PAULO".
+class _OptionList extends StatefulWidget {
+  const _OptionList({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.display,
+    required this.filter,
+  });
 
-  String _shown(Object? v) => v == null ? '' : widget.display(v);
+  final String label;
+  final Object? value;
+  final List<Object> options;
+  final String Function(Object) display;
+  final bool filter;
 
   @override
-  void didUpdateWidget(_PickerField old) {
-    super.didUpdateWidget(old);
-    // Only the field's own value rewrites its text, so a list arriving
-    // while the user is about to tap never resets the field.
-    if (widget.value != old.value) _text.text = _shown(widget.value);
-  }
+  State<_OptionList> createState() => _OptionListState();
+}
+
+class _OptionListState extends State<_OptionList> {
+  late final _folded = [
+    for (final o in widget.options) _fold(widget.display(o)),
+  ];
+  late List<Object> _shown = widget.options;
+  String _query = '';
+
+  /// Opens with the current choice in view.
+  late final _scroll = ScrollController(
+    initialScrollOffset: switch (widget.value) {
+      final v? => (widget.options.indexOf(v) - 3).clamp(0, 1 << 20) * 48.0,
+      null => 0,
+    },
+  );
 
   @override
   void dispose() {
-    _text.dispose();
+    _scroll.dispose();
     super.dispose();
+  }
+
+  static const _plain = {
+    'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', //
+    'é': 'e', 'ê': 'e', 'è': 'e', 'í': 'i', 'î': 'i', //
+    'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o', 'ú': 'u', //
+    'ü': 'u', 'ç': 'c', "'": '', '-': ' ',
+  };
+
+  static String _fold(String s) {
+    final b = StringBuffer();
+    for (final ch in s.toLowerCase().split('')) {
+      b.write(_plain[ch] ?? ch);
+    }
+    return b.toString();
+  }
+
+  void _search(String q) {
+    final f = _fold(q.trim());
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+    setState(() {
+      _query = q.trim();
+      _shown = f.isEmpty
+          ? widget.options
+          : [
+              for (final (i, o) in widget.options.indexed)
+                if (_folded[i].contains(f)) o,
+            ];
+    });
+  }
+
+  void _submit(String _) {
+    if (_shown.length == 1) Navigator.of(context).pop(_shown.single);
   }
 
   @override
   Widget build(BuildContext context) {
-    final w = widget;
-    final enabled = w.options.isNotEmpty;
-    if (shellKindOf(context) == ShellKind.ios) {
-      return InkWell(
-        onTap: !enabled
-            ? null
-            : () {
-                var picked = w.value == null
-                    ? 0
-                    : w.options
-                          .indexOf(w.value!)
-                          .clamp(0, w.options.length - 1);
-                showCupertinoModalPopup<void>(
-                  context: context,
-                  builder: (ctx) => Container(
-                    height: 280,
-                    color: context.atlas.plate,
-                    child: SafeArea(
-                      top: false,
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: CupertinoButton(
-                              child: const Text('OK'),
-                              onPressed: () {
-                                w.onChanged(w.options[picked]);
-                                Navigator.of(ctx).pop();
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: CupertinoPicker(
-                              itemExtent: 36,
-                              scrollController: FixedExtentScrollController(
-                                initialItem: picked,
-                              ),
-                              onSelectedItemChanged: (i) => picked = i,
-                              children: [
-                                for (final o in w.options)
-                                  Center(child: Text(w.display(o))),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+    final t = Theme.of(context).textTheme;
+    final ios = shellKindOf(context) == ShellKind.ios;
+    // Keyboard straight away on web/desktop; on touch devices the user
+    // may just want to scroll.
+    final autofocus = isWideLayout(context);
+    final hint = 'Buscar ${widget.label.toLowerCase()}';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            Space.x5,
+            Space.x4,
+            Space.x5,
+            Space.x2,
+          ),
+          child: Text(widget.label, style: t.titleMedium),
+        ),
+        if (widget.filter)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Space.x5,
+              vertical: Space.x2,
+            ),
+            child: ios
+                ? CupertinoSearchTextField(
+                    placeholder: hint,
+                    autofocus: autofocus,
+                    onChanged: _search,
+                    onSubmitted: _submit,
+                  )
+                : TextField(
+                    autofocus: autofocus,
+                    decoration: InputDecoration(
+                      hintText: hint,
+                      prefixIcon: Icon(AtlasIcons.search(context)),
+                    ),
+                    textInputAction: TextInputAction.done,
+                    onChanged: _search,
+                    onSubmitted: _submit,
+                  ),
+          ),
+        const Divider(height: 1),
+        Expanded(
+          child: _shown.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.all(Space.x5),
+                  child: Text(
+                    'Nada encontrado para “$_query”.',
+                    style: t.bodyMedium?.copyWith(
+                      color: context.atlas.inkMuted,
                     ),
                   ),
-                );
-              },
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: w.label,
-            enabled: enabled,
-            suffixIcon: const Icon(CupertinoIcons.chevron_down, size: 16),
-          ),
-          child: Text(_shown(w.value)),
+                )
+              : ListView.builder(
+                  itemExtent: 48,
+                  itemCount: _shown.length,
+                  controller: _scroll,
+                  itemBuilder: (context, i) {
+                    final o = _shown[i];
+                    final selected = o == widget.value;
+                    return ListTile(
+                      dense: true,
+                      selected: selected,
+                      title: Text(widget.display(o)),
+                      trailing: selected
+                          ? Icon(AtlasIcons.selected(context), size: 18)
+                          : null,
+                      onTap: () => Navigator.of(context).pop(o),
+                    );
+                  },
+                ),
         ),
-      );
-    }
-    return DropdownMenu<Object>(
-      controller: _text,
-      label: Text(w.label),
-      enabled: enabled,
-      enableFilter: w.filter,
-      requestFocusOnTap: w.filter,
-      menuHeight: 360,
-      expandedInsets: EdgeInsets.zero,
-      dropdownMenuEntries: [
-        for (final o in w.options)
-          DropdownMenuEntry(value: o, label: w.display(o)),
       ],
-      onSelected: (v) {
-        if (v != null) w.onChanged(v);
-      },
     );
   }
 }

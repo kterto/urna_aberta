@@ -52,6 +52,12 @@ abstract final class AtlasIcons {
       _pick(c, CupertinoIcons.pause_fill, Icons.pause_rounded);
   static IconData table(BuildContext c) =>
       _pick(c, CupertinoIcons.table, Icons.table_rows_outlined);
+  static IconData search(BuildContext c) =>
+      _pick(c, CupertinoIcons.search, Icons.search);
+  static IconData expand(BuildContext c) =>
+      _pick(c, CupertinoIcons.chevron_down, Icons.arrow_drop_down);
+  static IconData selected(BuildContext c) =>
+      _pick(c, CupertinoIcons.checkmark_alt, Icons.check);
   static IconData theme(BuildContext c) =>
       _pick(c, CupertinoIcons.circle_lefthalf_fill, Icons.contrast);
 }

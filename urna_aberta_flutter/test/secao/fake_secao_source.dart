@@ -82,32 +82,48 @@ SectionReport sampleReport({
 
 class FakeSecaoSource implements SecaoSource {
   final consults = <(String, int, int, int)>[];
+  final listCalls = <String>[];
+  Object? failLists;
   Object? fail;
   SectionReport Function() report = sampleReport;
   bool hold = false;
+  Completer<void>? holdReport;
   final _held = <String, Completer<void>>{};
 
   void release(String uf) => _held[uf]!.complete();
 
   @override
   Future<List<MunicipioRef>> municipios(String uf) async {
+    listCalls.add('municipios $uf');
     if (hold) await (_held[uf] = Completer<void>()).future;
+    if (failLists != null) throw failLists!;
     return uf == 'ac'
         ? [
             MunicipioRef(codigo: 1120, nome: 'CRUZEIRO DO SUL'),
             MunicipioRef(codigo: 1066, nome: 'PORTO WALTER'),
           ]
+        : uf == 'mg'
+        ? [
+            for (var i = 0; i < 900; i++)
+              MunicipioRef(
+                codigo: i + 1,
+                nome: 'CIDADE ${i.toString().padLeft(3, '0')}',
+              ),
+          ]
         : [MunicipioRef(codigo: 71072, nome: 'SÃO PAULO')];
   }
 
   @override
-  Future<List<int>> zonas(String uf, int municipio) async => [4];
+  Future<List<int>> zonas(String uf, int municipio) async {
+    listCalls.add('zonas $uf $municipio');
+    return [4];
+  }
 
   @override
-  Future<List<int>> secoes(String uf, int municipio, int zona) async => [
-    77,
-    78,
-  ];
+  Future<List<int>> secoes(String uf, int municipio, int zona) async {
+    listCalls.add('secoes $uf $municipio $zona');
+    return [77, 78];
+  }
 
   @override
   Future<SectionReport> consultar(
@@ -117,6 +133,7 @@ class FakeSecaoSource implements SecaoSource {
     int secao,
   ) async {
     consults.add((uf, municipio, zona, secao));
+    if (holdReport != null) await holdReport!.future;
     if (fail != null) throw fail!;
     return report();
   }

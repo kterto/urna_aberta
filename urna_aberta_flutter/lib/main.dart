@@ -11,7 +11,7 @@ void main() async {
   runApp(
     UrnaAbertaApp(
       tallySource: ServerTallySource(client),
-      secaoSource: ServerSecaoSource(client),
+      secaoSource: CachedSecaoSource(ServerSecaoSource(client)),
     ),
   );
 }

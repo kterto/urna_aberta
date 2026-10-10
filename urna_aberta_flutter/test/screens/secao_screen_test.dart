@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
@@ -23,10 +25,25 @@ Future<void> pumpScreen(WidgetTester tester, FakeSecaoSource source) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> choose(WidgetTester tester, String field, String option) async {
-  await tester.tap(find.widgetWithText(DropdownMenu<Object>, field));
+Future<void> openField(WidgetTester tester, String field) async {
+  await tester.tap(find.widgetWithText(InkWell, field));
   await tester.pumpAndSettle();
-  await tester.tap(find.text(option).last);
+}
+
+Future<void> choose(WidgetTester tester, String field, String option) async {
+  await openField(tester, field);
+  final row = find.descendant(
+    of: find.byType(ListView),
+    matching: find.text(option),
+  );
+  await tester.scrollUntilVisible(
+    row,
+    96,
+    scrollable: find.byType(Scrollable).last,
+  );
+  await tester.ensureVisible(row);
+  await tester.pumpAndSettle();
+  await tester.tap(row);
   await tester.pumpAndSettle();
 }
 
@@ -105,5 +122,60 @@ void main() {
     await pumpScreen(tester, source);
     await lookUp77(tester);
     expect(find.textContaining('ainda não publicou'), findsOneWidget);
+  });
+
+  testWidgets('while a list loads, its field says so', (tester) async {
+    final source = FakeSecaoSource()..hold = true;
+    await pumpScreen(tester, source);
+    await openField(tester, 'UF');
+    await tester.tap(find.text('AC').last);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('Carregando municípios…'), findsOneWidget);
+    source.release('ac');
+    await tester.pumpAndSettle();
+    expect(find.text('Carregando municípios…'), findsNothing);
+  });
+
+  testWidgets('a long list filters as you type', (tester) async {
+    await pumpScreen(tester, FakeSecaoSource());
+    await choose(tester, 'UF', 'AC');
+    await openField(tester, 'Município');
+    await tester.enterText(find.byType(TextField).last, 'porto');
+    await tester.pumpAndSettle();
+    expect(find.text('CRUZEIRO DO SUL'), findsNothing);
+    await tester.tap(find.text('PORTO WALTER').last);
+    await tester.pumpAndSettle();
+    await choose(tester, 'Zona', '0004');
+    expect(find.text('0004'), findsOneWidget);
+  });
+
+  testWidgets('a long list builds only the rows on screen', (tester) async {
+    await pumpScreen(tester, FakeSecaoSource());
+    await choose(tester, 'UF', 'MG');
+    await openField(tester, 'Município');
+    expect(find.text('CIDADE 000'), findsOneWidget);
+    // Not even built off screen, which an eager list would do.
+    expect(find.text('CIDADE 899', skipOffstage: false), findsNothing);
+    await tester.enterText(find.byType(TextField).last, '899');
+    await tester.pumpAndSettle();
+    expect(find.text('CIDADE 899'), findsOneWidget);
+  });
+
+  testWidgets('while the report loads, says TSE is being asked', (
+    tester,
+  ) async {
+    final source = FakeSecaoSource()..holdReport = Completer<void>();
+    await pumpScreen(tester, source);
+    await choose(tester, 'UF', 'AC');
+    await choose(tester, 'Município', 'PORTO WALTER');
+    await choose(tester, 'Zona', '0004');
+    await choose(tester, 'Seção', '0077');
+    await tester.tap(find.text('Buscar boletim de urna'));
+    await tester.pump();
+    expect(find.textContaining('Buscando os arquivos'), findsOneWidget);
+    source.holdReport!.complete();
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Buscando os arquivos'), findsNothing);
+    expect(find.text('22 · FLAVIO BOLSONARO'), findsOneWidget);
   });
 }

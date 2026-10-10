@@ -72,4 +72,60 @@ void main() {
     expect(c.uf, 'sp');
     expect(c.municipios.single.nome, 'SÃO PAULO');
   });
+
+  test('shows which list is loading until it arrives', () async {
+    source.hold = true;
+    final pending = c.selectUf('ac');
+    expect(c.loading, SecaoLoad.municipios);
+    source.release('ac');
+    await pending;
+    expect(c.loading, isNull);
+  });
+
+  test('a superseded load does not keep the new one marked loading', () async {
+    source.hold = true;
+    final first = c.selectUf('ac');
+    final second = c.selectUf('sp');
+    source.release('ac');
+    await first;
+    expect(c.loading, SecaoLoad.municipios);
+    source.release('sp');
+    await second;
+    expect(c.loading, isNull);
+  });
+
+  group('CachedSecaoSource', () {
+    late CachedSecaoSource cached;
+    setUp(() => cached = CachedSecaoSource(source));
+
+    test('asks the server once per list', () async {
+      await cached.municipios('ac');
+      await cached.municipios('ac');
+      await cached.zonas('ac', 1066);
+      await cached.zonas('ac', 1066);
+      await cached.secoes('ac', 1066, 4);
+      await cached.secoes('ac', 1066, 4);
+      await cached.municipios('sp');
+      expect(source.listCalls, [
+        'municipios ac',
+        'zonas ac 1066',
+        'secoes ac 1066 4',
+        'municipios sp',
+      ]);
+    });
+
+    test('a failed list is asked again next time', () async {
+      source.failLists = StateError('offline');
+      await expectLater(cached.municipios('ac'), throwsStateError);
+      source.failLists = null;
+      expect(await cached.municipios('ac'), hasLength(2));
+      expect(source.listCalls, ['municipios ac', 'municipios ac']);
+    });
+
+    test('the report is never cached: the server decides freshness', () async {
+      await cached.consultar('ac', 1066, 4, 77);
+      await cached.consultar('ac', 1066, 4, 77);
+      expect(source.consults, hasLength(2));
+    });
+  });
 }

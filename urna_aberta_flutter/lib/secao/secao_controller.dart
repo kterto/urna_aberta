@@ -41,6 +41,54 @@ class ServerSecaoSource implements SecaoSource {
   ) => _client.secao.consultar(uf, municipio, zona, secao);
 }
 
+/// Keeps each list after its first load. The lists come from TSE's section
+/// config, which does not change during a round; the report is not cached
+/// because the server decides when a section's files are stale.
+class CachedSecaoSource implements SecaoSource {
+  CachedSecaoSource(this._inner);
+
+  final SecaoSource _inner;
+  final _lists = <String, Future<Object>>{};
+
+  Future<T> _cached<T extends Object>(String key, Future<T> Function() load) {
+    final pending = _lists[key] ??= load();
+    // A failed load is asked again next time instead of kept.
+    pending.ignore();
+    return pending.then(
+      (v) => v as T,
+      onError: (Object e) {
+        if (identical(_lists[key], pending)) _lists.remove(key);
+        throw e;
+      },
+    );
+  }
+
+  @override
+  Future<List<MunicipioRef>> municipios(String uf) =>
+      _cached('m $uf', () => _inner.municipios(uf));
+
+  @override
+  Future<List<int>> zonas(String uf, int municipio) =>
+      _cached('z $uf $municipio', () => _inner.zonas(uf, municipio));
+
+  @override
+  Future<List<int>> secoes(String uf, int municipio, int zona) => _cached(
+    's $uf $municipio $zona',
+    () => _inner.secoes(uf, municipio, zona),
+  );
+
+  @override
+  Future<SectionReport> consultar(
+    String uf,
+    int municipio,
+    int zona,
+    int secao,
+  ) => _inner.consultar(uf, municipio, zona, secao);
+}
+
+/// What the controller is waiting for.
+enum SecaoLoad { municipios, zonas, secoes, report }
+
 /// Provides the [SecaoSource] to the screens below it.
 class SecaoScope extends InheritedWidget {
   const SecaoScope({super.key, required this.source, required super.child});
@@ -80,7 +128,7 @@ class SecaoController extends ChangeNotifier {
   int? _secao;
   SectionReport? _report;
   Object? _error;
-  int _pending = 0;
+  SecaoLoad? _loading;
 
   /// Bumped on every choice; a response for an older choice is dropped.
   int _generation = 0;
@@ -93,8 +141,9 @@ class SecaoController extends ChangeNotifier {
   List<int> get secoes => _secoes;
   int? get secao => _secao;
 
-  /// A list or the report is loading.
-  bool get busy => _pending > 0;
+  /// The list or report being loaded for the current choices, if any.
+  SecaoLoad? get loading => _loading;
+  bool get busy => _loading != null;
   SectionReport? get report => _report;
   Object? get error => _error;
 
@@ -105,19 +154,28 @@ class SecaoController extends ChangeNotifier {
     _uf = uf;
     _municipios = const [];
     _clearFromMunicipio();
-    await _load(() => _source.municipios(uf), (v) => _municipios = v);
+    await _load(
+      SecaoLoad.municipios,
+      () => _source.municipios(uf),
+      (v) => _municipios = v,
+    );
   }
 
   Future<void> selectMunicipio(MunicipioRef m) async {
     _municipio = m;
     _clearFromZona();
-    await _load(() => _source.zonas(_uf!, m.codigo), (v) => _zonas = v);
+    await _load(
+      SecaoLoad.zonas,
+      () => _source.zonas(_uf!, m.codigo),
+      (v) => _zonas = v,
+    );
   }
 
   Future<void> selectZona(int zona) async {
     _zona = zona;
     _clearFromSecao();
     await _load(
+      SecaoLoad.secoes,
       () => _source.secoes(_uf!, _municipio!.codigo, zona),
       (v) => _secoes = v,
     );
@@ -127,6 +185,7 @@ class SecaoController extends ChangeNotifier {
     _secao = secao;
     _report = null;
     _error = null;
+    _loading = null;
     _generation++;
     notifyListeners();
   }
@@ -135,6 +194,7 @@ class SecaoController extends ChangeNotifier {
     if (!canConsult) return;
     _report = null;
     await _load(
+      SecaoLoad.report,
       () => _source.consultar(_uf!, _municipio!.codigo, _zona!, _secao!),
       (v) => _report = v,
       bump: false,
@@ -160,13 +220,14 @@ class SecaoController extends ChangeNotifier {
   }
 
   Future<void> _load<T>(
+    SecaoLoad kind,
     Future<T> Function() request,
     void Function(T) apply, {
     bool bump = true,
   }) async {
     final generation = bump ? ++_generation : _generation;
     _error = null;
-    _pending++;
+    _loading = kind;
     notifyListeners();
     try {
       final value = await request();
@@ -174,7 +235,7 @@ class SecaoController extends ChangeNotifier {
     } catch (e) {
       if (generation == _generation) _error = e;
     } finally {
-      _pending--;
+      if (generation == _generation) _loading = null;
       notifyListeners();
     }
   }
