@@ -1,4 +1,15 @@
-# Flutter & Serverpod project
+# Urna Aberta (Flutter & Serverpod project)
+
+Urna Aberta lets anyone independently follow and verify the publication of Brazilian election results (TSE files), and learn how the process works. Bilingual pt-BR / en. Product truth lives in `PRODUCT.md`, the full spec in `HANDOFF.md`.
+
+## Design system
+
+- Visual world: "Atlas IBGE" (thematic atlas plates). Approved reference page: https://claude.ai/artifact/NRLMS5JuxKwVYYwDijN4s7. Direction contract: `.impeccable/surfaces/urna-aberta-flutter-lib-design.md`.
+- Code: `urna_aberta_flutter/lib/design/` — `tokens.dart` (AtlasPalette light/dark as a ThemeExtension, Regiao, spacing, motion), `typography.dart` (bundled Archivo + Source Serif 4), `theme.dart`, `platform.dart` (iOS / Android / web idioms, icons), `geo/brasil_geo.dart` (IBGE UF + region outlines from `assets/geo/brasil_uf.json`), `widgets/` (Plate, FileCode, SimulationStamp, StatusBadge, DivergenceBanner, BrazilMap, MapPlate, SourceDuo, MirroredBars, TimelineChart, UfSmallMultiples, ReplayBar, AtlasPage).
+- Rules: candidacies never get a color; every figure carries a Fonte line and its TSE file code; any non-official data shows `SimulationStamp`; status always icon + label; region and data colors were validated for color-vision deficiency, so change them only after re-running a palette validator.
+- Shell (`lib/app/shell.dart`): wide web = masthead; wide native = NavigationRail; iOS phone = CupertinoTabBar; Android phone = NavigationBar. Sections: Apuração, Minha seção, Verificar, Entenda. The design-system gallery is `lib/showcase/design_system_screen.dart`.
+- `lib/showcase/sample_data.dart` is SIMULATION data (anonymous candidacies) used only by the design-system gallery. Apuração reads the server's `tally` endpoint through `lib/replay/replay_controller.dart` (`TallyScope` provides the source; each viewer owns its replay clock).
+
 
 This project is a Flutter app (frontend) backed by a Serverpod server (backend). Always build the app's backend with Serverpod.
 Build for multiple users, use Serverpod's built-in authentication, which is already set up in `lib/server.dart`.
@@ -47,4 +58,3 @@ If the user asks you to test the app:
 
 The app is launched from `urna_aberta_flutter/lib/driver.dart`, which starts the Flutter driver extension with text entry emulation turned off so the app stays usable by hand. To let the driver type, set `enableTextEntryEmulation: true` there and `hot_restart` the app.
 
-IMPORTANT: After building the first version of the app, update this AGENTS.md file with information about the app we're building. KEEP the info about the MCP server and the checklist. Remove this paragraph.
