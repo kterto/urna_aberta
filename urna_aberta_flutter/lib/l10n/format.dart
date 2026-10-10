@@ -38,4 +38,13 @@ extension AtlasFormat on BuildContext {
         ? '${DateFormat('dd/MM', _tag).format(b)} $time'
         : '${DateFormat.MMMd(_tag).format(b)}, $time';
   }
+
+  /// `29/09/2026 10:31` / `Sep 29, 2026, 10:31`, Brasília time.
+  String dateHm(DateTime utc) {
+    final b = brasilia(utc);
+    final time = DateFormat.Hm(_tag).format(b);
+    return Localizations.localeOf(this).languageCode == 'pt'
+        ? '${DateFormat('dd/MM/yyyy', _tag).format(b)} $time'
+        : '${DateFormat.yMMMd(_tag).format(b)}, $time';
+  }
 }

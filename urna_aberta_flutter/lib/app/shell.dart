@@ -6,6 +6,7 @@ import '../design/tokens.dart';
 import '../l10n/l10n.dart';
 import '../screens/apuracao_screen.dart';
 import '../screens/entenda_screen.dart';
+import '../screens/resultados_screen.dart';
 import '../screens/secao_screen.dart';
 import '../screens/verificar_screen.dart';
 import 'app.dart';
@@ -21,10 +22,20 @@ class Destination {
 
 final destinations = <Destination>[
   Destination((l) => l.navApuracao, AtlasIcons.apuracao),
+  Destination((l) => l.navResultados, AtlasIcons.resultados),
   Destination((l) => l.navSecao, AtlasIcons.secao),
   Destination((l) => l.navVerificar, AtlasIcons.verificar),
   Destination((l) => l.navEntenda, AtlasIcons.entenda),
 ];
+
+/// Top-level sections, in [destinations] order.
+abstract final class Section {
+  static const apuracao = 0,
+      resultados = 1,
+      secao = 2,
+      verificar = 3,
+      entenda = 4;
+}
 
 /// Lets any screen switch the top-level section (e.g. banner → Entenda).
 class ShellScope extends InheritedWidget {
@@ -53,6 +64,7 @@ class _AppShellState extends State<AppShell> {
 
   static const _pages = <Widget>[
     ApuracaoScreen(),
+    ResultadosScreen(),
     SecaoScreen(),
     VerificarScreen(),
     EntendaScreen(),

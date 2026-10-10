@@ -256,6 +256,110 @@
   "navSecao": "Minha seção",
   "navVerificar": "Verificar",
   "navEntenda": "Entenda",
+  "navResultados": "Resultados",
+  "resultadosTitle": "Resultados",
+  "resultadosLede": "O resultado de cada cargo, em cada estado ou município, lido do arquivo assinado do TSE. Para deputados e vereadores, a Urna Aberta refaz a distribuição das vagas e compara com a do TSE.",
+  "resultadosRound": "{year} · {round}º turno",
+  "@resultadosRound": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
+      "round": {
+        "type": "int"
+      }
+    }
+  },
+  "resultadosElection": "Eleição",
+  "resultadosOffice": "Cargo",
+  "resultadosPlace": "Estado",
+  "resultadosMunicipio": "Município",
+  "resultadosMunicipioHint": "Digite para buscar",
+  "cargoPrefeito": "Prefeito",
+  "cargoVereador": "Vereador",
+  "resultadosNotHeld": "Esta votação ainda não aconteceu. O TSE começa a publicar os resultados às 17h (horário de Brasília) do dia da eleição.",
+  "resultadosChooseMunicipio": "Escolha o município para ver o resultado.",
+  "resultadosNotPublished": "O TSE ainda não publicou este resultado.",
+  "resultadosInvalidRequest": "Este cargo não é eleito neste lugar.",
+  "resultadosTseUnavailable": "O TSE não respondeu. Tente de novo em instantes.",
+  "resultadosError": "Não foi possível carregar o resultado.",
+  "resultadosSummaryPlate": "Resumo do resultado",
+  "resultadosValidVotes": "Votos válidos",
+  "resultadosSeats": "Vagas",
+  "resultadosQuotient": "Quociente eleitoral",
+  "resultadosTotalized": "Seções totalizadas",
+  "resultadosBlankNull": "Brancos e nulos",
+  "resultadosSource": "TSE · resultado do cargo (EA20), gerado em {when}",
+  "@resultadosSource": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "resultadosSeatsPlate": "Vagas por partido ou federação",
+  "resultadosSeatsSource": "TSE · vagas publicadas; Urna Aberta · distribuição refeita a partir dos votos",
+  "resultadosCheckMatches": "Nossa conta confere com a do TSE",
+  "resultadosCheckDiffers": "{count, plural, =1{Nossa conta difere da do TSE em 1 ponto} other{Nossa conta difere da do TSE em {count} pontos}}",
+  "@resultadosCheckDiffers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultadosCheckNote": "A Urna Aberta refez a distribuição das vagas com os votos deste arquivo, pelas regras do Código Eleitoral (arts. 106 a 109) e da Resolução TSE 23.677, e comparou o quociente eleitoral, as vagas de cada partido ou federação e os eleitos com os publicados pelo TSE.",
+  "resultadosColList": "Partido ou federação",
+  "resultadosColVotes": "Votos",
+  "resultadosColQp": "QP",
+  "resultadosColSeats": "Vagas",
+  "resultadosOurSeats": "nossa conta: {count}",
+  "resultadosQpUnfilled": "{count, plural, =1{1 vaga do QP sem candidato com 10% do quociente: foi para as sobras} other{{count} vagas do QP sem candidato com 10% do quociente: foram para as sobras}}",
+  "@resultadosQpUnfilled": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@resultadosOurSeats": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultadosKindFederation": "Federação",
+  "resultadosKindCoalition": "Coligação",
+  "resultadosCandidatesPlate": "Candidaturas",
+  "resultadosCandidatesSource": "TSE · votos e situação de cada candidatura",
+  "resultadosSearch": "Buscar por nome, número ou partido",
+  "resultadosShowMore": "Mostrar mais {count}",
+  "@resultadosShowMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resultadosNoMatch": "Nenhuma candidatura encontrada.",
+  "resultadosOurSeatDiffers": "nossa conta: {how}",
+  "@resultadosOurSeatDiffers": {
+    "placeholders": {
+      "how": {
+        "type": "String"
+      }
+    }
+  },
+  "resultadosNotElectedByUs": "não eleito",
+  "resultadosOfValid": "{percent} dos válidos",
+  "@resultadosOfValid": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "themeLight": "Claro",
   "themeSystem": "Sistema",
   "themeDark": "Escuro",

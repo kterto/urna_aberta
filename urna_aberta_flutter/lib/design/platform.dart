@@ -26,6 +26,8 @@ abstract final class AtlasIcons {
 
   static IconData apuracao(BuildContext c) =>
       _pick(c, CupertinoIcons.chart_bar_alt_fill, Icons.bar_chart_rounded);
+  static IconData resultados(BuildContext c) =>
+      _pick(c, CupertinoIcons.list_number, Icons.format_list_numbered);
   static IconData secao(BuildContext c) =>
       _pick(c, CupertinoIcons.location, Icons.place_outlined);
   static IconData verificar(BuildContext c) =>

@@ -292,6 +292,179 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navEntenda => 'Entenda';
 
   @override
+  String get navResultados => 'Resultados';
+
+  @override
+  String get resultadosTitle => 'Resultados';
+
+  @override
+  String get resultadosLede =>
+      'O resultado de cada cargo, em cada estado ou município, lido do arquivo assinado do TSE. Para deputados e vereadores, a Urna Aberta refaz a distribuição das vagas e compara com a do TSE.';
+
+  @override
+  String resultadosRound(String year, int round) {
+    return '$year · $roundº turno';
+  }
+
+  @override
+  String get resultadosElection => 'Eleição';
+
+  @override
+  String get resultadosOffice => 'Cargo';
+
+  @override
+  String get resultadosPlace => 'Estado';
+
+  @override
+  String get resultadosMunicipio => 'Município';
+
+  @override
+  String get resultadosMunicipioHint => 'Digite para buscar';
+
+  @override
+  String get cargoPrefeito => 'Prefeito';
+
+  @override
+  String get cargoVereador => 'Vereador';
+
+  @override
+  String get resultadosNotHeld =>
+      'Esta votação ainda não aconteceu. O TSE começa a publicar os resultados às 17h (horário de Brasília) do dia da eleição.';
+
+  @override
+  String get resultadosChooseMunicipio =>
+      'Escolha o município para ver o resultado.';
+
+  @override
+  String get resultadosNotPublished =>
+      'O TSE ainda não publicou este resultado.';
+
+  @override
+  String get resultadosInvalidRequest => 'Este cargo não é eleito neste lugar.';
+
+  @override
+  String get resultadosTseUnavailable =>
+      'O TSE não respondeu. Tente de novo em instantes.';
+
+  @override
+  String get resultadosError => 'Não foi possível carregar o resultado.';
+
+  @override
+  String get resultadosSummaryPlate => 'Resumo do resultado';
+
+  @override
+  String get resultadosValidVotes => 'Votos válidos';
+
+  @override
+  String get resultadosSeats => 'Vagas';
+
+  @override
+  String get resultadosQuotient => 'Quociente eleitoral';
+
+  @override
+  String get resultadosTotalized => 'Seções totalizadas';
+
+  @override
+  String get resultadosBlankNull => 'Brancos e nulos';
+
+  @override
+  String resultadosSource(String when) {
+    return 'TSE · resultado do cargo (EA20), gerado em $when';
+  }
+
+  @override
+  String get resultadosSeatsPlate => 'Vagas por partido ou federação';
+
+  @override
+  String get resultadosSeatsSource =>
+      'TSE · vagas publicadas; Urna Aberta · distribuição refeita a partir dos votos';
+
+  @override
+  String get resultadosCheckMatches => 'Nossa conta confere com a do TSE';
+
+  @override
+  String resultadosCheckDiffers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Nossa conta difere da do TSE em $count pontos',
+      one: 'Nossa conta difere da do TSE em 1 ponto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resultadosCheckNote =>
+      'A Urna Aberta refez a distribuição das vagas com os votos deste arquivo, pelas regras do Código Eleitoral (arts. 106 a 109) e da Resolução TSE 23.677, e comparou o quociente eleitoral, as vagas de cada partido ou federação e os eleitos com os publicados pelo TSE.';
+
+  @override
+  String get resultadosColList => 'Partido ou federação';
+
+  @override
+  String get resultadosColVotes => 'Votos';
+
+  @override
+  String get resultadosColQp => 'QP';
+
+  @override
+  String get resultadosColSeats => 'Vagas';
+
+  @override
+  String resultadosOurSeats(int count) {
+    return 'nossa conta: $count';
+  }
+
+  @override
+  String resultadosQpUnfilled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count vagas do QP sem candidato com 10% do quociente: foram para as sobras',
+      one:
+          '1 vaga do QP sem candidato com 10% do quociente: foi para as sobras',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resultadosKindFederation => 'Federação';
+
+  @override
+  String get resultadosKindCoalition => 'Coligação';
+
+  @override
+  String get resultadosCandidatesPlate => 'Candidaturas';
+
+  @override
+  String get resultadosCandidatesSource =>
+      'TSE · votos e situação de cada candidatura';
+
+  @override
+  String get resultadosSearch => 'Buscar por nome, número ou partido';
+
+  @override
+  String resultadosShowMore(int count) {
+    return 'Mostrar mais $count';
+  }
+
+  @override
+  String get resultadosNoMatch => 'Nenhuma candidatura encontrada.';
+
+  @override
+  String resultadosOurSeatDiffers(String how) {
+    return 'nossa conta: $how';
+  }
+
+  @override
+  String get resultadosNotElectedByUs => 'não eleito';
+
+  @override
+  String resultadosOfValid(String percent) {
+    return '$percent dos válidos';
+  }
+
+  @override
   String get themeLight => 'Claro';
 
   @override

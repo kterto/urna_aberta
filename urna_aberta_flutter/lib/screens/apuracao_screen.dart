@@ -176,7 +176,8 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: Space.x4),
                     child: DivergenceBanner(
-                      onLearnMore: () => ShellScope.of(context)?.go(3),
+                      onLearnMore: () =>
+                          ShellScope.of(context)?.go(Section.entenda),
                     ),
                   )
                 : const SizedBox.shrink(),
@@ -316,7 +317,8 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: Space.x4),
                     child: DivergenceBanner(
-                      onLearnMore: () => ShellScope.of(context)?.go(3),
+                      onLearnMore: () =>
+                          ShellScope.of(context)?.go(Section.entenda),
                     ),
                   )
                 : const SizedBox.shrink(),

@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../design/theme.dart';
 import '../l10n/l10n.dart';
 import '../replay/replay_controller.dart';
+import '../resultados/resultados_controller.dart';
 import '../secao/secao_controller.dart';
 import '../verificar/verificar_controller.dart';
 import 'shell.dart';
@@ -17,11 +18,13 @@ class UrnaAbertaApp extends StatelessWidget {
     required this.tallySource,
     required this.secaoSource,
     required this.verificarSource,
+    required this.resultadosSource,
   });
 
   final TallySource tallySource;
   final SecaoSource secaoSource;
   final VerificarSource verificarSource;
+  final ResultadosSource resultadosSource;
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +36,24 @@ class UrnaAbertaApp extends StatelessWidget {
           source: secaoSource,
           child: VerificarScope(
             source: verificarSource,
-            child: MaterialApp(
-              title: 'Urna Aberta',
-              locale: localeNotifier.value,
-              supportedLocales: AppLocalizations.supportedLocales,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-              ],
-              debugShowCheckedModeBanner: false,
-              theme: atlasTheme(Brightness.light),
-              darkTheme: atlasTheme(Brightness.dark),
-              themeMode: themeModeNotifier.value,
-              home: const AppShell(),
+            child: ResultadosScope(
+              source: resultadosSource,
+              child: MaterialApp(
+                title: 'Urna Aberta',
+                locale: localeNotifier.value,
+                supportedLocales: AppLocalizations.supportedLocales,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                ],
+                debugShowCheckedModeBanner: false,
+                theme: atlasTheme(Brightness.light),
+                darkTheme: atlasTheme(Brightness.dark),
+                themeMode: themeModeNotifier.value,
+                home: const AppShell(),
+              ),
             ),
           ),
         ),

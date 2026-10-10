@@ -552,6 +552,276 @@ abstract class AppLocalizations {
   /// **'Entenda'**
   String get navEntenda;
 
+  /// No description provided for @navResultados.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resultados'**
+  String get navResultados;
+
+  /// No description provided for @resultadosTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resultados'**
+  String get resultadosTitle;
+
+  /// No description provided for @resultadosLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'O resultado de cada cargo, em cada estado ou município, lido do arquivo assinado do TSE. Para deputados e vereadores, a Urna Aberta refaz a distribuição das vagas e compara com a do TSE.'**
+  String get resultadosLede;
+
+  /// No description provided for @resultadosRound.
+  ///
+  /// In pt, this message translates to:
+  /// **'{year} · {round}º turno'**
+  String resultadosRound(String year, int round);
+
+  /// No description provided for @resultadosElection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Eleição'**
+  String get resultadosElection;
+
+  /// No description provided for @resultadosOffice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cargo'**
+  String get resultadosOffice;
+
+  /// No description provided for @resultadosPlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Estado'**
+  String get resultadosPlace;
+
+  /// No description provided for @resultadosMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Município'**
+  String get resultadosMunicipio;
+
+  /// No description provided for @resultadosMunicipioHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Digite para buscar'**
+  String get resultadosMunicipioHint;
+
+  /// No description provided for @cargoPrefeito.
+  ///
+  /// In pt, this message translates to:
+  /// **'Prefeito'**
+  String get cargoPrefeito;
+
+  /// No description provided for @cargoVereador.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vereador'**
+  String get cargoVereador;
+
+  /// No description provided for @resultadosNotHeld.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esta votação ainda não aconteceu. O TSE começa a publicar os resultados às 17h (horário de Brasília) do dia da eleição.'**
+  String get resultadosNotHeld;
+
+  /// No description provided for @resultadosChooseMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha o município para ver o resultado.'**
+  String get resultadosChooseMunicipio;
+
+  /// No description provided for @resultadosNotPublished.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE ainda não publicou este resultado.'**
+  String get resultadosNotPublished;
+
+  /// No description provided for @resultadosInvalidRequest.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este cargo não é eleito neste lugar.'**
+  String get resultadosInvalidRequest;
+
+  /// No description provided for @resultadosTseUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE não respondeu. Tente de novo em instantes.'**
+  String get resultadosTseUnavailable;
+
+  /// No description provided for @resultadosError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar o resultado.'**
+  String get resultadosError;
+
+  /// No description provided for @resultadosSummaryPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resumo do resultado'**
+  String get resultadosSummaryPlate;
+
+  /// No description provided for @resultadosValidVotes.
+  ///
+  /// In pt, this message translates to:
+  /// **'Votos válidos'**
+  String get resultadosValidVotes;
+
+  /// No description provided for @resultadosSeats.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vagas'**
+  String get resultadosSeats;
+
+  /// No description provided for @resultadosQuotient.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quociente eleitoral'**
+  String get resultadosQuotient;
+
+  /// No description provided for @resultadosTotalized.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seções totalizadas'**
+  String get resultadosTotalized;
+
+  /// No description provided for @resultadosBlankNull.
+  ///
+  /// In pt, this message translates to:
+  /// **'Brancos e nulos'**
+  String get resultadosBlankNull;
+
+  /// No description provided for @resultadosSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · resultado do cargo (EA20), gerado em {when}'**
+  String resultadosSource(String when);
+
+  /// No description provided for @resultadosSeatsPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vagas por partido ou federação'**
+  String get resultadosSeatsPlate;
+
+  /// No description provided for @resultadosSeatsSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · vagas publicadas; Urna Aberta · distribuição refeita a partir dos votos'**
+  String get resultadosSeatsSource;
+
+  /// No description provided for @resultadosCheckMatches.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nossa conta confere com a do TSE'**
+  String get resultadosCheckMatches;
+
+  /// No description provided for @resultadosCheckDiffers.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{Nossa conta difere da do TSE em 1 ponto} other{Nossa conta difere da do TSE em {count} pontos}}'**
+  String resultadosCheckDiffers(int count);
+
+  /// No description provided for @resultadosCheckNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'A Urna Aberta refez a distribuição das vagas com os votos deste arquivo, pelas regras do Código Eleitoral (arts. 106 a 109) e da Resolução TSE 23.677, e comparou o quociente eleitoral, as vagas de cada partido ou federação e os eleitos com os publicados pelo TSE.'**
+  String get resultadosCheckNote;
+
+  /// No description provided for @resultadosColList.
+  ///
+  /// In pt, this message translates to:
+  /// **'Partido ou federação'**
+  String get resultadosColList;
+
+  /// No description provided for @resultadosColVotes.
+  ///
+  /// In pt, this message translates to:
+  /// **'Votos'**
+  String get resultadosColVotes;
+
+  /// No description provided for @resultadosColQp.
+  ///
+  /// In pt, this message translates to:
+  /// **'QP'**
+  String get resultadosColQp;
+
+  /// No description provided for @resultadosColSeats.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vagas'**
+  String get resultadosColSeats;
+
+  /// No description provided for @resultadosOurSeats.
+  ///
+  /// In pt, this message translates to:
+  /// **'nossa conta: {count}'**
+  String resultadosOurSeats(int count);
+
+  /// No description provided for @resultadosQpUnfilled.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{1 vaga do QP sem candidato com 10% do quociente: foi para as sobras} other{{count} vagas do QP sem candidato com 10% do quociente: foram para as sobras}}'**
+  String resultadosQpUnfilled(int count);
+
+  /// No description provided for @resultadosKindFederation.
+  ///
+  /// In pt, this message translates to:
+  /// **'Federação'**
+  String get resultadosKindFederation;
+
+  /// No description provided for @resultadosKindCoalition.
+  ///
+  /// In pt, this message translates to:
+  /// **'Coligação'**
+  String get resultadosKindCoalition;
+
+  /// No description provided for @resultadosCandidatesPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Candidaturas'**
+  String get resultadosCandidatesPlate;
+
+  /// No description provided for @resultadosCandidatesSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · votos e situação de cada candidatura'**
+  String get resultadosCandidatesSource;
+
+  /// No description provided for @resultadosSearch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscar por nome, número ou partido'**
+  String get resultadosSearch;
+
+  /// No description provided for @resultadosShowMore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostrar mais {count}'**
+  String resultadosShowMore(int count);
+
+  /// No description provided for @resultadosNoMatch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma candidatura encontrada.'**
+  String get resultadosNoMatch;
+
+  /// No description provided for @resultadosOurSeatDiffers.
+  ///
+  /// In pt, this message translates to:
+  /// **'nossa conta: {how}'**
+  String resultadosOurSeatDiffers(String how);
+
+  /// No description provided for @resultadosNotElectedByUs.
+  ///
+  /// In pt, this message translates to:
+  /// **'não eleito'**
+  String get resultadosNotElectedByUs;
+
+  /// No description provided for @resultadosOfValid.
+  ///
+  /// In pt, this message translates to:
+  /// **'{percent} dos válidos'**
+  String resultadosOfValid(String percent);
+
   /// No description provided for @themeLight.
   ///
   /// In pt, this message translates to:

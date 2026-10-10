@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'app/app.dart';
 import 'client.dart';
 import 'replay/replay_controller.dart';
+import 'resultados/resultados_controller.dart';
 import 'secao/secao_controller.dart';
 import 'verificar/verificar_controller.dart';
 
@@ -14,6 +15,7 @@ void main() async {
       tallySource: ServerTallySource(client),
       secaoSource: CachedSecaoSource(ServerSecaoSource(client)),
       verificarSource: ServerVerificarSource(client),
+      resultadosSource: ServerResultadosSource(client),
     ),
   );
 }
