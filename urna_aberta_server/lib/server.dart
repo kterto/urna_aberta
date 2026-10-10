@@ -10,6 +10,8 @@ import 'src/live/elections.dart';
 import 'src/live/live_ingestor.dart';
 import 'src/live/live_poll_call.dart';
 import 'src/replay/fixture_seeder.dart';
+import 'src/results/resultados_endpoint.dart';
+import 'src/results/results_service.dart';
 import 'src/secao/secao_endpoint.dart';
 import 'src/secao/section_directories.dart';
 import 'src/secao/section_service.dart';
@@ -127,6 +129,12 @@ void run(List<String> args) async {
   );
 
   final live = _liveIngestor(tse, urls);
+  // EA11 as the live poller last read it, else as archived.
+  final archivedElections = _archivedElections();
+  ResultadosEndpoint.service = ResultsService(
+    client: tse,
+    elections: () => live?.elections ?? archivedElections,
+  );
 
   // Start the server.
   await pod.start();
@@ -155,6 +163,11 @@ void run(List<String> args) async {
       await session.close();
     }
   }
+}
+
+List<Election> _archivedElections() {
+  final f = File('../fixtures/2026-1t/oficial/comum/config/ele-c.json');
+  return f.existsSync() ? parseElections(f.readAsBytesSync()) : const [];
 }
 
 /// Election-night polling of TSE, on unless `URNA_LIVE=off`. Outside a

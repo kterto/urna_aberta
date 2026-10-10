@@ -1,0 +1,11 @@
+### Urna Aberta's seat allocation against TSE's, for one race.
+class: SeatCheck
+fields:
+  quotient: int
+  tseQuotient: int?
+  matches: bool
+  ### Lists and candidates whose outcome differs from TSE's.
+  listDifferences: int
+  candidateDifferences: int
+  ### Seats no candidate could take.
+  unfilled: int

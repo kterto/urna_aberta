@@ -17,6 +17,10 @@ tally:
   - timeline:
   - divergence:
   - live:
+resultados:
+  - eleicoes:
+  - municipios:
+  - resultado:
 secao:
   - municipios:
   - zonas:

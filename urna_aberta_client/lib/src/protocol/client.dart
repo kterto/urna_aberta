@@ -19,6 +19,8 @@ import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
     as _ivdor3em;
+import 'package:urna_aberta_client/src/protocol/election_summary.dart'
+    as _i35jelvf;
 import 'package:urna_aberta_client/src/protocol/file_verification.dart'
     as _i4bcni6a;
 import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
@@ -26,6 +28,8 @@ import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
 import 'package:urna_aberta_client/src/protocol/live_status.dart' as _iz8cte89;
 import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
     as _iawxlp65;
+import 'package:urna_aberta_client/src/protocol/office_report.dart'
+    as _i8bxvetb;
 import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
 import 'package:urna_aberta_client/src/protocol/section_report.dart'
     as _it6gukgl;
@@ -334,6 +338,50 @@ class EndpointTally extends _isc.EndpointRef {
       );
 }
 
+/// Resultados: the published result of any office, in any scope, for every
+/// ordinary election TSE lists, with an independent seat allocation for
+/// proportional offices.
+/// {@category Endpoint}
+class EndpointResultados extends _isc.EndpointRef {
+  EndpointResultados(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'resultados';
+
+  _ida.Future<List<_i35jelvf.ElectionSummary>> eleicoes() =>
+      caller.callServerEndpoint<List<_i35jelvf.ElectionSummary>>(
+        'resultados',
+        'eleicoes',
+        {},
+      );
+
+  _ida.Future<List<_iawxlp65.MunicipioRef>> municipios(
+    int eleicao,
+    String uf,
+  ) => caller.callServerEndpoint<List<_iawxlp65.MunicipioRef>>(
+    'resultados',
+    'municipios',
+    {
+      'eleicao': eleicao,
+      'uf': uf,
+    },
+  );
+
+  _ida.Future<_i8bxvetb.OfficeReport> resultado(
+    int eleicao,
+    int cargo,
+    String abrangencia,
+  ) => caller.callServerEndpoint<_i8bxvetb.OfficeReport>(
+    'resultados',
+    'resultado',
+    {
+      'eleicao': eleicao,
+      'cargo': cargo,
+      'abrangencia': abrangencia,
+    },
+  );
+}
+
 /// Minha seção: find a polling section and read its official files.
 /// {@category Endpoint}
 class EndpointSecao extends _isc.EndpointRef {
@@ -460,6 +508,7 @@ class Client extends _isc.ServerpodClientShared {
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
     tally = EndpointTally(this);
+    resultados = EndpointResultados(this);
     secao = EndpointSecao(this);
     verificar = EndpointVerificar(this);
     modules = Modules(this);
@@ -473,6 +522,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointTally tally;
 
+  late final EndpointResultados resultados;
+
   late final EndpointSecao secao;
 
   late final EndpointVerificar verificar;
@@ -485,6 +536,7 @@ class Client extends _isc.ServerpodClientShared {
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
     'tally': tally,
+    'resultados': resultados,
     'secao': secao,
     'verificar': verificar,
   };

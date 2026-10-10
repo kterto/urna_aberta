@@ -21,6 +21,7 @@ import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../greetings/greeting_endpoint.dart' as _il624ik7;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
+import '../results/resultados_endpoint.dart' as _ignf5cub;
 import '../secao/secao_endpoint.dart' as _i5402ufq;
 import '../verify/verificar_endpoint.dart' as _i11vp49h;
 export 'future_calls.dart' show ServerpodFutureCallsGetter;
@@ -51,6 +52,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'tally',
+          null,
+        ),
+      'resultados': _ignf5cub.ResultadosEndpoint()
+        ..initialize(
+          server,
+          'resultados',
           null,
         ),
       'secao': _i5402ufq.SecaoEndpoint()
@@ -389,6 +396,81 @@ class Endpoints extends _is.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['tally'] as _iphjbc6w.TallyEndpoint).live(session),
+        ),
+      },
+    );
+    connectors['resultados'] = _is.EndpointConnector(
+      name: 'resultados',
+      endpoint: endpoints['resultados']!,
+      methodConnectors: {
+        'eleicoes': _is.MethodConnector(
+          name: 'eleicoes',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .eleicoes(session),
+        ),
+        'municipios': _is.MethodConnector(
+          name: 'municipios',
+          params: {
+            'eleicao': _is.ParameterDescription(
+              name: 'eleicao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'uf': _is.ParameterDescription(
+              name: 'uf',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .municipios(
+                        session,
+                        params['eleicao'],
+                        params['uf'],
+                      ),
+        ),
+        'resultado': _is.MethodConnector(
+          name: 'resultado',
+          params: {
+            'eleicao': _is.ParameterDescription(
+              name: 'eleicao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'cargo': _is.ParameterDescription(
+              name: 'cargo',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'abrangencia': _is.ParameterDescription(
+              name: 'abrangencia',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .resultado(
+                        session,
+                        params['eleicao'],
+                        params['cargo'],
+                        params['abrangencia'],
+                      ),
         ),
       },
     );

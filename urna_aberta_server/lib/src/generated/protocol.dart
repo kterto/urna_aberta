@@ -19,6 +19,8 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
 import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
+import 'package:urna_aberta_server/src/generated/election_summary.dart'
+    as _i22tx4kq;
 import 'package:urna_aberta_server/src/generated/file_verification.dart'
     as _i5a4izj1;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
@@ -27,19 +29,26 @@ import 'package:urna_aberta_server/src/generated/timeline_point.dart'
     as _ir3q3hqp;
 import 'bu_check.dart' as _ijbwnxcy;
 import 'candidate.dart' as _irnb9urg;
+import 'candidate_report.dart' as _i8xvblpk;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'candidate_votes.dart' as _iurxdm15;
 import 'cargo_result.dart' as _i77b8h6f;
 import 'data_origin.dart' as _i2ilnjuc;
 import 'divergence_event.dart' as _i3f5hnmb;
+import 'election_summary.dart' as _ipxcqqyf;
 import 'file_not_stored.dart' as _i0m7v5qb;
 import 'file_verification.dart' as _ikk6q8b9;
 import 'greetings/greeting.dart' as _izw8z7ou;
+import 'list_report.dart' as _i49o1wen;
 import 'live_status.dart' as _i5q61ine;
 import 'municipio_ref.dart' as _i663s1cn;
+import 'office_report.dart' as _ie6yu1i3;
 import 'replay_night.dart' as _i1vi4thm;
 import 'replay_unavailable.dart' as _i6npibdt;
+import 'result_file.dart' as _ihi5zekk;
 import 'result_snapshot.dart' as _i4dv59av;
+import 'result_unavailable.dart' as _ip5wxoe5;
+import 'seat_check.dart' as _idhahere;
 import 'section_check.dart' as _i1fk3nml;
 import 'section_file.dart' as _i4rww364;
 import 'section_file_info.dart' as _igdizl70;
@@ -54,19 +63,26 @@ import 'urna_signature.dart' as _i343iyih;
 import 'voto_result.dart' as _iuhijha9;
 export 'bu_check.dart';
 export 'candidate.dart';
+export 'candidate_report.dart';
 export 'candidate_tally.dart';
 export 'candidate_votes.dart';
 export 'cargo_result.dart';
 export 'data_origin.dart';
 export 'divergence_event.dart';
+export 'election_summary.dart';
 export 'file_not_stored.dart';
 export 'file_verification.dart';
 export 'greetings/greeting.dart';
+export 'list_report.dart';
 export 'live_status.dart';
 export 'municipio_ref.dart';
+export 'office_report.dart';
 export 'replay_night.dart';
 export 'replay_unavailable.dart';
+export 'result_file.dart';
 export 'result_snapshot.dart';
+export 'result_unavailable.dart';
+export 'seat_check.dart';
 export 'section_check.dart';
 export 'section_file.dart';
 export 'section_file_info.dart';
@@ -300,6 +316,123 @@ class Protocol extends _is.DatabaseSerializationManager {
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'startedAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'result_file',
+      dartName: 'ResultFile',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'electionCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'officeCode',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'scopeCode',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'tseGeneratedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'fetchedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'rawSha256',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'signature',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:SignatureStatus',
+        ),
+        _isp.ColumnDefinition(
+          name: 'jws',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'result_file_version_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'electionCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'officeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'scopeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'rawSha256',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'result_file_latest_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'electionCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'officeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'scopeCode',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'tseGeneratedAt',
             ),
           ],
           type: 'btree',
@@ -681,6 +814,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _irnb9urg.Candidate) {
       return _irnb9urg.Candidate.fromJson(data) as T;
     }
+    if (t == _i8xvblpk.CandidateReport) {
+      return _i8xvblpk.CandidateReport.fromJson(data) as T;
+    }
     if (t == _ixvsuy9r.CandidateTally) {
       return _ixvsuy9r.CandidateTally.fromJson(data) as T;
     }
@@ -696,6 +832,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i3f5hnmb.DivergenceEvent) {
       return _i3f5hnmb.DivergenceEvent.fromJson(data) as T;
     }
+    if (t == _ipxcqqyf.ElectionSummary) {
+      return _ipxcqqyf.ElectionSummary.fromJson(data) as T;
+    }
     if (t == _i0m7v5qb.FileNotStoredException) {
       return _i0m7v5qb.FileNotStoredException.fromJson(data) as T;
     }
@@ -705,11 +844,17 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _izw8z7ou.Greeting) {
       return _izw8z7ou.Greeting.fromJson(data) as T;
     }
+    if (t == _i49o1wen.ListReport) {
+      return _i49o1wen.ListReport.fromJson(data) as T;
+    }
     if (t == _i5q61ine.LiveStatus) {
       return _i5q61ine.LiveStatus.fromJson(data) as T;
     }
     if (t == _i663s1cn.MunicipioRef) {
       return _i663s1cn.MunicipioRef.fromJson(data) as T;
+    }
+    if (t == _ie6yu1i3.OfficeReport) {
+      return _ie6yu1i3.OfficeReport.fromJson(data) as T;
     }
     if (t == _i1vi4thm.ReplayNight) {
       return _i1vi4thm.ReplayNight.fromJson(data) as T;
@@ -717,8 +862,17 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i6npibdt.ReplayUnavailableException) {
       return _i6npibdt.ReplayUnavailableException.fromJson(data) as T;
     }
+    if (t == _ihi5zekk.ResultFile) {
+      return _ihi5zekk.ResultFile.fromJson(data) as T;
+    }
     if (t == _i4dv59av.ResultSnapshot) {
       return _i4dv59av.ResultSnapshot.fromJson(data) as T;
+    }
+    if (t == _ip5wxoe5.ResultUnavailable) {
+      return _ip5wxoe5.ResultUnavailable.fromJson(data) as T;
+    }
+    if (t == _idhahere.SeatCheck) {
+      return _idhahere.SeatCheck.fromJson(data) as T;
     }
     if (t == _i1fk3nml.SectionCheck) {
       return _i1fk3nml.SectionCheck.fromJson(data) as T;
@@ -762,6 +916,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _is.getType<_irnb9urg.Candidate?>()) {
       return (data != null ? _irnb9urg.Candidate.fromJson(data) : null) as T;
     }
+    if (t == _is.getType<_i8xvblpk.CandidateReport?>()) {
+      return (data != null ? _i8xvblpk.CandidateReport.fromJson(data) : null)
+          as T;
+    }
     if (t == _is.getType<_ixvsuy9r.CandidateTally?>()) {
       return (data != null ? _ixvsuy9r.CandidateTally.fromJson(data) : null)
           as T;
@@ -780,6 +938,10 @@ class Protocol extends _is.DatabaseSerializationManager {
       return (data != null ? _i3f5hnmb.DivergenceEvent.fromJson(data) : null)
           as T;
     }
+    if (t == _is.getType<_ipxcqqyf.ElectionSummary?>()) {
+      return (data != null ? _ipxcqqyf.ElectionSummary.fromJson(data) : null)
+          as T;
+    }
     if (t == _is.getType<_i0m7v5qb.FileNotStoredException?>()) {
       return (data != null
               ? _i0m7v5qb.FileNotStoredException.fromJson(data)
@@ -793,11 +955,17 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _is.getType<_izw8z7ou.Greeting?>()) {
       return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
     }
+    if (t == _is.getType<_i49o1wen.ListReport?>()) {
+      return (data != null ? _i49o1wen.ListReport.fromJson(data) : null) as T;
+    }
     if (t == _is.getType<_i5q61ine.LiveStatus?>()) {
       return (data != null ? _i5q61ine.LiveStatus.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_i663s1cn.MunicipioRef?>()) {
       return (data != null ? _i663s1cn.MunicipioRef.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_ie6yu1i3.OfficeReport?>()) {
+      return (data != null ? _ie6yu1i3.OfficeReport.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_i1vi4thm.ReplayNight?>()) {
       return (data != null ? _i1vi4thm.ReplayNight.fromJson(data) : null) as T;
@@ -808,9 +976,19 @@ class Protocol extends _is.DatabaseSerializationManager {
               : null)
           as T;
     }
+    if (t == _is.getType<_ihi5zekk.ResultFile?>()) {
+      return (data != null ? _ihi5zekk.ResultFile.fromJson(data) : null) as T;
+    }
     if (t == _is.getType<_i4dv59av.ResultSnapshot?>()) {
       return (data != null ? _i4dv59av.ResultSnapshot.fromJson(data) : null)
           as T;
+    }
+    if (t == _is.getType<_ip5wxoe5.ResultUnavailable?>()) {
+      return (data != null ? _ip5wxoe5.ResultUnavailable.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_idhahere.SeatCheck?>()) {
+      return (data != null ? _idhahere.SeatCheck.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_i1fk3nml.SectionCheck?>()) {
       return (data != null ? _i1fk3nml.SectionCheck.fromJson(data) : null) as T;
@@ -865,6 +1043,12 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
     if (t == List<_i4neo0h8.TimelinePoint>) {
       return (data as List)
               .map((e) => deserialize<_i4neo0h8.TimelinePoint>(e))
@@ -874,6 +1058,18 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == List<_i3f5hnmb.DivergenceEvent>) {
       return (data as List)
               .map((e) => deserialize<_i3f5hnmb.DivergenceEvent>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i49o1wen.ListReport>) {
+      return (data as List)
+              .map((e) => deserialize<_i49o1wen.ListReport>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i8xvblpk.CandidateReport>) {
+      return (data as List)
+              .map((e) => deserialize<_i8xvblpk.CandidateReport>(e))
               .toList()
           as T;
     }
@@ -917,9 +1113,6 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
-    if (t == List<String>) {
-      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
-    }
     if (t == List<_iurxdm15.CandidateVotes>) {
       return (data as List)
               .map((e) => deserialize<_iurxdm15.CandidateVotes>(e))
@@ -941,6 +1134,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == List<_it5gv87d.DivergenceEvent>) {
       return (data as List)
               .map((e) => deserialize<_it5gv87d.DivergenceEvent>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i22tx4kq.ElectionSummary>) {
+      return (data as List)
+              .map((e) => deserialize<_i22tx4kq.ElectionSummary>(e))
               .toList()
           as T;
     }
@@ -975,19 +1174,26 @@ class Protocol extends _is.DatabaseSerializationManager {
     return switch (type) {
       _ijbwnxcy.BuCheck => 'BuCheck',
       _irnb9urg.Candidate => 'Candidate',
+      _i8xvblpk.CandidateReport => 'CandidateReport',
       _ixvsuy9r.CandidateTally => 'CandidateTally',
       _iurxdm15.CandidateVotes => 'CandidateVotes',
       _i77b8h6f.CargoResult => 'CargoResult',
       _i2ilnjuc.DataOrigin => 'DataOrigin',
       _i3f5hnmb.DivergenceEvent => 'DivergenceEvent',
+      _ipxcqqyf.ElectionSummary => 'ElectionSummary',
       _i0m7v5qb.FileNotStoredException => 'FileNotStoredException',
       _ikk6q8b9.FileVerification => 'FileVerification',
       _izw8z7ou.Greeting => 'Greeting',
+      _i49o1wen.ListReport => 'ListReport',
       _i5q61ine.LiveStatus => 'LiveStatus',
       _i663s1cn.MunicipioRef => 'MunicipioRef',
+      _ie6yu1i3.OfficeReport => 'OfficeReport',
       _i1vi4thm.ReplayNight => 'ReplayNight',
       _i6npibdt.ReplayUnavailableException => 'ReplayUnavailableException',
+      _ihi5zekk.ResultFile => 'ResultFile',
       _i4dv59av.ResultSnapshot => 'ResultSnapshot',
+      _ip5wxoe5.ResultUnavailable => 'ResultUnavailable',
+      _idhahere.SeatCheck => 'SeatCheck',
       _i1fk3nml.SectionCheck => 'SectionCheck',
       _i4rww364.SectionFile => 'SectionFile',
       _igdizl70.SectionFileInfo => 'SectionFileInfo',
@@ -1018,6 +1224,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'BuCheck';
       case _irnb9urg.Candidate():
         return 'Candidate';
+      case _i8xvblpk.CandidateReport():
+        return 'CandidateReport';
       case _ixvsuy9r.CandidateTally():
         return 'CandidateTally';
       case _iurxdm15.CandidateVotes():
@@ -1028,22 +1236,34 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'DataOrigin';
       case _i3f5hnmb.DivergenceEvent():
         return 'DivergenceEvent';
+      case _ipxcqqyf.ElectionSummary():
+        return 'ElectionSummary';
       case _i0m7v5qb.FileNotStoredException():
         return 'FileNotStoredException';
       case _ikk6q8b9.FileVerification():
         return 'FileVerification';
       case _izw8z7ou.Greeting():
         return 'Greeting';
+      case _i49o1wen.ListReport():
+        return 'ListReport';
       case _i5q61ine.LiveStatus():
         return 'LiveStatus';
       case _i663s1cn.MunicipioRef():
         return 'MunicipioRef';
+      case _ie6yu1i3.OfficeReport():
+        return 'OfficeReport';
       case _i1vi4thm.ReplayNight():
         return 'ReplayNight';
       case _i6npibdt.ReplayUnavailableException():
         return 'ReplayUnavailableException';
+      case _ihi5zekk.ResultFile():
+        return 'ResultFile';
       case _i4dv59av.ResultSnapshot():
         return 'ResultSnapshot';
+      case _ip5wxoe5.ResultUnavailable():
+        return 'ResultUnavailable';
+      case _idhahere.SeatCheck():
+        return 'SeatCheck';
       case _i1fk3nml.SectionCheck():
         return 'SectionCheck';
       case _i4rww364.SectionFile():
@@ -1100,6 +1320,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'Candidate') {
       return deserialize<_irnb9urg.Candidate>(data['data']);
     }
+    if (dataClassName == 'CandidateReport') {
+      return deserialize<_i8xvblpk.CandidateReport>(data['data']);
+    }
     if (dataClassName == 'CandidateTally') {
       return deserialize<_ixvsuy9r.CandidateTally>(data['data']);
     }
@@ -1115,6 +1338,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'DivergenceEvent') {
       return deserialize<_i3f5hnmb.DivergenceEvent>(data['data']);
     }
+    if (dataClassName == 'ElectionSummary') {
+      return deserialize<_ipxcqqyf.ElectionSummary>(data['data']);
+    }
     if (dataClassName == 'FileNotStoredException') {
       return deserialize<_i0m7v5qb.FileNotStoredException>(data['data']);
     }
@@ -1124,11 +1350,17 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'Greeting') {
       return deserialize<_izw8z7ou.Greeting>(data['data']);
     }
+    if (dataClassName == 'ListReport') {
+      return deserialize<_i49o1wen.ListReport>(data['data']);
+    }
     if (dataClassName == 'LiveStatus') {
       return deserialize<_i5q61ine.LiveStatus>(data['data']);
     }
     if (dataClassName == 'MunicipioRef') {
       return deserialize<_i663s1cn.MunicipioRef>(data['data']);
+    }
+    if (dataClassName == 'OfficeReport') {
+      return deserialize<_ie6yu1i3.OfficeReport>(data['data']);
     }
     if (dataClassName == 'ReplayNight') {
       return deserialize<_i1vi4thm.ReplayNight>(data['data']);
@@ -1136,8 +1368,17 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'ReplayUnavailableException') {
       return deserialize<_i6npibdt.ReplayUnavailableException>(data['data']);
     }
+    if (dataClassName == 'ResultFile') {
+      return deserialize<_ihi5zekk.ResultFile>(data['data']);
+    }
     if (dataClassName == 'ResultSnapshot') {
       return deserialize<_i4dv59av.ResultSnapshot>(data['data']);
+    }
+    if (dataClassName == 'ResultUnavailable') {
+      return deserialize<_ip5wxoe5.ResultUnavailable>(data['data']);
+    }
+    if (dataClassName == 'SeatCheck') {
+      return deserialize<_idhahere.SeatCheck>(data['data']);
     }
     if (dataClassName == 'SectionCheck') {
       return deserialize<_i1fk3nml.SectionCheck>(data['data']);
@@ -1222,6 +1463,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return _ixvsuy9r.CandidateTally.t;
       case _i3f5hnmb.DivergenceEvent:
         return _i3f5hnmb.DivergenceEvent.t;
+      case _ihi5zekk.ResultFile:
+        return _ihi5zekk.ResultFile.t;
       case _i4dv59av.ResultSnapshot:
         return _i4dv59av.ResultSnapshot.t;
       case _i1fk3nml.SectionCheck:

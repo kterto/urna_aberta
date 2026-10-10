@@ -1,0 +1,21 @@
+### A signed TSE result file (EA20) as fetched for Resultados: the raw
+### `.jws`, so every figure shown can be traced back to it.
+class: ResultFile
+table: result_file
+fields:
+  electionCode: int
+  officeCode: int
+  ### Lowercase scope: `br`, a UF, `zz`, or a municipality (`sp71072`).
+  scopeCode: String
+  tseGeneratedAt: DateTime
+  fetchedAt: DateTime
+  ### SHA-256 of the `.jws` bytes, hex.
+  rawSha256: String
+  signature: SignatureStatus
+  jws: String
+indexes:
+  result_file_version_idx:
+    fields: electionCode, officeCode, scopeCode, rawSha256
+    unique: true
+  result_file_latest_idx:
+    fields: electionCode, officeCode, scopeCode, tseGeneratedAt

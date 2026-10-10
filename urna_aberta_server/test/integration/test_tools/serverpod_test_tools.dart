@@ -19,6 +19,8 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
 import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
+import 'package:urna_aberta_server/src/generated/election_summary.dart'
+    as _i22tx4kq;
 import 'package:urna_aberta_server/src/generated/file_verification.dart'
     as _i5a4izj1;
 import 'package:urna_aberta_server/src/generated/future_calls.dart'
@@ -28,6 +30,8 @@ import 'package:urna_aberta_server/src/generated/greetings/greeting.dart'
 import 'package:urna_aberta_server/src/generated/live_status.dart' as _ikfybxr9;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
     as _i5vkvva1;
+import 'package:urna_aberta_server/src/generated/office_report.dart'
+    as _it8y8zyf;
 import 'package:urna_aberta_server/src/generated/replay_night.dart'
     as _igasjbde;
 import 'package:urna_aberta_server/src/generated/section_report.dart'
@@ -173,6 +177,8 @@ class TestEndpoints {
 
   late final _TallyEndpoint tally;
 
+  late final _ResultadosEndpoint resultados;
+
   late final _SecaoEndpoint secao;
 
   late final _VerificarEndpoint verificar;
@@ -198,6 +204,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     tally = _TallyEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    resultados = _ResultadosEndpoint(
       endpoints,
       serializationManager,
     );
@@ -738,6 +748,119 @@ class _TallyEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_ikfybxr9.LiveStatus>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _ResultadosEndpoint {
+  _ResultadosEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<List<_i22tx4kq.ElectionSummary>> eleicoes(
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'resultados',
+            method: 'eleicoes',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'resultados',
+          methodName: 'eleicoes',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_i22tx4kq.ElectionSummary>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<List<_i5vkvva1.MunicipioRef>> municipios(
+    _ist.TestSessionBuilder sessionBuilder,
+    int eleicao,
+    String uf,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'resultados',
+            method: 'municipios',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'resultados',
+          methodName: 'municipios',
+          parameters: _ist.testObjectToJson({
+            'eleicao': eleicao,
+            'uf': uf,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_i5vkvva1.MunicipioRef>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_it8y8zyf.OfficeReport> resultado(
+    _ist.TestSessionBuilder sessionBuilder,
+    int eleicao,
+    int cargo,
+    String abrangencia,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'resultados',
+            method: 'resultado',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'resultados',
+          methodName: 'resultado',
+          parameters: _ist.testObjectToJson({
+            'eleicao': eleicao,
+            'cargo': cargo,
+            'abrangencia': abrangencia,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_it8y8zyf.OfficeReport>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
