@@ -1,0 +1,44 @@
+services:
+  # Development services
+  postgres:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: urna_aberta
+      POSTGRES_PASSWORD: "aJhj-t0mZFJ15_jNWNrBHkfujmG9p4uf"
+    volumes:
+      - urna_aberta_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "8091:6379"
+    command: redis-server --requirepass "A59PShsfJT4wY8WBMl84pUfmrxqIyspz"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Test services
+  postgres_test:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: urna_aberta_test
+      POSTGRES_PASSWORD: "6IGB2bWYz2jvlCOLc1cT-KLeMWbjpQOl"
+    volumes:
+      - urna_aberta_test_data:/var/lib/postgresql/data
+
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - "9091:6379"
+    command: redis-server --requirepass "OTG5ItL_fOozlNm6LQXofldGaj_qMQaa"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+volumes:
+  urna_aberta_data:
+  urna_aberta_test_data:

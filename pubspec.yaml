@@ -1,0 +1,11 @@
+name: _
+publish_to: none
+
+environment:
+  sdk: '^3.12.2'
+
+workspace:
+  - urna_aberta_client
+  - urna_aberta_server
+  - urna_aberta_flutter
+

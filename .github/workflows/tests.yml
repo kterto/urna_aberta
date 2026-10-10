@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: '4.0.0'
+      SERVERPOD_PASSWORD_database: '6IGB2bWYz2jvlCOLc1cT-KLeMWbjpQOl'
+      SERVERPOD_PASSWORD_redis: 'OTG5ItL_fOozlNm6LQXofldGaj_qMQaa'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+
+      - name: Start containers
+        working-directory: urna_aberta_server
+        run: docker compose up --quiet-pull --build -d
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install Serverpod CLI
+        run: dart install serverpod_cli $VERSION
+
+      - name: Run Serverpod generator
+        working-directory: urna_aberta_server
+        run: serverpod generate
+
+      - name: Run tests
+        working-directory: urna_aberta_server
+        run: dart test
+
+      - name: Stop containers
+        if: always()
+        working-directory: urna_aberta_server
+        run: docker compose down -v
