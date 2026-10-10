@@ -7,25 +7,32 @@ import '../generated/protocol.dart';
 import '../tally/aggregator.dart';
 import '../tally/ea20.dart';
 import '../tse/tse_urls.dart';
+import '../verify/jws.dart';
 
 /// Stores EA20 files as immutable [ResultSnapshot] versions.
 abstract final class SnapshotStore {
   /// Records one EA20 file. A file already stored for [origin] (same hash)
   /// returns the existing row with `isNew: false`.
   ///
-  /// Throws [FormatException] when the file is malformed or its own
-  /// election or office code differs from [electionCode] / [office].
+  /// With [jws] (the file's `.jws`), the signature is checked and kept; a
+  /// file whose signature fails is stored as such and never tallied.
+  ///
+  /// Throws [FormatException] when the file is malformed, its own election
+  /// or office code differs from [electionCode] / [office], or [jws] signs
+  /// other bytes.
   static Future<({ResultSnapshot snapshot, bool isNew})> record(
     Session session, {
     required DataOrigin origin,
     required int electionCode,
     required Office office,
     required List<int> bytes,
+    String? jws,
     required DateTime fetchedAt,
   }) async {
     final result = parseEa20(bytes);
     _checkIdentity(bytes, electionCode, office);
     final sha = sha256.convert(bytes).toString();
+    final signed = jws == null ? null : await _checkSignature(jws, bytes);
 
     return session.db.transaction((tx) async {
       final existing = await ResultSnapshot.db.findFirstRow(
@@ -39,7 +46,21 @@ abstract final class SnapshotStore {
         transaction: tx,
       );
       await _recordCandidates(session, tx, electionCode, office, result);
-      if (existing != null) return (snapshot: existing, isNew: false);
+      if (existing != null) {
+        if (signed == null || existing.jws != null) {
+          return (snapshot: existing, isNew: false);
+        }
+        final updated = await ResultSnapshot.db.updateRow(
+          session,
+          existing.copyWith(
+            signature: signed.status,
+            signatureKid: signed.kid,
+            jws: signed.jws,
+          ),
+          transaction: tx,
+        );
+        return (snapshot: updated, isNew: false);
+      }
 
       final snapshot = await ResultSnapshot.db.insertRow(
         session,
@@ -53,6 +74,9 @@ abstract final class SnapshotStore {
           tseGeneratedAt: result.generatedAt!,
           fetchedAt: fetchedAt,
           rawSha256: sha,
+          signature: signed?.status,
+          signatureKid: signed?.kid,
+          jws: signed?.jws,
         ),
         transaction: tx,
       );
@@ -82,7 +106,10 @@ abstract final class SnapshotStore {
           t.origin.equals(origin) &
           t.electionCode.equals(electionCode) &
           t.officeCode.equals(office.code) &
-          (t.tseGeneratedAt <= at),
+          (t.tseGeneratedAt <= at) &
+          // Unsigned (older) rows still count; a failed signature never does.
+          (t.signature.equals(null) |
+              t.signature.equals(SignatureStatus.valid)),
       orderBy: (t) => t.tseGeneratedAt.desc(),
       include: ResultSnapshot.include(tallies: CandidateTally.includeList()),
     );
@@ -113,6 +140,28 @@ abstract final class SnapshotStore {
           candidates: names[s.scopeCode] ?? const {},
         ),
     ];
+  }
+
+  static Future<({SignatureStatus status, String kid, String jws})>
+  _checkSignature(String compact, List<int> bytes) async {
+    final jws = TseJws.parse(compact);
+    if (!_sameBytes(jws.payload, bytes)) {
+      throw const FormatException('O JWS assina outro arquivo.');
+    }
+    final status = switch (await checkJws(jws)) {
+      JwsCheck.valid => SignatureStatus.valid,
+      JwsCheck.invalid => SignatureStatus.invalid,
+      JwsCheck.unknownKey => SignatureStatus.unknownKey,
+    };
+    return (status: status, kid: jws.kid, jws: compact.trim());
+  }
+
+  static bool _sameBytes(List<int> a, List<int> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   /// Adds candidacies not yet known for this election, office and scope.

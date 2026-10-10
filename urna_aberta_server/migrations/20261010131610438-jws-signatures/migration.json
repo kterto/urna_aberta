@@ -1,0 +1,73 @@
+{
+  "__className__": "serverpod.DatabaseMigration",
+  "actions": [
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "result_snapshot",
+        "schema": "public",
+        "addColumns": [
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "signature",
+            "fieldName": "signature",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "protocol:SignatureStatus?"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "signatureKid",
+            "fieldName": "signatureKid",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "jws",
+            "fieldName": "jws",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          }
+        ],
+        "deleteColumns": [
+          "signatureValid"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"signatureValid\" of table \"result_snapshot\" will be dropped.",
+            "table": "result_snapshot",
+            "columns": [
+              "signatureValid"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"signatureValid\" of table \"result_snapshot\" will be dropped.",
+      "table": "result_snapshot",
+      "columns": [
+        "signatureValid"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

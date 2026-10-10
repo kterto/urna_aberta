@@ -19,6 +19,8 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
 import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
+import 'package:urna_aberta_server/src/generated/file_verification.dart'
+    as _i5a4izj1;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
     as _i5vkvva1;
 import 'package:urna_aberta_server/src/generated/timeline_point.dart'
@@ -30,6 +32,8 @@ import 'candidate_votes.dart' as _iurxdm15;
 import 'cargo_result.dart' as _i77b8h6f;
 import 'data_origin.dart' as _i2ilnjuc;
 import 'divergence_event.dart' as _i3f5hnmb;
+import 'file_not_stored.dart' as _i0m7v5qb;
+import 'file_verification.dart' as _ikk6q8b9;
 import 'greetings/greeting.dart' as _izw8z7ou;
 import 'municipio_ref.dart' as _i663s1cn;
 import 'replay_night.dart' as _i1vi4thm;
@@ -41,6 +45,7 @@ import 'section_file_info.dart' as _igdizl70;
 import 'section_not_found.dart' as _iakf100n;
 import 'section_report.dart' as _i64rlb21;
 import 'section_unavailable.dart' as _i8oamffp;
+import 'signature_status.dart' as _iomwgc6v;
 import 'tally_frame.dart' as _iiyd8otz;
 import 'timeline_point.dart' as _i4neo0h8;
 import 'uf_progress.dart' as _icbf2ppq;
@@ -52,6 +57,8 @@ export 'candidate_votes.dart';
 export 'cargo_result.dart';
 export 'data_origin.dart';
 export 'divergence_event.dart';
+export 'file_not_stored.dart';
+export 'file_verification.dart';
 export 'greetings/greeting.dart';
 export 'municipio_ref.dart';
 export 'replay_night.dart';
@@ -63,6 +70,7 @@ export 'section_file_info.dart';
 export 'section_not_found.dart';
 export 'section_report.dart';
 export 'section_unavailable.dart';
+export 'signature_status.dart';
 export 'tally_frame.dart';
 export 'timeline_point.dart';
 export 'uf_progress.dart';
@@ -365,10 +373,22 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'String',
         ),
         _isp.ColumnDefinition(
-          name: 'signatureValid',
-          columnType: _isp.ColumnType.boolean,
+          name: 'signature',
+          columnType: _isp.ColumnType.text,
           isNullable: true,
-          dartType: 'bool?',
+          dartType: 'protocol:SignatureStatus?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'signatureKid',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'jws',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
         ),
       ],
       foreignKeys: [],
@@ -672,6 +692,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i3f5hnmb.DivergenceEvent) {
       return _i3f5hnmb.DivergenceEvent.fromJson(data) as T;
     }
+    if (t == _i0m7v5qb.FileNotStoredException) {
+      return _i0m7v5qb.FileNotStoredException.fromJson(data) as T;
+    }
+    if (t == _ikk6q8b9.FileVerification) {
+      return _ikk6q8b9.FileVerification.fromJson(data) as T;
+    }
     if (t == _izw8z7ou.Greeting) {
       return _izw8z7ou.Greeting.fromJson(data) as T;
     }
@@ -704,6 +730,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _i8oamffp.SectionUnavailableException) {
       return _i8oamffp.SectionUnavailableException.fromJson(data) as T;
+    }
+    if (t == _iomwgc6v.SignatureStatus) {
+      return _iomwgc6v.SignatureStatus.fromJson(data) as T;
     }
     if (t == _iiyd8otz.TallyFrame) {
       return _iiyd8otz.TallyFrame.fromJson(data) as T;
@@ -739,6 +768,16 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_i3f5hnmb.DivergenceEvent?>()) {
       return (data != null ? _i3f5hnmb.DivergenceEvent.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i0m7v5qb.FileNotStoredException?>()) {
+      return (data != null
+              ? _i0m7v5qb.FileNotStoredException.fromJson(data)
+              : null)
+          as T;
+    }
+    if (t == _is.getType<_ikk6q8b9.FileVerification?>()) {
+      return (data != null ? _ikk6q8b9.FileVerification.fromJson(data) : null)
           as T;
     }
     if (t == _is.getType<_izw8z7ou.Greeting?>()) {
@@ -784,6 +823,10 @@ class Protocol extends _is.DatabaseSerializationManager {
       return (data != null
               ? _i8oamffp.SectionUnavailableException.fromJson(data)
               : null)
+          as T;
+    }
+    if (t == _is.getType<_iomwgc6v.SignatureStatus?>()) {
+      return (data != null ? _iomwgc6v.SignatureStatus.fromJson(data) : null)
           as T;
     }
     if (t == _is.getType<_iiyd8otz.TallyFrame?>()) {
@@ -881,6 +924,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as T;
     }
+    if (t == List<_i5a4izj1.FileVerification>) {
+      return (data as List)
+              .map((e) => deserialize<_i5a4izj1.FileVerification>(e))
+              .toList()
+          as T;
+    }
     try {
       return _iais.Protocol().deserialize<T>(data, t);
     } on _is.DeserializationTypeNotFoundException catch (_) {}
@@ -902,6 +951,8 @@ class Protocol extends _is.DatabaseSerializationManager {
       _i77b8h6f.CargoResult => 'CargoResult',
       _i2ilnjuc.DataOrigin => 'DataOrigin',
       _i3f5hnmb.DivergenceEvent => 'DivergenceEvent',
+      _i0m7v5qb.FileNotStoredException => 'FileNotStoredException',
+      _ikk6q8b9.FileVerification => 'FileVerification',
       _izw8z7ou.Greeting => 'Greeting',
       _i663s1cn.MunicipioRef => 'MunicipioRef',
       _i1vi4thm.ReplayNight => 'ReplayNight',
@@ -913,6 +964,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       _iakf100n.SectionNotFoundException => 'SectionNotFoundException',
       _i64rlb21.SectionReport => 'SectionReport',
       _i8oamffp.SectionUnavailableException => 'SectionUnavailableException',
+      _iomwgc6v.SignatureStatus => 'SignatureStatus',
       _iiyd8otz.TallyFrame => 'TallyFrame',
       _i4neo0h8.TimelinePoint => 'TimelinePoint',
       _icbf2ppq.UfProgress => 'UfProgress',
@@ -945,6 +997,10 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'DataOrigin';
       case _i3f5hnmb.DivergenceEvent():
         return 'DivergenceEvent';
+      case _i0m7v5qb.FileNotStoredException():
+        return 'FileNotStoredException';
+      case _ikk6q8b9.FileVerification():
+        return 'FileVerification';
       case _izw8z7ou.Greeting():
         return 'Greeting';
       case _i663s1cn.MunicipioRef():
@@ -967,6 +1023,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'SectionReport';
       case _i8oamffp.SectionUnavailableException():
         return 'SectionUnavailableException';
+      case _iomwgc6v.SignatureStatus():
+        return 'SignatureStatus';
       case _iiyd8otz.TallyFrame():
         return 'TallyFrame';
       case _i4neo0h8.TimelinePoint():
@@ -1022,6 +1080,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'DivergenceEvent') {
       return deserialize<_i3f5hnmb.DivergenceEvent>(data['data']);
     }
+    if (dataClassName == 'FileNotStoredException') {
+      return deserialize<_i0m7v5qb.FileNotStoredException>(data['data']);
+    }
+    if (dataClassName == 'FileVerification') {
+      return deserialize<_ikk6q8b9.FileVerification>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
       return deserialize<_izw8z7ou.Greeting>(data['data']);
     }
@@ -1054,6 +1118,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'SectionUnavailableException') {
       return deserialize<_i8oamffp.SectionUnavailableException>(data['data']);
+    }
+    if (dataClassName == 'SignatureStatus') {
+      return deserialize<_iomwgc6v.SignatureStatus>(data['data']);
     }
     if (dataClassName == 'TallyFrame') {
       return deserialize<_iiyd8otz.TallyFrame>(data['data']);

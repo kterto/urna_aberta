@@ -223,6 +223,17 @@ class TseUrls {
     ]);
   }
 
+  /// The `.jws` TSE publishes next to a `.json` file: the same file, signed
+  /// (see `verify/jws.dart`).
+  Uri signatureOf(Uri json) {
+    if (json.host != host || !json.path.endsWith('.json')) {
+      throw ArgumentError.value(json, 'json', 'not a TSE .json file');
+    }
+    return json.replace(
+      path: '${json.path.substring(0, json.path.length - 5)}.jws',
+    );
+  }
+
   Uri _uri(List<String> segments) => Uri(
     scheme: 'https',
     host: host,

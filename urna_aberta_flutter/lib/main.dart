@@ -4,6 +4,7 @@ import 'app/app.dart';
 import 'client.dart';
 import 'replay/replay_controller.dart';
 import 'secao/secao_controller.dart';
+import 'verificar/verificar_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,7 @@ void main() async {
     UrnaAbertaApp(
       tallySource: ServerTallySource(client),
       secaoSource: CachedSecaoSource(ServerSecaoSource(client)),
+      verificarSource: ServerVerificarSource(client),
     ),
   );
 }

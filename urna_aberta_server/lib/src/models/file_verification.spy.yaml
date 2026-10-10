@@ -1,0 +1,21 @@
+### The newest stored version of one published result file and how its
+### signature checked out.
+class: FileVerification
+fields:
+  snapshotId: int
+  origin: DataOrigin
+  electionCode: int
+  ### TSE office code: 1 President, 3 Governor, 5 Senator.
+  officeCode: int
+  ### Lowercase scope: `br`, a UF, or `zz` (exterior).
+  scopeCode: String
+  ### The signed file's name, e.g. `br-c0001-e006257-u.jws`.
+  fileName: String
+  ### Where TSE publishes the signed file.
+  url: String
+  tseGeneratedAt: DateTime
+  ### SHA-256 of the file (the JWS payload), hex.
+  sha256: String
+  ### Null when the file was stored without its `.jws`.
+  signature: SignatureStatus?
+  kid: String?

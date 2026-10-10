@@ -20,6 +20,7 @@ import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../greetings/greeting_endpoint.dart' as _il624ik7;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
 import '../secao/secao_endpoint.dart' as _i5402ufq;
+import '../verify/verificar_endpoint.dart' as _i11vp49h;
 
 class Endpoints extends _is.EndpointDispatch {
   @override
@@ -53,6 +54,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'secao',
+          null,
+        ),
+      'verificar': _i11vp49h.VerificarEndpoint()
+        ..initialize(
+          server,
+          'verificar',
           null,
         ),
     };
@@ -484,6 +491,41 @@ class Endpoints extends _is.EndpointDispatch {
                     params['municipio'],
                     params['zona'],
                     params['secao'],
+                  ),
+        ),
+      },
+    );
+    connectors['verificar'] = _is.EndpointConnector(
+      name: 'verificar',
+      endpoint: endpoints['verificar']!,
+      methodConnectors: {
+        'arquivos': _is.MethodConnector(
+          name: 'arquivos',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['verificar'] as _i11vp49h.VerificarEndpoint)
+                  .arquivos(session),
+        ),
+        'jws': _is.MethodConnector(
+          name: 'jws',
+          params: {
+            'snapshotId': _is.ParameterDescription(
+              name: 'snapshotId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['verificar'] as _i11vp49h.VerificarEndpoint).jws(
+                    session,
+                    params['snapshotId'],
                   ),
         ),
       },

@@ -16,8 +16,11 @@ fields:
   fetchedAt: DateTime
   ### SHA-256 of the raw file bytes, hex.
   rawSha256: String
-  ### JWS check result; null until verified.
-  signatureValid: bool?
+  ### JWS check result; null when the file came without its `.jws`.
+  signature: SignatureStatus?
+  signatureKid: String?
+  ### The `.jws` as received (compact serialization; its payload is the file).
+  jws: String?
   tallies: List<CandidateTally>?, relation(name=snapshot_tallies)
 indexes:
   result_snapshot_version_idx:

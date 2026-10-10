@@ -1,0 +1,4 @@
+### No stored file (or no stored signature) has that id.
+exception: FileNotStoredException
+fields:
+  message: String

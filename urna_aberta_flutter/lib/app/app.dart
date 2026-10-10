@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../design/theme.dart';
 import '../replay/replay_controller.dart';
 import '../secao/secao_controller.dart';
+import '../verificar/verificar_controller.dart';
 import 'shell.dart';
 
 /// Theme choice: follows the system by default; the web masthead can pin it.
@@ -13,10 +14,12 @@ class UrnaAbertaApp extends StatelessWidget {
     super.key,
     required this.tallySource,
     required this.secaoSource,
+    required this.verificarSource,
   });
 
   final TallySource tallySource;
   final SecaoSource secaoSource;
+  final VerificarSource verificarSource;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +29,16 @@ class UrnaAbertaApp extends StatelessWidget {
         source: tallySource,
         child: SecaoScope(
           source: secaoSource,
-          child: MaterialApp(
-            title: 'Urna Aberta',
-            debugShowCheckedModeBanner: false,
-            theme: atlasTheme(Brightness.light),
-            darkTheme: atlasTheme(Brightness.dark),
-            themeMode: mode,
-            home: const AppShell(),
+          child: VerificarScope(
+            source: verificarSource,
+            child: MaterialApp(
+              title: 'Urna Aberta',
+              debugShowCheckedModeBanner: false,
+              theme: atlasTheme(Brightness.light),
+              darkTheme: atlasTheme(Brightness.dark),
+              themeMode: mode,
+              home: const AppShell(),
+            ),
           ),
         ),
       ),

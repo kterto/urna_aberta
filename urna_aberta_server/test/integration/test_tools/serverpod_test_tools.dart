@@ -19,6 +19,8 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
 import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
+import 'package:urna_aberta_server/src/generated/file_verification.dart'
+    as _i5a4izj1;
 import 'package:urna_aberta_server/src/generated/greetings/greeting.dart'
     as _i13zhb17;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
@@ -167,6 +169,8 @@ class TestEndpoints {
   late final _TallyEndpoint tally;
 
   late final _SecaoEndpoint secao;
+
+  late final _VerificarEndpoint verificar;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -193,6 +197,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     secao = _SecaoEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    verificar = _VerificarEndpoint(
       endpoints,
       serializationManager,
     );
@@ -844,6 +852,78 @@ class _SecaoEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_i68ta11r.SectionReport>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _VerificarEndpoint {
+  _VerificarEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<List<_i5a4izj1.FileVerification>> arquivos(
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificar',
+            method: 'arquivos',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificar',
+          methodName: 'arquivos',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<_i5a4izj1.FileVerification>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<String> jws(
+    _ist.TestSessionBuilder sessionBuilder,
+    int snapshotId,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'verificar',
+            method: 'jws',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'verificar',
+          methodName: 'jws',
+          parameters: _ist.testObjectToJson({'snapshotId': snapshotId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

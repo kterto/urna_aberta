@@ -16,6 +16,18 @@ void main() {
       );
     });
 
+    test('a result file\'s signature is its .jws sibling', () {
+      final json = urls.result(6257, Scope.brazil(), president);
+      expect(
+        urls.signatureOf(json).toString(),
+        'https://resultados.tse.jus.br/oficial/ele2026/6257/dados/br/br-c0001-e006257-u.jws',
+      );
+      expect(
+        () => urls.signatureOf(Uri.parse('https://example.org/x.dat')),
+        throwsArgumentError,
+      );
+    });
+
     test('EA12 municipalities config pads the election code to 6 digits', () {
       expect(
         urls.municipalitiesConfig(6257).toString(),

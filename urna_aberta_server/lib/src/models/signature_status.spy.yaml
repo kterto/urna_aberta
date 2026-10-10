@@ -1,0 +1,10 @@
+### Result of checking a TSE file's JWS signature against the pinned key.
+enum: SignatureStatus
+serialized: byName
+values:
+  ### Signed with TSE's published key; the file is exactly what TSE signed.
+  - valid
+  ### The signature does not match: altered, or not from TSE.
+  - invalid
+  ### Signed with a key id Urna Aberta does not know.
+  - unknownKey

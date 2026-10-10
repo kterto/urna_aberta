@@ -35,6 +35,8 @@ dependencies:
   serverpod_flutter: 4.0.0
   serverpod_auth_idp_flutter: 4.0.0
   url_launcher: ^6.3.3
+  cryptography: ^2.9.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   # Used for agents to drive the app through the Dart MCP

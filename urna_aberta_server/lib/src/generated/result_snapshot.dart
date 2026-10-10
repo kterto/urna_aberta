@@ -15,6 +15,7 @@ import 'package:serverpod/serverpod.dart' as _is;
 import 'package:urna_aberta_server/src/generated/protocol.dart' as _iyugoj1j;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'data_origin.dart' as _i2ilnjuc;
+import 'signature_status.dart' as _iomwgc6v;
 
 /// One immutable version of a TSE EA20 result file.
 abstract class ResultSnapshot
@@ -30,7 +31,9 @@ abstract class ResultSnapshot
     required this.tseGeneratedAt,
     required this.fetchedAt,
     required this.rawSha256,
-    this.signatureValid,
+    this.signature,
+    this.signatureKid,
+    this.jws,
     this.tallies,
   });
 
@@ -45,7 +48,9 @@ abstract class ResultSnapshot
     required DateTime tseGeneratedAt,
     required DateTime fetchedAt,
     required String rawSha256,
-    bool? signatureValid,
+    _iomwgc6v.SignatureStatus? signature,
+    String? signatureKid,
+    String? jws,
     List<_ixvsuy9r.CandidateTally>? tallies,
   }) = _ResultSnapshotImpl;
 
@@ -67,9 +72,13 @@ abstract class ResultSnapshot
         jsonSerialization['fetchedAt'],
       ),
       rawSha256: jsonSerialization['rawSha256'] as String,
-      signatureValid: jsonSerialization['signatureValid'] == null
+      signature: jsonSerialization['signature'] == null
           ? null
-          : _is.BoolJsonExtension.fromJson(jsonSerialization['signatureValid']),
+          : _iomwgc6v.SignatureStatus.fromJson(
+              (jsonSerialization['signature'] as String),
+            ),
+      signatureKid: jsonSerialization['signatureKid'] as String?,
+      jws: jsonSerialization['jws'] as String?,
       tallies: jsonSerialization['tallies'] == null
           ? null
           : _iyugoj1j.Protocol().deserialize<List<_ixvsuy9r.CandidateTally>>(
@@ -108,8 +117,13 @@ abstract class ResultSnapshot
   /// SHA-256 of the raw file bytes, hex.
   String rawSha256;
 
-  /// JWS check result; null until verified.
-  bool? signatureValid;
+  /// JWS check result; null when the file came without its `.jws`.
+  _iomwgc6v.SignatureStatus? signature;
+
+  String? signatureKid;
+
+  /// The `.jws` as received (compact serialization; its payload is the file).
+  String? jws;
 
   List<_ixvsuy9r.CandidateTally>? tallies;
 
@@ -130,7 +144,9 @@ abstract class ResultSnapshot
     DateTime? tseGeneratedAt,
     DateTime? fetchedAt,
     String? rawSha256,
-    bool? signatureValid,
+    _iomwgc6v.SignatureStatus? signature,
+    String? signatureKid,
+    String? jws,
     List<_ixvsuy9r.CandidateTally>? tallies,
   });
   @override
@@ -147,7 +163,9 @@ abstract class ResultSnapshot
       'tseGeneratedAt': tseGeneratedAt.toJson(),
       'fetchedAt': fetchedAt.toJson(),
       'rawSha256': rawSha256,
-      if (signatureValid != null) 'signatureValid': signatureValid,
+      if (signature != null) 'signature': signature?.toJson(),
+      if (signatureKid != null) 'signatureKid': signatureKid,
+      if (jws != null) 'jws': jws,
       if (tallies != null)
         'tallies': tallies?.toJson(valueToJson: (v) => v.toJson()),
     };
@@ -167,7 +185,9 @@ abstract class ResultSnapshot
       'tseGeneratedAt': tseGeneratedAt.toJson(),
       'fetchedAt': fetchedAt.toJson(),
       'rawSha256': rawSha256,
-      if (signatureValid != null) 'signatureValid': signatureValid,
+      if (signature != null) 'signature': signature?.toJson(),
+      if (signatureKid != null) 'signatureKid': signatureKid,
+      if (jws != null) 'jws': jws,
       if (tallies != null)
         'tallies': tallies?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
@@ -217,7 +237,9 @@ class _ResultSnapshotImpl extends ResultSnapshot {
     required DateTime tseGeneratedAt,
     required DateTime fetchedAt,
     required String rawSha256,
-    bool? signatureValid,
+    _iomwgc6v.SignatureStatus? signature,
+    String? signatureKid,
+    String? jws,
     List<_ixvsuy9r.CandidateTally>? tallies,
   }) : super._(
          id: id,
@@ -230,7 +252,9 @@ class _ResultSnapshotImpl extends ResultSnapshot {
          tseGeneratedAt: tseGeneratedAt,
          fetchedAt: fetchedAt,
          rawSha256: rawSha256,
-         signatureValid: signatureValid,
+         signature: signature,
+         signatureKid: signatureKid,
+         jws: jws,
          tallies: tallies,
        );
 
@@ -249,7 +273,9 @@ class _ResultSnapshotImpl extends ResultSnapshot {
     DateTime? tseGeneratedAt,
     DateTime? fetchedAt,
     String? rawSha256,
-    Object? signatureValid = _Undefined,
+    Object? signature = _Undefined,
+    Object? signatureKid = _Undefined,
+    Object? jws = _Undefined,
     Object? tallies = _Undefined,
   }) {
     return ResultSnapshot(
@@ -263,9 +289,11 @@ class _ResultSnapshotImpl extends ResultSnapshot {
       tseGeneratedAt: tseGeneratedAt ?? this.tseGeneratedAt,
       fetchedAt: fetchedAt ?? this.fetchedAt,
       rawSha256: rawSha256 ?? this.rawSha256,
-      signatureValid: signatureValid is bool?
-          ? signatureValid
-          : this.signatureValid,
+      signature: signature is _iomwgc6v.SignatureStatus?
+          ? signature
+          : this.signature,
+      signatureKid: signatureKid is String? ? signatureKid : this.signatureKid,
+      jws: jws is String? ? jws : this.jws,
       tallies: tallies is List<_ixvsuy9r.CandidateTally>?
           ? tallies
           : this.tallies?.map((e0) => e0.copyWith()).toList(),
@@ -325,8 +353,20 @@ class ResultSnapshotUpdateTable extends _is.UpdateTable<ResultSnapshotTable> {
     value,
   );
 
-  _is.ColumnValue<bool, bool> signatureValid(bool? value) => _is.ColumnValue(
-    table.signatureValid,
+  _is.ColumnValue<_iomwgc6v.SignatureStatus, _iomwgc6v.SignatureStatus>
+  signature(_iomwgc6v.SignatureStatus? value) => _is.ColumnValue(
+    table.signature,
+    value,
+  );
+
+  _is.ColumnValue<String, String> signatureKid(String? value) =>
+      _is.ColumnValue(
+        table.signatureKid,
+        value,
+      );
+
+  _is.ColumnValue<String, String> jws(String? value) => _is.ColumnValue(
+    table.jws,
     value,
   );
 }
@@ -372,8 +412,17 @@ class ResultSnapshotTable extends _is.Table<int?> {
       'rawSha256',
       this,
     );
-    signatureValid = _is.ColumnBool(
-      'signatureValid',
+    signature = _is.ColumnEnum(
+      'signature',
+      this,
+      _is.EnumSerialization.byName,
+    );
+    signatureKid = _is.ColumnString(
+      'signatureKid',
+      this,
+    );
+    jws = _is.ColumnString(
+      'jws',
       this,
     );
   }
@@ -403,8 +452,13 @@ class ResultSnapshotTable extends _is.Table<int?> {
   /// SHA-256 of the raw file bytes, hex.
   late final _is.ColumnString rawSha256;
 
-  /// JWS check result; null until verified.
-  late final _is.ColumnBool signatureValid;
+  /// JWS check result; null when the file came without its `.jws`.
+  late final _is.ColumnEnum<_iomwgc6v.SignatureStatus> signature;
+
+  late final _is.ColumnString signatureKid;
+
+  /// The `.jws` as received (compact serialization; its payload is the file).
+  late final _is.ColumnString jws;
 
   _ixvsuy9r.CandidateTallyTable? ___tallies;
 
@@ -454,7 +508,9 @@ class ResultSnapshotTable extends _is.Table<int?> {
     tseGeneratedAt,
     fetchedAt,
     rawSha256,
-    signatureValid,
+    signature,
+    signatureKid,
+    jws,
   ];
 
   @override

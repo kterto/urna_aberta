@@ -20,17 +20,23 @@ Future<void> main(List<String> args) async {
   final urls = TseUrls.oficial();
   final ufs = Scope.ufs.where((u) => u != 'zz').toList();
 
+  final results = <Uri>[
+    urls.result(federal, Scope.brazil(), Office.presidente),
+    for (final uf in Scope.ufs)
+      urls.result(federal, Scope.uf(uf), Office.presidente),
+    for (final uf in ufs)
+      urls.result(estadual, Scope.uf(uf), Office.governador),
+    for (final uf in ufs) urls.result(estadual, Scope.uf(uf), Office.senador),
+  ];
   final targets = <Uri>[
     urls.electionsConfig(),
     urls.municipalitiesConfig(federal),
     urls.municipalitiesConfig(estadual),
     urls.brazilTracking(federal),
-    urls.result(federal, Scope.brazil(), Office.presidente),
-    for (final uf in Scope.ufs) urls.result(federal, Scope.uf(uf), Office.presidente),
+    ...results,
     for (final uf in Scope.ufs) urls.ufTracking(federal, uf),
-    for (final uf in ufs) urls.result(estadual, Scope.uf(uf), Office.governador),
-    for (final uf in ufs) urls.result(estadual, Scope.uf(uf), Office.senador),
     for (final uf in Scope.ufs) urls.sectionConfig(pleito, uf),
+    for (final r in results) urls.signatureOf(r),
   ];
 
   final http = IoTseHttp();
@@ -57,7 +63,9 @@ Future<void> main(List<String> args) async {
         'lastModified': r.lastModified,
         'fetchedAt': DateTime.now().toUtc().toIso8601String(),
       });
-      stdout.writeln('[${i + 1}/${targets.length}] ${r.body.length} B ${uri.path}');
+      stdout.writeln(
+        '[${i + 1}/${targets.length}] ${r.body.length} B ${uri.path}',
+      );
     }
   } on TseException catch (e) {
     stderr.writeln('Stopped: $e');
@@ -73,6 +81,8 @@ Future<void> main(List<String> args) async {
         'files': manifest,
       }),
     );
-    stdout.writeln('${manifest.length} files, ${(bytes / 1e6).toStringAsFixed(1)} MB → ${out.path}');
+    stdout.writeln(
+      '${manifest.length} files, ${(bytes / 1e6).toStringAsFixed(1)} MB → ${out.path}',
+    );
   }
 }

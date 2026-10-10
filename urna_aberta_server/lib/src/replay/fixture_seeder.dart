@@ -8,7 +8,8 @@ import '../ingestion/snapshot_store.dart';
 import '../tse/tse_urls.dart';
 
 /// Loads archived EA20 files (`fixtures/<round>/manifest.json`) as replay
-/// snapshots. Other archived files are left alone.
+/// snapshots, each checked against its archived `.jws` when present. Other
+/// archived files are left alone.
 abstract final class FixtureSeeder {
   static final _ea20 = RegExp(
     r'/(\d+)/dados/[a-z]+/[a-z]+-c(\d{4})-e\d{6}-u\.json$',
@@ -28,12 +29,16 @@ abstract final class FixtureSeeder {
       final m = _ea20.firstMatch('/$path');
       if (m == null) continue;
       final officeCode = int.parse(m.group(2)!);
+      final signature = File(
+        '${root.path}/${path.substring(0, path.length - 5)}.jws',
+      );
       final r = await SnapshotStore.record(
         session,
         origin: DataOrigin.replay,
         electionCode: int.parse(m.group(1)!),
         office: Office.values.firstWhere((o) => o.code == officeCode),
         bytes: await File('${root.path}/$path').readAsBytes(),
+        jws: signature.existsSync() ? await signature.readAsString() : null,
         fetchedAt: DateTime.parse(file['fetchedAt'] as String),
       );
       if (r.isNew) added++;

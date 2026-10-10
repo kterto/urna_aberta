@@ -30,6 +30,13 @@ void main() {
       expect(br.officeCode, 1);
       expect(br.fetchedAt.isAfter(DateTime.utc(2026, 10, 5)), isTrue);
     });
+
+    test('checks each archived file against its archived .jws', () async {
+      await FixtureSeeder.seed(session, _fixtures);
+      final rows = await ResultSnapshot.db.find(session);
+      expect(rows.map((r) => r.signature).toSet(), {SignatureStatus.valid});
+      expect(rows.every((r) => r.jws != null), isTrue);
+    });
   });
 
   withServerpod('tally endpoint', (sessionBuilder, endpoints) {

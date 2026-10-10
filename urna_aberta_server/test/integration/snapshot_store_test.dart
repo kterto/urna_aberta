@@ -14,6 +14,26 @@ const _dados = '../fixtures/2026-1t/oficial/ele2026/6257/dados';
 List<int> presidentFile(String scope) =>
     File('$_dados/$scope/$scope-c0001-e006257-u.json').readAsBytesSync();
 
+String presidentJws(String scope) =>
+    File('$_dados/$scope/$scope-c0001-e006257-u.jws').readAsStringSync();
+
+/// [bytes] wrapped in the Acre file's real header and signature, which
+/// do not sign them.
+String forgedJws(List<int> bytes) {
+  final parts = presidentJws('ac').trim().split('.');
+  final payload = base64Url.encode(bytes).replaceAll('=', '');
+  return '${parts[0]}.$payload.${parts[2]}';
+}
+
+/// The Acre file as a later version with more sections counted.
+List<int> laterAcre() {
+  final json = jsonDecode(utf8.decode(presidentFile('ac'))) as Map;
+  (json['s'] as Map)['st'] = '2271';
+  (json['s'] as Map)['ts'] = '2271';
+  json['dg'] = '06/10/2026';
+  return utf8.encode(jsonEncode(json));
+}
+
 /// The Acre file with its counts and generation time rewritten, standing in
 /// for an earlier version of the same file.
 List<int> earlierAcre() {
@@ -32,6 +52,7 @@ void main() {
 
     Future<({ResultSnapshot snapshot, bool isNew})> record(
       List<int> bytes, {
+      String? jws,
       DataOrigin origin = DataOrigin.replay,
       Office office = Office.presidente,
       int election = 6257,
@@ -41,6 +62,7 @@ void main() {
       electionCode: election,
       office: office,
       bytes: bytes,
+      jws: jws,
       fetchedAt: fetchedAt,
     );
 
@@ -57,7 +79,8 @@ void main() {
       expect(s.sectionsTotalized, 2270);
       expect(s.tseGeneratedAt, DateTime.utc(2026, 10, 5, 15, 51, 40));
       expect(s.rawSha256, hasLength(64));
-      expect(s.signatureValid, isNull);
+      expect(s.signature, isNull);
+      expect(s.jws, isNull);
       expect(s.tallies, hasLength(12));
       expect(
         s.tallies!.singleWhere((t) => t.candidateNumber == 22).votes,
@@ -93,6 +116,51 @@ void main() {
       expect(again.isNew, isFalse);
       expect(await Candidate.db.count(session), 12);
     });
+
+    test('a signed file keeps its JWS and a valid signature', () async {
+      final r = await record(presidentFile('ac'), jws: presidentJws('ac'));
+      expect(r.snapshot.signature, SignatureStatus.valid);
+      expect(r.snapshot.signatureKid, 'sNbt9Q_fLS65zE1_ZLNV-XRRwPY');
+      expect(r.snapshot.jws, presidentJws('ac').trim());
+    });
+
+    test('a JWS that signs a different file is refused', () async {
+      await expectLater(
+        record(presidentFile('ac'), jws: presidentJws('sp')),
+        throwsFormatException,
+      );
+      expect(await ResultSnapshot.db.count(session), 0);
+    });
+
+    test(
+      'a file whose signature fails is kept as invalid, never tallied',
+      () async {
+        await record(presidentFile('ac'), jws: presidentJws('ac'));
+        final later = laterAcre();
+        final r = await record(later, jws: forgedJws(later));
+        expect(r.snapshot.signature, SignatureStatus.invalid);
+        final latest = await SnapshotStore.latestAt(
+          session,
+          origin: DataOrigin.replay,
+          electionCode: 6257,
+          office: Office.presidente,
+          at: DateTime.utc(2030),
+        );
+        expect(latest.single.sectionsTotalized, 2270);
+      },
+    );
+
+    test(
+      'recording a stored file with its JWS fills in the signature',
+      () async {
+        await record(presidentFile('ac'));
+        final r = await record(presidentFile('ac'), jws: presidentJws('ac'));
+        expect(r.isNew, isFalse);
+        final s = (await ResultSnapshot.db.findById(session, r.snapshot.id!))!;
+        expect(s.signature, SignatureStatus.valid);
+        expect(s.jws, isNotNull);
+      },
+    );
 
     test('recording the same file again adds nothing', () async {
       final first = await record(presidentFile('ac'));

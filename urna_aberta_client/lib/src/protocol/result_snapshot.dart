@@ -14,6 +14,7 @@ import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import 'package:urna_aberta_client/src/protocol/protocol.dart' as _ihdok87d;
 import 'candidate_tally.dart' as _ixvsuy9r;
 import 'data_origin.dart' as _i2ilnjuc;
+import 'signature_status.dart' as _iomwgc6v;
 
 /// One immutable version of a TSE EA20 result file.
 abstract class ResultSnapshot
@@ -29,7 +30,9 @@ abstract class ResultSnapshot
     required this.tseGeneratedAt,
     required this.fetchedAt,
     required this.rawSha256,
-    this.signatureValid,
+    this.signature,
+    this.signatureKid,
+    this.jws,
     this.tallies,
   });
 
@@ -44,7 +47,9 @@ abstract class ResultSnapshot
     required DateTime tseGeneratedAt,
     required DateTime fetchedAt,
     required String rawSha256,
-    bool? signatureValid,
+    _iomwgc6v.SignatureStatus? signature,
+    String? signatureKid,
+    String? jws,
     List<_ixvsuy9r.CandidateTally>? tallies,
   }) = _ResultSnapshotImpl;
 
@@ -66,11 +71,13 @@ abstract class ResultSnapshot
         jsonSerialization['fetchedAt'],
       ),
       rawSha256: jsonSerialization['rawSha256'] as String,
-      signatureValid: jsonSerialization['signatureValid'] == null
+      signature: jsonSerialization['signature'] == null
           ? null
-          : _isc.BoolJsonExtension.fromJson(
-              jsonSerialization['signatureValid'],
+          : _iomwgc6v.SignatureStatus.fromJson(
+              (jsonSerialization['signature'] as String),
             ),
+      signatureKid: jsonSerialization['signatureKid'] as String?,
+      jws: jsonSerialization['jws'] as String?,
       tallies: jsonSerialization['tallies'] == null
           ? null
           : _ihdok87d.Protocol().deserialize<List<_ixvsuy9r.CandidateTally>>(
@@ -107,8 +114,13 @@ abstract class ResultSnapshot
   /// SHA-256 of the raw file bytes, hex.
   String rawSha256;
 
-  /// JWS check result; null until verified.
-  bool? signatureValid;
+  /// JWS check result; null when the file came without its `.jws`.
+  _iomwgc6v.SignatureStatus? signature;
+
+  String? signatureKid;
+
+  /// The `.jws` as received (compact serialization; its payload is the file).
+  String? jws;
 
   List<_ixvsuy9r.CandidateTally>? tallies;
 
@@ -126,7 +138,9 @@ abstract class ResultSnapshot
     DateTime? tseGeneratedAt,
     DateTime? fetchedAt,
     String? rawSha256,
-    bool? signatureValid,
+    _iomwgc6v.SignatureStatus? signature,
+    String? signatureKid,
+    String? jws,
     List<_ixvsuy9r.CandidateTally>? tallies,
   });
   @override
@@ -143,7 +157,9 @@ abstract class ResultSnapshot
       'tseGeneratedAt': tseGeneratedAt.toJson(),
       'fetchedAt': fetchedAt.toJson(),
       'rawSha256': rawSha256,
-      if (signatureValid != null) 'signatureValid': signatureValid,
+      if (signature != null) 'signature': signature?.toJson(),
+      if (signatureKid != null) 'signatureKid': signatureKid,
+      if (jws != null) 'jws': jws,
       if (tallies != null)
         'tallies': tallies?.toJson(valueToJson: (v) => v.toJson()),
     };
@@ -163,7 +179,9 @@ abstract class ResultSnapshot
       'tseGeneratedAt': tseGeneratedAt.toJson(),
       'fetchedAt': fetchedAt.toJson(),
       'rawSha256': rawSha256,
-      if (signatureValid != null) 'signatureValid': signatureValid,
+      if (signature != null) 'signature': signature?.toJson(),
+      if (signatureKid != null) 'signatureKid': signatureKid,
+      if (jws != null) 'jws': jws,
       if (tallies != null)
         'tallies': tallies?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
@@ -189,7 +207,9 @@ class _ResultSnapshotImpl extends ResultSnapshot {
     required DateTime tseGeneratedAt,
     required DateTime fetchedAt,
     required String rawSha256,
-    bool? signatureValid,
+    _iomwgc6v.SignatureStatus? signature,
+    String? signatureKid,
+    String? jws,
     List<_ixvsuy9r.CandidateTally>? tallies,
   }) : super._(
          id: id,
@@ -202,7 +222,9 @@ class _ResultSnapshotImpl extends ResultSnapshot {
          tseGeneratedAt: tseGeneratedAt,
          fetchedAt: fetchedAt,
          rawSha256: rawSha256,
-         signatureValid: signatureValid,
+         signature: signature,
+         signatureKid: signatureKid,
+         jws: jws,
          tallies: tallies,
        );
 
@@ -221,7 +243,9 @@ class _ResultSnapshotImpl extends ResultSnapshot {
     DateTime? tseGeneratedAt,
     DateTime? fetchedAt,
     String? rawSha256,
-    Object? signatureValid = _Undefined,
+    Object? signature = _Undefined,
+    Object? signatureKid = _Undefined,
+    Object? jws = _Undefined,
     Object? tallies = _Undefined,
   }) {
     return ResultSnapshot(
@@ -235,9 +259,11 @@ class _ResultSnapshotImpl extends ResultSnapshot {
       tseGeneratedAt: tseGeneratedAt ?? this.tseGeneratedAt,
       fetchedAt: fetchedAt ?? this.fetchedAt,
       rawSha256: rawSha256 ?? this.rawSha256,
-      signatureValid: signatureValid is bool?
-          ? signatureValid
-          : this.signatureValid,
+      signature: signature is _iomwgc6v.SignatureStatus?
+          ? signature
+          : this.signature,
+      signatureKid: signatureKid is String? ? signatureKid : this.signatureKid,
+      jws: jws is String? ? jws : this.jws,
       tallies: tallies is List<_ixvsuy9r.CandidateTally>?
           ? tallies
           : this.tallies?.map((e0) => e0.copyWith()).toList(),

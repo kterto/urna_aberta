@@ -7,6 +7,8 @@ Raw files from the TSE results CDN (`resultados.tse.jus.br`, ambiente `oficial`)
 
 Contents: EA11 (`ele-c.json`), EA12 (municipalities, 6257 and 6259), EA14 (Brazil tracking), EA15 (tracking per UF), EA20 President (Brazil, 27 UFs, ZZ), EA20 Governor and Senator (27 UFs), EA16 section config (27 UFs + ZZ).
 
+Each EA20 file also has its signed copy, `<same name>.jws` (fetched 10/10/2026). It is a JWS in compact serialization (EdDSA, Ed25519, key id `sNbt9Q_fLS65zE1_ZLNV-XRRwPY`). Its payload is byte-identical to the `.json`, and all 83 verify with the key in `urna_aberta_server/lib/src/verify/jws.dart`.
+
 Regenerate with `dart run bin/archive_fixtures.dart` from `urna_aberta_server` (20 req/s, stops at the first error).
 
 These are the final files (generated 05/10/2026). They show the end state, not the night's progression.

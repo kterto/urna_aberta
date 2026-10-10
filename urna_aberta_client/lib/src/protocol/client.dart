@@ -19,6 +19,8 @@ import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
     as _ivdor3em;
+import 'package:urna_aberta_client/src/protocol/file_verification.dart'
+    as _i4bcni6a;
 import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
     as _i0ezu2ai;
 import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
@@ -380,6 +382,32 @@ class EndpointSecao extends _isc.EndpointRef {
   );
 }
 
+/// Verificar: how each stored TSE result file's signature checked out, and
+/// the signed files themselves so the app can check them again on its own.
+/// {@category Endpoint}
+class EndpointVerificar extends _isc.EndpointRef {
+  EndpointVerificar(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'verificar';
+
+  /// The newest stored version of each result file: President (Brazil,
+  /// then UFs and exterior), then Governor, then Senator.
+  _ida.Future<List<_i4bcni6a.FileVerification>> arquivos() =>
+      caller.callServerEndpoint<List<_i4bcni6a.FileVerification>>(
+        'verificar',
+        'arquivos',
+        {},
+      );
+
+  /// The stored `.jws` of one file, exactly as TSE served it.
+  _ida.Future<String> jws(int snapshotId) => caller.callServerEndpoint<String>(
+    'verificar',
+    'jws',
+    {'snapshotId': snapshotId},
+  );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _iaic.Caller(client);
@@ -423,6 +451,7 @@ class Client extends _isc.ServerpodClientShared {
     greeting = EndpointGreeting(this);
     tally = EndpointTally(this);
     secao = EndpointSecao(this);
+    verificar = EndpointVerificar(this);
     modules = Modules(this);
   }
 
@@ -436,6 +465,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointSecao secao;
 
+  late final EndpointVerificar verificar;
+
   late final Modules modules;
 
   @override
@@ -445,6 +476,7 @@ class Client extends _isc.ServerpodClientShared {
     'greeting': greeting,
     'tally': tally,
     'secao': secao,
+    'verificar': verificar,
   };
 
   @override
