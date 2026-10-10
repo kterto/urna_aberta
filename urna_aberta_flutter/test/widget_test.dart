@@ -6,11 +6,17 @@ import 'package:urna_aberta_flutter/design/theme.dart';
 import 'package:urna_aberta_flutter/design/tokens.dart';
 import 'package:urna_aberta_flutter/replay/replay_controller.dart';
 
+import 'package:urna_aberta_flutter/secao/secao_controller.dart';
+
 import 'screens/apuracao_screen_test.dart' show StubSource;
+import 'secao/fake_secao_source.dart';
 
 Widget _app(Brightness b) => TallyScope(
   source: StubSource(),
-  child: MaterialApp(theme: atlasTheme(b), home: const AppShell()),
+  child: SecaoScope(
+    source: FakeSecaoSource(),
+    child: MaterialApp(theme: atlasTheme(b), home: const AppShell()),
+  ),
 );
 
 void main() {
