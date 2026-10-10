@@ -702,12 +702,6 @@ abstract class AppLocalizations {
   /// **'Capítulo {number}'**
   String entendaChapterLabel(int number);
 
-  /// No description provided for @entendaDraftStamp.
-  ///
-  /// In pt, this message translates to:
-  /// **'Rascunho · revisar fontes'**
-  String get entendaDraftStamp;
-
   /// No description provided for @entendaPausePara1.
   ///
   /// In pt, this message translates to:
@@ -732,12 +726,6 @@ abstract class AppLocalizations {
   /// **'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay, com a pausa no mesmo horário. A evolução dos estados durante a pausa é uma curva sintética: a Urna Aberta guardou apenas os arquivos finais daquela noite.'**
   String get entendaPausePara3;
 
-  /// No description provided for @entendaInProduction.
-  ///
-  /// In pt, this message translates to:
-  /// **'Este capítulo está em produção. O texto será escrito a partir das fontes oficiais do TSE e revisado em português e inglês.'**
-  String get entendaInProduction;
-
   /// No description provided for @entendaSources.
   ///
   /// In pt, this message translates to:
@@ -749,6 +737,300 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'TSE · Informações técnicas sobre a divulgação de resultados'**
   String get entendaSourceDivulgacao;
+
+  /// No description provided for @entendaCh1Para1.
+  ///
+  /// In pt, this message translates to:
+  /// **'A votação vai das 8h às 17h, no horário de Brasília. A seção só é encerrada depois que todos os eleitores que receberam senha terminam de votar. Então a urna eletrônica apura os votos da seção e imprime o Boletim de Urna (BU).'**
+  String get entendaCh1Para1;
+
+  /// No description provided for @entendaCh1Para2.
+  ///
+  /// In pt, this message translates to:
+  /// **'O presidente da mesa assina as vias do BU com os demais mesários e com os fiscais presentes, e afixa uma cópia assinada em local visível da seção. O BU, o Registro Digital do Voto e os demais arquivos da urna são gerados e assinados digitalmente.'**
+  String get entendaCh1Para2;
+
+  /// No description provided for @entendaCh1Para3.
+  ///
+  /// In pt, this message translates to:
+  /// **'A urna não tem conexão com a internet nem com outras redes. A mídia de resultado, um dispositivo removível com os dados da votação, é retirada da urna e levada à Justiça Eleitoral, ou os arquivos são enviados do próprio local de votação pelo JE-Connect, por uma rede privada. Antes de somar, os sistemas da Justiça Eleitoral conferem a assinatura digital e a integridade de cada arquivo.'**
+  String get entendaCh1Para3;
+
+  /// No description provided for @entendaCh1Callout.
+  ///
+  /// In pt, this message translates to:
+  /// **'Apuração é a contagem feita por cada urna. Totalização é a soma das apurações de todas as urnas do país e do exterior. Divulgação é a última etapa: a publicação no Portal Resultados.'**
+  String get entendaCh1Callout;
+
+  /// No description provided for @entendaCh1Para4.
+  ///
+  /// In pt, this message translates to:
+  /// **'As três etapas acontecem em sequência, e os resultados são divulgados à medida que os boletins chegam. Por isso uma pausa na divulgação, como a de 4 de outubro, não interrompe a apuração nem a totalização (capítulo 6).'**
+  String get entendaCh1Para4;
+
+  /// No description provided for @entendaCh2Para1.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Boletim de Urna é o resultado impresso de uma seção. Ele identifica o município, a zona, a seção e a urna, e traz a quantidade de eleitores aptos e de eleitores que compareceram, os votos de cada candidato e de cada partido, os votos brancos e nulos e a soma geral.'**
+  String get entendaCh2Para1;
+
+  /// No description provided for @entendaCh2Para2.
+  ///
+  /// In pt, this message translates to:
+  /// **'São impressas cinco vias obrigatórias e até cinco adicionais. Uma é afixada no local de votação, outra fica com o presidente da seção, e fiscais de partidos podem receber uma via.'**
+  String get entendaCh2Para2;
+
+  /// No description provided for @entendaCh2Para3.
+  ///
+  /// In pt, this message translates to:
+  /// **'O BU impresso traz QR Codes com os dados da votação. Qualquer cidadão ou entidade fiscalizadora pode lê-los com os aplicativos Boletim na Mão ou e-Título e comparar com o resultado da mesma seção divulgado pelo TSE.'**
+  String get entendaCh2Para3;
+
+  /// No description provided for @entendaCh2Para4.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE publica na internet os boletins enviados para totalização. Os arquivos espelham os boletins impressos, sem o processamento do sistema de totalização. É esse arquivo que a tela Minha seção busca para a sua seção.'**
+  String get entendaCh2Para4;
+
+  /// No description provided for @entendaCh3Para1.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cada urna grava, além do boletim, outros arquivos. O TSE disponibiliza no Portal Resultados o boletim de urna, o Registro Digital do Voto (RDV) e o log da urna, que podem ser baixados para consulta e auditoria. O portal de dados abertos traz os mesmos arquivos de todas as seções, por UF.'**
+  String get entendaCh3Para1;
+
+  /// No description provided for @entendaCh3Para2.
+  ///
+  /// In pt, this message translates to:
+  /// **'O RDV é o arquivo em que os votos são registrados, separados por cargo e gravados em posições aleatórias. Não há como ligar um voto do RDV a um eleitor. O BU é gerado a partir dele, e o RDV permite que partidos recontem os votos da urna a qualquer tempo.'**
+  String get entendaCh3Para2;
+
+  /// No description provided for @entendaCh3Para3.
+  ///
+  /// In pt, this message translates to:
+  /// **'O log é o registro cronológico das principais operações do software da urna: início e fim da votação, relatórios emitidos, aplicativos executados, ajustes de relógio e procedimentos de contingência.'**
+  String get entendaCh3Para3;
+
+  /// No description provided for @entendaCh3Para4.
+  ///
+  /// In pt, this message translates to:
+  /// **'Para cada seção, o TSE publica também um arquivo auxiliar com a lista dos hashes dos arquivos de urna recebidos e a situação de cada um (recebido, rejeitado, excluído ou totalizado). A tela Minha seção usa essa lista.'**
+  String get entendaCh3Para4;
+
+  /// No description provided for @entendaCh4Para1.
+  ///
+  /// In pt, this message translates to:
+  /// **'Um hash é uma pequena sequência de caracteres calculada a partir de um arquivo e que o identifica de forma inequívoca. Por menor que seja a diferença entre dois arquivos, os hashes são completamente diferentes.'**
+  String get entendaCh4Para1;
+
+  /// No description provided for @entendaCh4Para2.
+  ///
+  /// In pt, this message translates to:
+  /// **'Uma assinatura digital usa um par de chaves: a chave privada, conhecida só por quem assina, e a chave pública, que pode ser distribuída a todos. Quem tem a chave pública confere que o arquivo veio de quem assinou e não foi alterado.'**
+  String get entendaCh4Para2;
+
+  /// No description provided for @entendaCh4Para3.
+  ///
+  /// In pt, this message translates to:
+  /// **'A urna assina tudo o que sai dela: boletim, RDV e log. Os arquivos de resultado da divulgação vêm em pares JSON e JWS; o JWS traz os mesmos dados com uma assinatura digital do TSE, no algoritmo EdDSA com chave Ed25519. O manual do TSE pede que a chave pública não seja tirada do próprio arquivo verificado.'**
+  String get entendaCh4Para3;
+
+  /// No description provided for @entendaCh4Callout.
+  ///
+  /// In pt, this message translates to:
+  /// **'A Urna Aberta confere duas coisas: a assinatura do TSE em cada arquivo de resultado (tela Verificar) e o hash do boletim da sua seção contra a lista do arquivo auxiliar (tela Minha seção).'**
+  String get entendaCh4Callout;
+
+  /// No description provided for @entendaCh4Para4.
+  ///
+  /// In pt, this message translates to:
+  /// **'A assinatura da própria urna sobre o boletim ainda não é conferida pela Urna Aberta. Para isso, use o QR Code do boletim impresso com o aplicativo Boletim na Mão.'**
+  String get entendaCh4Para4;
+
+  /// No description provided for @entendaCh5Para1.
+  ///
+  /// In pt, this message translates to:
+  /// **'O código-fonte da urna fica aberto às entidades fiscalizadoras um ano antes de cada eleição. Para 2026, a abertura foi em 2 de outubro de 2025. Podem fiscalizar, entre outros, partidos, federações e coligações, OAB, Ministério Público, Defensoria Pública, Congresso Nacional, CGU, Polícia Federal e TCU.'**
+  String get entendaCh5Para1;
+
+  /// No description provided for @entendaCh5Para2.
+  ///
+  /// In pt, this message translates to:
+  /// **'No Teste Público de Segurança, investigadores inscritos tentam atacar os sistemas eleitorais. A edição para 2026 começou em 1º de dezembro de 2025, com 38 planos de teste. No Teste de Confirmação, em maio de 2026, o TSE concluiu que nenhum achado fragilizou o sigilo ou a integridade do voto.'**
+  String get entendaCh5Para2;
+
+  /// No description provided for @entendaCh5Para3.
+  ///
+  /// In pt, this message translates to:
+  /// **'Em 4 de setembro de 2026, na Cerimônia de Assinatura Digital e Lacração, os sistemas foram assinados digitalmente pelo TSE e por representantes das entidades fiscalizadoras, e as mídias foram lacradas e guardadas na sala-cofre do TSE.'**
+  String get entendaCh5Para3;
+
+  /// No description provided for @entendaCh5Para4.
+  ///
+  /// In pt, this message translates to:
+  /// **'No dia da eleição, o Teste de Integridade usa urnas sorteadas na véspera: entre 8h e 17h, cédulas de papel preenchidas por voluntários são digitadas uma a uma, com filmagem e acesso público, e o resultado da urna é comparado com as cédulas. Em 2026 houve também a versão com biometria de eleitores voluntários.'**
+  String get entendaCh5Para4;
+
+  /// No description provided for @entendaCh5Para5.
+  ///
+  /// In pt, this message translates to:
+  /// **'Depois da totalização, as entidades fiscalizadoras podem pedir os boletins, os RDVs e os logs das urnas e os registros dos sistemas de totalização.'**
+  String get entendaCh5Para5;
+
+  /// No description provided for @entendaCh7Para1.
+  ///
+  /// In pt, this message translates to:
+  /// **'A Urna Aberta lê os mesmos arquivos que o TSE publica e mostra de onde vem cada número, com o código do arquivo.'**
+  String get entendaCh7Para1;
+
+  /// No description provided for @entendaCh7ProvesTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'O que ela prova'**
+  String get entendaCh7ProvesTitle;
+
+  /// No description provided for @entendaCh7Para2.
+  ///
+  /// In pt, this message translates to:
+  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo cujo hash consta da lista do arquivo auxiliar.'**
+  String get entendaCh7Para2;
+
+  /// No description provided for @entendaCh7NotTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'O que ela não prova'**
+  String get entendaCh7NotTitle;
+
+  /// No description provided for @entendaCh7Para3.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nada sobre o funcionamento da urna, o software dela ou se cada voto foi registrado como o eleitor quis: isso é o papel dos protocolos do capítulo 5. Ela ainda não confere a assinatura da urna sobre o boletim, e não confere que o boletim publicado é igual ao impresso: essa comparação é sua, com o boletim afixado ou o Boletim na Mão.'**
+  String get entendaCh7Para3;
+
+  /// No description provided for @entendaCh7Para4.
+  ///
+  /// In pt, this message translates to:
+  /// **'Partes marcadas como simulação, como a evolução dos estados no replay da noite de 4 de outubro, são curvas sintéticas e não dados oficiais.'**
+  String get entendaCh7Para4;
+
+  /// No description provided for @entendaSourceTotalizacao2026.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Saiba como foi a totalização dos votos no 1º turno das Eleições 2026'**
+  String get entendaSourceTotalizacao2026;
+
+  /// No description provided for @entendaSourceApuracaoTotalizacao.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Entenda a diferença entre apuração e totalização de votos'**
+  String get entendaSourceApuracaoTotalizacao;
+
+  /// No description provided for @entendaSourceCaminhoDoVoto.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Veja qual é o caminho do voto depois de encerrada a votação'**
+  String get entendaSourceCaminhoDoVoto;
+
+  /// No description provided for @entendaSourceRes23751.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Resolução nº 23.751/2026 (atos gerais do processo eleitoral)'**
+  String get entendaSourceRes23751;
+
+  /// No description provided for @entendaSourceBoletimDuvidas.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Você já ouviu falar do Boletim de Urna? Tire suas dúvidas'**
+  String get entendaSourceBoletimDuvidas;
+
+  /// No description provided for @entendaSourceDadosAbertosResultados.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Portal de Dados Abertos: Resultados'**
+  String get entendaSourceDadosAbertosResultados;
+
+  /// No description provided for @entendaSourceVotacaoSegura.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Votação segura'**
+  String get entendaSourceVotacaoSegura;
+
+  /// No description provided for @entendaSourceRes23673.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Resolução nº 23.673/2021 (fiscalização e auditoria)'**
+  String get entendaSourceRes23673;
+
+  /// No description provided for @entendaSourceMitosVerdades.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Segurança das eleições informatizadas: mitos e verdades'**
+  String get entendaSourceMitosVerdades;
+
+  /// No description provided for @entendaSourceAcompanharResultados.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Terminada a votação, saiba como acompanhar os resultados'**
+  String get entendaSourceAcompanharResultados;
+
+  /// No description provided for @entendaSourceEa18.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · EA18: arquivo auxiliar de seção'**
+  String get entendaSourceEa18;
+
+  /// No description provided for @entendaSourceAssinaturaResumo.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Assinatura digital e resumos digitais trazem mais segurança à urna'**
+  String get entendaSourceAssinaturaResumo;
+
+  /// No description provided for @entendaSourceManualJws.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Manual de verificação dos arquivos JWS'**
+  String get entendaSourceManualJws;
+
+  /// No description provided for @entendaSourceManualQr.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Manual do QR Code no Boletim de Urna'**
+  String get entendaSourceManualQr;
+
+  /// No description provided for @entendaSourceCodigoFonte.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Códigos-fonte dos sistemas eleitorais continuam abertos para inspeção'**
+  String get entendaSourceCodigoFonte;
+
+  /// No description provided for @entendaSourceTps2025.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Teste da Urna 2025 começa na segunda (1º)'**
+  String get entendaSourceTps2025;
+
+  /// No description provided for @entendaSourceTesteConfirmacao.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Testes confirmam, mais uma vez, a segurança do sistema eleitoral'**
+  String get entendaSourceTesteConfirmacao;
+
+  /// No description provided for @entendaSourceLacracao2026.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Sistemas das Eleições 2026 são assinados digitalmente e lacrados'**
+  String get entendaSourceLacracao2026;
+
+  /// No description provided for @entendaSourceTesteIntegridade.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Como funciona o Teste de Integridade'**
+  String get entendaSourceTesteIntegridade;
+
+  /// No description provided for @entendaSourceTesteIntegridade2026.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Teste de Integridade confirma correspondência entre cédulas e votos'**
+  String get entendaSourceTesteIntegridade2026;
 
   /// No description provided for @secaoTitle.
   ///

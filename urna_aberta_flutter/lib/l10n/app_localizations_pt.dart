@@ -376,9 +376,6 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get entendaDraftStamp => 'Rascunho · revisar fontes';
-
-  @override
   String get entendaPausePara1 =>
       'Na noite de 4 de outubro de 2026, por volta das 19h14 (horário de Brasília), a visualização nacional (\"Brasil\") dos resultados para presidente parou de ser atualizada, quando 64,81% dos dados haviam sido divulgados. A geração desses arquivos foi restabelecida às 20h04, cerca de 50 minutos depois.';
 
@@ -395,15 +392,203 @@ class AppLocalizationsPt extends AppLocalizations {
       'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay, com a pausa no mesmo horário. A evolução dos estados durante a pausa é uma curva sintética: a Urna Aberta guardou apenas os arquivos finais daquela noite.';
 
   @override
-  String get entendaInProduction =>
-      'Este capítulo está em produção. O texto será escrito a partir das fontes oficiais do TSE e revisado em português e inglês.';
-
-  @override
   String get entendaSources => 'Fontes';
 
   @override
   String get entendaSourceDivulgacao =>
       'TSE · Informações técnicas sobre a divulgação de resultados';
+
+  @override
+  String get entendaCh1Para1 =>
+      'A votação vai das 8h às 17h, no horário de Brasília. A seção só é encerrada depois que todos os eleitores que receberam senha terminam de votar. Então a urna eletrônica apura os votos da seção e imprime o Boletim de Urna (BU).';
+
+  @override
+  String get entendaCh1Para2 =>
+      'O presidente da mesa assina as vias do BU com os demais mesários e com os fiscais presentes, e afixa uma cópia assinada em local visível da seção. O BU, o Registro Digital do Voto e os demais arquivos da urna são gerados e assinados digitalmente.';
+
+  @override
+  String get entendaCh1Para3 =>
+      'A urna não tem conexão com a internet nem com outras redes. A mídia de resultado, um dispositivo removível com os dados da votação, é retirada da urna e levada à Justiça Eleitoral, ou os arquivos são enviados do próprio local de votação pelo JE-Connect, por uma rede privada. Antes de somar, os sistemas da Justiça Eleitoral conferem a assinatura digital e a integridade de cada arquivo.';
+
+  @override
+  String get entendaCh1Callout =>
+      'Apuração é a contagem feita por cada urna. Totalização é a soma das apurações de todas as urnas do país e do exterior. Divulgação é a última etapa: a publicação no Portal Resultados.';
+
+  @override
+  String get entendaCh1Para4 =>
+      'As três etapas acontecem em sequência, e os resultados são divulgados à medida que os boletins chegam. Por isso uma pausa na divulgação, como a de 4 de outubro, não interrompe a apuração nem a totalização (capítulo 6).';
+
+  @override
+  String get entendaCh2Para1 =>
+      'O Boletim de Urna é o resultado impresso de uma seção. Ele identifica o município, a zona, a seção e a urna, e traz a quantidade de eleitores aptos e de eleitores que compareceram, os votos de cada candidato e de cada partido, os votos brancos e nulos e a soma geral.';
+
+  @override
+  String get entendaCh2Para2 =>
+      'São impressas cinco vias obrigatórias e até cinco adicionais. Uma é afixada no local de votação, outra fica com o presidente da seção, e fiscais de partidos podem receber uma via.';
+
+  @override
+  String get entendaCh2Para3 =>
+      'O BU impresso traz QR Codes com os dados da votação. Qualquer cidadão ou entidade fiscalizadora pode lê-los com os aplicativos Boletim na Mão ou e-Título e comparar com o resultado da mesma seção divulgado pelo TSE.';
+
+  @override
+  String get entendaCh2Para4 =>
+      'O TSE publica na internet os boletins enviados para totalização. Os arquivos espelham os boletins impressos, sem o processamento do sistema de totalização. É esse arquivo que a tela Minha seção busca para a sua seção.';
+
+  @override
+  String get entendaCh3Para1 =>
+      'Cada urna grava, além do boletim, outros arquivos. O TSE disponibiliza no Portal Resultados o boletim de urna, o Registro Digital do Voto (RDV) e o log da urna, que podem ser baixados para consulta e auditoria. O portal de dados abertos traz os mesmos arquivos de todas as seções, por UF.';
+
+  @override
+  String get entendaCh3Para2 =>
+      'O RDV é o arquivo em que os votos são registrados, separados por cargo e gravados em posições aleatórias. Não há como ligar um voto do RDV a um eleitor. O BU é gerado a partir dele, e o RDV permite que partidos recontem os votos da urna a qualquer tempo.';
+
+  @override
+  String get entendaCh3Para3 =>
+      'O log é o registro cronológico das principais operações do software da urna: início e fim da votação, relatórios emitidos, aplicativos executados, ajustes de relógio e procedimentos de contingência.';
+
+  @override
+  String get entendaCh3Para4 =>
+      'Para cada seção, o TSE publica também um arquivo auxiliar com a lista dos hashes dos arquivos de urna recebidos e a situação de cada um (recebido, rejeitado, excluído ou totalizado). A tela Minha seção usa essa lista.';
+
+  @override
+  String get entendaCh4Para1 =>
+      'Um hash é uma pequena sequência de caracteres calculada a partir de um arquivo e que o identifica de forma inequívoca. Por menor que seja a diferença entre dois arquivos, os hashes são completamente diferentes.';
+
+  @override
+  String get entendaCh4Para2 =>
+      'Uma assinatura digital usa um par de chaves: a chave privada, conhecida só por quem assina, e a chave pública, que pode ser distribuída a todos. Quem tem a chave pública confere que o arquivo veio de quem assinou e não foi alterado.';
+
+  @override
+  String get entendaCh4Para3 =>
+      'A urna assina tudo o que sai dela: boletim, RDV e log. Os arquivos de resultado da divulgação vêm em pares JSON e JWS; o JWS traz os mesmos dados com uma assinatura digital do TSE, no algoritmo EdDSA com chave Ed25519. O manual do TSE pede que a chave pública não seja tirada do próprio arquivo verificado.';
+
+  @override
+  String get entendaCh4Callout =>
+      'A Urna Aberta confere duas coisas: a assinatura do TSE em cada arquivo de resultado (tela Verificar) e o hash do boletim da sua seção contra a lista do arquivo auxiliar (tela Minha seção).';
+
+  @override
+  String get entendaCh4Para4 =>
+      'A assinatura da própria urna sobre o boletim ainda não é conferida pela Urna Aberta. Para isso, use o QR Code do boletim impresso com o aplicativo Boletim na Mão.';
+
+  @override
+  String get entendaCh5Para1 =>
+      'O código-fonte da urna fica aberto às entidades fiscalizadoras um ano antes de cada eleição. Para 2026, a abertura foi em 2 de outubro de 2025. Podem fiscalizar, entre outros, partidos, federações e coligações, OAB, Ministério Público, Defensoria Pública, Congresso Nacional, CGU, Polícia Federal e TCU.';
+
+  @override
+  String get entendaCh5Para2 =>
+      'No Teste Público de Segurança, investigadores inscritos tentam atacar os sistemas eleitorais. A edição para 2026 começou em 1º de dezembro de 2025, com 38 planos de teste. No Teste de Confirmação, em maio de 2026, o TSE concluiu que nenhum achado fragilizou o sigilo ou a integridade do voto.';
+
+  @override
+  String get entendaCh5Para3 =>
+      'Em 4 de setembro de 2026, na Cerimônia de Assinatura Digital e Lacração, os sistemas foram assinados digitalmente pelo TSE e por representantes das entidades fiscalizadoras, e as mídias foram lacradas e guardadas na sala-cofre do TSE.';
+
+  @override
+  String get entendaCh5Para4 =>
+      'No dia da eleição, o Teste de Integridade usa urnas sorteadas na véspera: entre 8h e 17h, cédulas de papel preenchidas por voluntários são digitadas uma a uma, com filmagem e acesso público, e o resultado da urna é comparado com as cédulas. Em 2026 houve também a versão com biometria de eleitores voluntários.';
+
+  @override
+  String get entendaCh5Para5 =>
+      'Depois da totalização, as entidades fiscalizadoras podem pedir os boletins, os RDVs e os logs das urnas e os registros dos sistemas de totalização.';
+
+  @override
+  String get entendaCh7Para1 =>
+      'A Urna Aberta lê os mesmos arquivos que o TSE publica e mostra de onde vem cada número, com o código do arquivo.';
+
+  @override
+  String get entendaCh7ProvesTitle => 'O que ela prova';
+
+  @override
+  String get entendaCh7Para2 =>
+      'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo cujo hash consta da lista do arquivo auxiliar.';
+
+  @override
+  String get entendaCh7NotTitle => 'O que ela não prova';
+
+  @override
+  String get entendaCh7Para3 =>
+      'Nada sobre o funcionamento da urna, o software dela ou se cada voto foi registrado como o eleitor quis: isso é o papel dos protocolos do capítulo 5. Ela ainda não confere a assinatura da urna sobre o boletim, e não confere que o boletim publicado é igual ao impresso: essa comparação é sua, com o boletim afixado ou o Boletim na Mão.';
+
+  @override
+  String get entendaCh7Para4 =>
+      'Partes marcadas como simulação, como a evolução dos estados no replay da noite de 4 de outubro, são curvas sintéticas e não dados oficiais.';
+
+  @override
+  String get entendaSourceTotalizacao2026 =>
+      'TSE · Saiba como foi a totalização dos votos no 1º turno das Eleições 2026';
+
+  @override
+  String get entendaSourceApuracaoTotalizacao =>
+      'TSE · Entenda a diferença entre apuração e totalização de votos';
+
+  @override
+  String get entendaSourceCaminhoDoVoto =>
+      'TSE · Veja qual é o caminho do voto depois de encerrada a votação';
+
+  @override
+  String get entendaSourceRes23751 =>
+      'TSE · Resolução nº 23.751/2026 (atos gerais do processo eleitoral)';
+
+  @override
+  String get entendaSourceBoletimDuvidas =>
+      'TSE · Você já ouviu falar do Boletim de Urna? Tire suas dúvidas';
+
+  @override
+  String get entendaSourceDadosAbertosResultados =>
+      'TSE · Portal de Dados Abertos: Resultados';
+
+  @override
+  String get entendaSourceVotacaoSegura => 'TSE · Votação segura';
+
+  @override
+  String get entendaSourceRes23673 =>
+      'TSE · Resolução nº 23.673/2021 (fiscalização e auditoria)';
+
+  @override
+  String get entendaSourceMitosVerdades =>
+      'TSE · Segurança das eleições informatizadas: mitos e verdades';
+
+  @override
+  String get entendaSourceAcompanharResultados =>
+      'TSE · Terminada a votação, saiba como acompanhar os resultados';
+
+  @override
+  String get entendaSourceEa18 => 'TSE · EA18: arquivo auxiliar de seção';
+
+  @override
+  String get entendaSourceAssinaturaResumo =>
+      'TSE · Assinatura digital e resumos digitais trazem mais segurança à urna';
+
+  @override
+  String get entendaSourceManualJws =>
+      'TSE · Manual de verificação dos arquivos JWS';
+
+  @override
+  String get entendaSourceManualQr =>
+      'TSE · Manual do QR Code no Boletim de Urna';
+
+  @override
+  String get entendaSourceCodigoFonte =>
+      'TSE · Códigos-fonte dos sistemas eleitorais continuam abertos para inspeção';
+
+  @override
+  String get entendaSourceTps2025 =>
+      'TSE · Teste da Urna 2025 começa na segunda (1º)';
+
+  @override
+  String get entendaSourceTesteConfirmacao =>
+      'TSE · Testes confirmam, mais uma vez, a segurança do sistema eleitoral';
+
+  @override
+  String get entendaSourceLacracao2026 =>
+      'TSE · Sistemas das Eleições 2026 são assinados digitalmente e lacrados';
+
+  @override
+  String get entendaSourceTesteIntegridade =>
+      'TSE · Como funciona o Teste de Integridade';
+
+  @override
+  String get entendaSourceTesteIntegridade2026 =>
+      'TSE · Teste de Integridade confirma correspondência entre cédulas e votos';
 
   @override
   String get secaoTitle => 'Minha seção';

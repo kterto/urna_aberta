@@ -4,25 +4,214 @@ import 'package:url_launcher/url_launcher.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/typography.dart';
-import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
 import '../l10n/l10n.dart';
 
+sealed class _Block {
+  const _Block(this.text);
+
+  final String text;
+}
+
+class _Para extends _Block {
+  const _Para(super.text);
+}
+
+class _Callout extends _Block {
+  const _Callout(super.text);
+}
+
+class _Heading extends _Block {
+  const _Heading(super.text);
+}
+
+class _SourceRef {
+  const _SourceRef(this.label, this.url);
+
+  final String label;
+  final String url;
+}
+
 class _Chapter {
-  const _Chapter(this.title, this.summary);
+  const _Chapter(this.title, this.summary, this.body, this.sources);
 
   final String title;
   final String summary;
+  final List<_Block> body;
+  final List<_SourceRef> sources;
 }
 
+const _tse = 'https://www.tse.jus.br';
+const _fatoOuBoatoPause =
+    'https://www.justicaeleitoral.jus.br/fato-ou-boato/checagens/2026/e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente';
+const _divulgacaoTecnica =
+    '$_tse/eleicoes/informacoes-tecnicas-sobre-a-divulgacao-de-resultados';
+const _totalizacao2026 =
+    '$_tse/comunicacao/noticias/2026/Outubro/saiba-como-foi-a-totalizacao-dos-votos-no-1o-turno-das-eleicoes-2026';
+const _apuracaoTotalizacao =
+    '$_tse/comunicacao/noticias/2026/Outubro/entenda-a-diferenca-entre-apuracao-e-totalizacao-de-votos';
+const _caminhoDoVoto =
+    '$_tse/comunicacao/noticias/2026/Setembro/faltam-7-dias-veja-qual-e-o-caminho-do-voto-depois-de-encerrada-a-votacao';
+const _res23751 =
+    '$_tse/legislacao/compilada/res/2026/resolucao-no-23-751-de-26-de-fevereiro-de-2026';
+const _boletimDuvidas =
+    '$_tse/comunicacao/noticias/2022/Outubro/voce-ja-ouviu-falar-do-boletim-de-urna-mas-sabe-o-que-ele-e-tire-suas-duvidas';
+const _dadosAbertosResultados =
+    'https://dadosabertos.tse.jus.br/group/about/resultados';
+const _votacaoSegura =
+    '$_tse/eleicoes/historia/processo-eleitoral-brasileiro/votacao/votacao-segura';
+const _res23673 =
+    '$_tse/legislacao/compilada/res/2021/resolucao-no-23-673-14-de-dezembro-de-2021';
+const _mitosVerdades =
+    '$_tse/eleicoes/eleicoes-2018/seguranca-das-eleicoes-informatizadas';
+const _acompanharResultados =
+    '$_tse/comunicacao/noticias/2026/Outubro/terminada-a-votacao-saiba-como-acompanhar-os-resultados-das-eleicoes';
+const _ea18 =
+    '$_tse/eleicoes/eleicoes-2026-content/arquivos/divulgacao-de-resultados/tse-ea18-arquivo-auxiliar-de-secao';
+const _assinaturaResumo =
+    '$_tse/comunicacao/noticias/2021/Agosto/assinatura-digital-e-resumos-digitais-trazem-ainda-mais-seguranca-a-urna-eletronica';
+const _manualJws =
+    '$_tse/eleicoes/eleicoes-2026-content/arquivos/divulgacao-de-resultados/manual-verificacao-jws';
+const _manualQr =
+    '$_tse/eleicoes/eleicoes-2026-content/arquivos/manual-do-qr-code-no-boletim-de-urna/@@display-file/file/manual-do-qr-code-no-boletim-de-urna.pdf';
+const _codigoFonte =
+    '$_tse/comunicacao/noticias/2026/Abril/eleicoes-2026-codigos-fonte-dos-sistemas-eleitorais-continuam-abertos-para-inspecao';
+const _tps2025 =
+    '$_tse/comunicacao/noticias/2025/Novembro/confiabilidade-transparencia-e-seguranca-teste-da-urna-2025-comeca-na-segunda-1o';
+const _testeConfirmacao =
+    '$_tse/comunicacao/noticias/2026/Maio/eleicoes-2026-testes-confirmam-mais-uma-vez-a-seguranca-do-sistema-eleitoral-brasileiro';
+const _lacracao2026 =
+    '$_tse/comunicacao/noticias/2026/Setembro/sistemas-das-eleicoes-gerais-de-2026-sao-assinados-digitalmente-e-lacrados-pelo-tse';
+const _testeIntegridade =
+    '$_tse/comunicacao/noticias/2026/Agosto/como-funciona-o-teste-de-integridade-a-prova-dos-nove-da-urna-eletronica';
+const _testeIntegridade2026 =
+    '$_tse/comunicacao/noticias/2026/Outubro/teste-de-integridade-no-tse-confirma-correspondencia-entre-cedulas-e-votos-registrados-nas-urnas';
+
 List<_Chapter> _chapters(AppLocalizations l) => [
-  _Chapter(l.entendaCh1Title, l.entendaCh1Summary),
-  _Chapter(l.entendaCh2Title, l.entendaCh2Summary),
-  _Chapter(l.entendaCh3Title, l.entendaCh3Summary),
-  _Chapter(l.entendaCh4Title, l.entendaCh4Summary),
-  _Chapter(l.entendaCh5Title, l.entendaCh5Summary),
-  _Chapter(l.entendaCh6Title, l.entendaCh6Summary),
-  _Chapter(l.entendaCh7Title, l.entendaCh7Summary),
+  _Chapter(
+    l.entendaCh1Title,
+    l.entendaCh1Summary,
+    [
+      _Para(l.entendaCh1Para1),
+      _Para(l.entendaCh1Para2),
+      _Para(l.entendaCh1Para3),
+      _Callout(l.entendaCh1Callout),
+      _Para(l.entendaCh1Para4),
+    ],
+    [
+      _SourceRef(l.entendaSourceCaminhoDoVoto, _caminhoDoVoto),
+      _SourceRef(l.entendaSourceApuracaoTotalizacao, _apuracaoTotalizacao),
+      _SourceRef(l.entendaSourceTotalizacao2026, _totalizacao2026),
+      _SourceRef(l.entendaSourceRes23751, _res23751),
+    ],
+  ),
+  _Chapter(
+    l.entendaCh2Title,
+    l.entendaCh2Summary,
+    [
+      _Para(l.entendaCh2Para1),
+      _Para(l.entendaCh2Para2),
+      _Para(l.entendaCh2Para3),
+      _Para(l.entendaCh2Para4),
+    ],
+    [
+      _SourceRef(l.entendaSourceBoletimDuvidas, _boletimDuvidas),
+      _SourceRef(l.entendaSourceTotalizacao2026, _totalizacao2026),
+      _SourceRef(l.entendaSourceRes23751, _res23751),
+      _SourceRef(
+        l.entendaSourceDadosAbertosResultados,
+        _dadosAbertosResultados,
+      ),
+    ],
+  ),
+  _Chapter(
+    l.entendaCh3Title,
+    l.entendaCh3Summary,
+    [
+      _Para(l.entendaCh3Para1),
+      _Para(l.entendaCh3Para2),
+      _Para(l.entendaCh3Para3),
+      _Para(l.entendaCh3Para4),
+    ],
+    [
+      _SourceRef(l.entendaSourceAcompanharResultados, _acompanharResultados),
+      _SourceRef(l.entendaSourceVotacaoSegura, _votacaoSegura),
+      _SourceRef(l.entendaSourceRes23673, _res23673),
+      _SourceRef(l.entendaSourceMitosVerdades, _mitosVerdades),
+      _SourceRef(l.entendaSourceEa18, _ea18),
+    ],
+  ),
+  _Chapter(
+    l.entendaCh4Title,
+    l.entendaCh4Summary,
+    [
+      _Para(l.entendaCh4Para1),
+      _Para(l.entendaCh4Para2),
+      _Para(l.entendaCh4Para3),
+      _Callout(l.entendaCh4Callout),
+      _Para(l.entendaCh4Para4),
+    ],
+    [
+      _SourceRef(l.entendaSourceRes23673, _res23673),
+      _SourceRef(l.entendaSourceAssinaturaResumo, _assinaturaResumo),
+      _SourceRef(l.entendaSourceManualJws, _manualJws),
+      _SourceRef(l.entendaSourceEa18, _ea18),
+      _SourceRef(l.entendaSourceManualQr, _manualQr),
+    ],
+  ),
+  _Chapter(
+    l.entendaCh5Title,
+    l.entendaCh5Summary,
+    [
+      _Para(l.entendaCh5Para1),
+      _Para(l.entendaCh5Para2),
+      _Para(l.entendaCh5Para3),
+      _Para(l.entendaCh5Para4),
+      _Para(l.entendaCh5Para5),
+    ],
+    [
+      _SourceRef(l.entendaSourceCodigoFonte, _codigoFonte),
+      _SourceRef(l.entendaSourceRes23673, _res23673),
+      _SourceRef(l.entendaSourceTps2025, _tps2025),
+      _SourceRef(l.entendaSourceTesteConfirmacao, _testeConfirmacao),
+      _SourceRef(l.entendaSourceLacracao2026, _lacracao2026),
+      _SourceRef(l.entendaSourceTesteIntegridade, _testeIntegridade),
+      _SourceRef(l.entendaSourceTesteIntegridade2026, _testeIntegridade2026),
+    ],
+  ),
+  _Chapter(
+    l.entendaCh6Title,
+    l.entendaCh6Summary,
+    [
+      _Para(l.entendaPausePara1),
+      _Para(l.entendaPausePara2),
+      _Para(l.entendaPausePara2b),
+      _Callout(l.entendaPauseCallout),
+      _Para(l.entendaPausePara3),
+    ],
+    [
+      _SourceRef(l.entendaSourceFatoOuBoato, _fatoOuBoatoPause),
+      _SourceRef(l.entendaSourceDivulgacao, _divulgacaoTecnica),
+    ],
+  ),
+  _Chapter(
+    l.entendaCh7Title,
+    l.entendaCh7Summary,
+    [
+      _Para(l.entendaCh7Para1),
+      _Heading(l.entendaCh7ProvesTitle),
+      _Para(l.entendaCh7Para2),
+      _Heading(l.entendaCh7NotTitle),
+      _Para(l.entendaCh7Para3),
+      _Para(l.entendaCh7Para4),
+    ],
+    [
+      _SourceRef(l.entendaSourceManualJws, _manualJws),
+      _SourceRef(l.entendaSourceEa18, _ea18),
+      _SourceRef(l.entendaSourceManualQr, _manualQr),
+      _SourceRef(l.entendaSourceRes23673, _res23673),
+    ],
+  ),
 ];
 
 /// Learn: chapter index plus the reading experience.
@@ -143,56 +332,41 @@ class _ChapterScreen extends StatelessWidget {
                   style: (wide ? AtlasType.display : AtlasType.headlineSerif)
                       .copyWith(color: p.ink),
                 ),
-                const SizedBox(height: Space.x3),
-                // Chapter 6 is written from TSE's note; the others are drafts.
-                if (index != 5) SimulationStamp(label: l.entendaDraftStamp),
                 const SizedBox(height: Space.x6),
-                if (index == 5) ...[
-                  para(
-                    l.entendaPausePara1,
-                  ),
-                  para(
-                    l.entendaPausePara2,
-                  ),
-                  para(l.entendaPausePara2b),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: Space.x4),
-                    padding: const EdgeInsets.all(Space.x4),
-                    decoration: BoxDecoration(
-                      color: p.plateSunk,
-                      borderRadius: BorderRadius.circular(Corner.plate),
+                for (final block in ch.body)
+                  switch (block) {
+                    _Para(:final text) => para(text),
+                    _Heading(:final text) => Padding(
+                      padding: const EdgeInsets.only(
+                        top: Space.x2,
+                        bottom: Space.x2,
+                      ),
+                      child: Text(text, style: t.titleMedium),
                     ),
-                    child: Text(
-                      l.entendaPauseCallout,
-
-                      style: AtlasType.headlineSerif.copyWith(
-                        color: p.ink,
-                        fontSize: 21,
-                        height: 1.35,
+                    _Callout(:final text) => Container(
+                      margin: const EdgeInsets.only(bottom: Space.x4),
+                      padding: const EdgeInsets.all(Space.x4),
+                      decoration: BoxDecoration(
+                        color: p.plateSunk,
+                        borderRadius: BorderRadius.circular(Corner.plate),
+                      ),
+                      child: Text(
+                        text,
+                        style: AtlasType.headlineSerif.copyWith(
+                          color: p.ink,
+                          fontSize: 21,
+                          height: 1.35,
+                        ),
                       ),
                     ),
-                  ),
-                  para(
-                    l.entendaPausePara3,
-                  ),
-                ] else
-                  para(
-                    l.entendaInProduction,
-                  ),
+                  },
                 const SizedBox(height: Space.x4),
                 Text(l.entendaSources, style: t.titleSmall),
                 const SizedBox(height: Space.x2),
-                if (index == 5) ...[
-                  _Source(
-                    l.entendaSourceFatoOuBoato,
-                    'https://www.justicaeleitoral.jus.br/fato-ou-boato/checagens/2026/e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente',
-                  ),
+                for (final source in ch.sources) ...[
+                  _Source(source.label, source.url),
                   const SizedBox(height: Space.x2),
                 ],
-                _Source(
-                  l.entendaSourceDivulgacao,
-                  'https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divulgacao-de-resultados',
-                ),
               ],
             ),
           ),

@@ -65,5 +65,38 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+
+    for (final locale in const [Locale('pt'), Locale('en')]) {
+      for (var n = 1; n <= 7; n++) {
+        testWidgets(
+          'chapter $n is written and sourced (${locale.languageCode}, $w px)',
+          (tester) async {
+            await pumpEntenda(tester, locale, size);
+            await tester.tap(find.byIcon(Icons.chevron_right).at(n - 1));
+            await tester.pumpAndSettle();
+            final pt = locale.languageCode == 'pt';
+            expect(
+              find.text(pt ? 'Capítulo $n' : 'Chapter $n'),
+              findsOneWidget,
+            );
+            expect(
+              find.textContaining(pt ? 'em produção' : 'being written'),
+              findsNothing,
+            );
+            expect(
+              find.text(
+                (pt
+                        ? 'Rascunho · revisar fontes'
+                        : 'Draft · sources under review')
+                    .toUpperCase(),
+              ),
+              findsNothing,
+            );
+            expect(find.byType(TextButton), findsAtLeastNWidgets(1));
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
   }
 }
