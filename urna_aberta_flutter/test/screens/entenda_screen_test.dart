@@ -36,6 +36,18 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('how seats are distributed, sourced ($w px)', (tester) async {
+      await pumpEntenda(tester, const Locale('pt'), size);
+      await tester.tap(find.text('Como as vagas são distribuídas'));
+      await tester.pumpAndSettle();
+      expect(find.text('Capítulo 7'), findsOneWidget);
+      expect(find.textContaining('10% do quociente eleitoral'), findsOneWidget);
+      expect(find.textContaining('80%'), findsOneWidget);
+      expect(find.textContaining('STF'), findsWidgets);
+      expect(find.textContaining('Código Eleitoral'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('English pause chapter ($w px)', (tester) async {
       await pumpEntenda(tester, const Locale('en'), size);
       await tester.tap(find.text('October 4, 2026'));
@@ -67,7 +79,7 @@ void main() {
     });
 
     for (final locale in const [Locale('pt'), Locale('en')]) {
-      for (var n = 1; n <= 7; n++) {
+      for (var n = 1; n <= 8; n++) {
         testWidgets(
           'chapter $n is written and sourced (${locale.languageCode}, $w px)',
           (tester) async {

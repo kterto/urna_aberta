@@ -1,6 +1,6 @@
 # Plan: follow and analyse any Brazilian election
 
-Status: proposal, awaiting approval (10/10/2026).
+Status (10/10/2026): approved; steps 1–4 done (data layer, seat engine, Resultados + Câmara, reframe). Step 5 (live for every office) partly done: the live poller already fetches every office TSE publishes on a night; the Apuração view is still presidential.
 
 ## Goal
 

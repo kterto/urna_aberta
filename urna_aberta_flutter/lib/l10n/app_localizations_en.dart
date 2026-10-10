@@ -224,14 +224,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get apuracaoHeadline => 'The count never stopped.';
+  String get apuracaoHeadline => 'Follow the count';
 
   @override
   String get apuracaoLede =>
-      'President, 1st round. TSE\'s national file and the sum of each state\'s files, side by side. Every number links to the file it came from.';
-
-  @override
-  String get apuracaoDesignSystem => 'Design system';
+      'On election night this screen shows TSE\'s national file and the sum of each state\'s files, side by side. Otherwise it replays a real case: the 2026 1st round for President, when national publication stopped for about 50 minutes while the state files kept coming. Every number links to the file it came from.';
 
   @override
   String get apuracaoDuoTitle => 'The two sources compared · President';
@@ -573,6 +570,53 @@ class AppLocalizationsEn extends AppLocalizations {
       'And, just as clearly, what it does not prove.';
 
   @override
+  String get entendaChSeatsTitle => 'How seats are distributed';
+
+  @override
+  String get entendaChSeatsSummary =>
+      'Electoral quotient, party quotient and remainders, step by step.';
+
+  @override
+  String get entendaChSeatsPara1 =>
+      'Federal, state and district deputies and city councillors are elected by the proportional system: seats are first divided among parties and federations according to their votes, and only then go to each list\'s most voted candidates. Coalitions only apply to majoritarian offices; a federation counts as a single party.';
+
+  @override
+  String get entendaChSeatsPara2 =>
+      'The starting point is the electoral quotient (quociente eleitoral): valid votes (votes for candidates and for the party ticket; blank and null votes do not count) divided by the number of seats, dropping a fraction of a half or less. Each list\'s party quotient (quociente partidário) is its votes divided by the electoral quotient, without the fraction: the seats the list wins outright.';
+
+  @override
+  String get entendaChSeatsPara3 =>
+      'To take one of those seats, a candidate needs nominal votes equal to or above 10% of the electoral quotient. If the list does not have enough candidates with that minimum, the missing seats go to the remainders.';
+
+  @override
+  String get entendaChSeatsPara4 =>
+      'Remainders go by highest average: the list\'s votes divided by its party quotient plus the remainders it has already won, plus one. At first only lists with at least 80% of the electoral quotient and candidates with at least 20% of it compete. When no list meets those conditions, every list and every candidate competes for the remaining seats, as the Supreme Court (STF) decided in 2024; in 2025 it held that the rule applies from the 2022 elections.';
+
+  @override
+  String get entendaChSeatsPara5 =>
+      'Equal averages between lists: the list with more votes takes the seat. Equal votes between candidates of the same list: the older one.';
+
+  @override
+  String get entendaChSeatsCallout =>
+      'Urna Aberta redoes this count for every race, from the votes in TSE\'s signed file, and shows whether it reaches the same result: electoral quotient, each party\'s or federation\'s seats, and who is elected. In the 54 deputy races of 2026 and the councils of the 26 state capitals in 2024, it did.';
+
+  @override
+  String get entendaSourceCodigoEleitoral =>
+      'Planalto · Electoral Code (Law 4,737/1965), arts. 106 to 112';
+
+  @override
+  String get entendaSourceRes23677 =>
+      'TSE · Resolution 23,677/2021 (proportional system), arts. 9 to 14';
+
+  @override
+  String get entendaSourceStfSobras2024 =>
+      'STF · Court strikes down rule on remainder seats (2024)';
+
+  @override
+  String get entendaSourceStfSobras2025 =>
+      'STF · Ruling on remainder seats applies from 2022 (2025)';
+
+  @override
   String entendaChapterLabel(int number) {
     return 'Chapter $number';
   }
@@ -701,7 +745,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get entendaCh7Para2 =>
-      'That the result files were signed by TSE and not altered afterwards (EdDSA signature checked against the official key, on the server and, if you ask, on your device). That the independent sum of the states and abroad matches, or does not match, the national file. That the published report for your section is exactly the file the voting machine listed, and that the list was signed by a machine whose certificate TSE issued (2020 and 2022 models).';
+      'That the result files were signed by TSE and not altered afterwards (EdDSA signature checked against the official key, on the server and, if you ask, on your device). That the independent sum of the states and abroad matches, or does not match, the national file. That the published report for your section is exactly the file the voting machine listed, and that the list was signed by a machine whose certificate TSE issued (2020 and 2022 models). That the seat allocation for deputies and councillors, redone from the file\'s votes, equals the one TSE published, or exactly where it differs.';
 
   @override
   String get entendaCh7NotTitle => 'What it does not prove';
@@ -1260,7 +1304,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apuracaoModeLive => 'Live';
 
   @override
-  String get apuracaoModeReplay => '1st round replay';
+  String get apuracaoModeReplay => 'Case: October 4';
 
   @override
   String apuracaoLiveLede(int round) {
@@ -1274,7 +1318,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String apuracaoLiveSoon(int round, String date) {
-    return 'Live counting for round $round starts on $date at 5 pm Brasília time. Meanwhile, replay the 1st round.';
+    return 'Live counting for round $round starts on $date at 5 pm Brasília time. Final results for every office, in every state and municipality, are in Results.';
   }
 
   @override
@@ -1309,4 +1353,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get entendaSourceFatoOuBoato =>
       'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (fact-check, Oct 6, 2026)';
+
+  @override
+  String get apuracaoSeeResults => 'See the final results';
 }

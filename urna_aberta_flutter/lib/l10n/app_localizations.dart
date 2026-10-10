@@ -435,20 +435,14 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoHeadline.
   ///
   /// In pt, this message translates to:
-  /// **'A contagem não parou.'**
+  /// **'Acompanhe a apuração'**
   String get apuracaoHeadline;
 
   /// No description provided for @apuracaoLede.
   ///
   /// In pt, this message translates to:
-  /// **'Presidente, 1º turno. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Cada número leva ao arquivo de onde veio.'**
+  /// **'Na noite da eleição, esta tela mostra o arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Fora dela, reprisa um caso real: o 1º turno de 2026 para Presidente, quando a divulgação nacional parou por cerca de 50 minutos e os arquivos dos estados continuaram. Cada número leva ao arquivo de onde veio.'**
   String get apuracaoLede;
-
-  /// No description provided for @apuracaoDesignSystem.
-  ///
-  /// In pt, this message translates to:
-  /// **'Sistema de design'**
-  String get apuracaoDesignSystem;
 
   /// No description provided for @apuracaoDuoTitle.
   ///
@@ -1002,6 +996,78 @@ abstract class AppLocalizations {
   /// **'E, com a mesma clareza, o que ele não prova.'**
   String get entendaCh7Summary;
 
+  /// No description provided for @entendaChSeatsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Como as vagas são distribuídas'**
+  String get entendaChSeatsTitle;
+
+  /// No description provided for @entendaChSeatsSummary.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quociente eleitoral, quociente partidário e sobras, passo a passo.'**
+  String get entendaChSeatsSummary;
+
+  /// No description provided for @entendaChSeatsPara1.
+  ///
+  /// In pt, this message translates to:
+  /// **'Deputados federais, estaduais e distritais e vereadores são eleitos pelo sistema proporcional: as vagas são divididas primeiro entre partidos e federações, conforme os votos de cada um, e só depois vão para os candidatos mais votados de cada lista. Coligações valem apenas para cargos majoritários; uma federação conta como um único partido.'**
+  String get entendaChSeatsPara1;
+
+  /// No description provided for @entendaChSeatsPara2.
+  ///
+  /// In pt, this message translates to:
+  /// **'O ponto de partida é o quociente eleitoral: os votos válidos (votos em candidatos e na legenda; brancos e nulos não entram) divididos pelo número de vagas, desprezada a fração igual ou inferior a meio. O quociente partidário de cada lista é a divisão dos seus votos pelo quociente eleitoral, sem a fração: é o número de vagas que a lista conquista direto.'**
+  String get entendaChSeatsPara2;
+
+  /// No description provided for @entendaChSeatsPara3.
+  ///
+  /// In pt, this message translates to:
+  /// **'Para ocupar uma dessas vagas, o candidato precisa ter votos nominais iguais ou superiores a 10% do quociente eleitoral. Se a lista não tiver candidatos suficientes com esse mínimo, as vagas que faltam vão para as sobras.'**
+  String get entendaChSeatsPara3;
+
+  /// No description provided for @entendaChSeatsPara4.
+  ///
+  /// In pt, this message translates to:
+  /// **'As sobras são distribuídas pela maior média: os votos da lista divididos pelo seu quociente partidário mais as sobras que já ganhou, mais um. Primeiro disputam só as listas com pelo menos 80% do quociente eleitoral e com candidatos que tenham pelo menos 20% dele. Quando nenhuma lista cumpre essas condições, todas as listas e todos os candidatos disputam as vagas restantes, como decidiu o STF em 2024; em 2025, o tribunal fixou que a regra vale desde as eleições de 2022.'**
+  String get entendaChSeatsPara4;
+
+  /// No description provided for @entendaChSeatsPara5.
+  ///
+  /// In pt, this message translates to:
+  /// **'Empate de médias entre listas: fica com a vaga a que tiver mais votos. Empate de votos entre candidatos da mesma lista: o mais velho.'**
+  String get entendaChSeatsPara5;
+
+  /// No description provided for @entendaChSeatsCallout.
+  ///
+  /// In pt, this message translates to:
+  /// **'A Urna Aberta refaz essa conta para cada disputa, com os votos do arquivo assinado do TSE, e mostra se chega ao mesmo resultado: quociente eleitoral, vagas de cada partido ou federação e eleitos. Nas 54 disputas de deputado de 2026 e nas câmaras das 26 capitais em 2024, chegou.'**
+  String get entendaChSeatsCallout;
+
+  /// No description provided for @entendaSourceCodigoEleitoral.
+  ///
+  /// In pt, this message translates to:
+  /// **'Planalto · Código Eleitoral (Lei 4.737/1965), arts. 106 a 112'**
+  String get entendaSourceCodigoEleitoral;
+
+  /// No description provided for @entendaSourceRes23677.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Resolução nº 23.677/2021 (sistema proporcional), arts. 9 a 14'**
+  String get entendaSourceRes23677;
+
+  /// No description provided for @entendaSourceStfSobras2024.
+  ///
+  /// In pt, this message translates to:
+  /// **'STF · Supremo invalida regra sobre distribuição de sobras eleitorais (2024)'**
+  String get entendaSourceStfSobras2024;
+
+  /// No description provided for @entendaSourceStfSobras2025.
+  ///
+  /// In pt, this message translates to:
+  /// **'STF · Decisão sobre sobras eleitorais vale desde 2022 (2025)'**
+  String get entendaSourceStfSobras2025;
+
   /// No description provided for @entendaChapterLabel.
   ///
   /// In pt, this message translates to:
@@ -1197,7 +1263,7 @@ abstract class AppLocalizations {
   /// No description provided for @entendaCh7Para2.
   ///
   /// In pt, this message translates to:
-  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022).'**
+  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022). Que a distribuição das vagas de deputados e vereadores, refeita a partir dos votos do arquivo, é igual à publicada pelo TSE, ou exatamente onde difere.'**
   String get entendaCh7Para2;
 
   /// No description provided for @entendaCh7NotTitle.
@@ -2110,7 +2176,7 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoModeReplay.
   ///
   /// In pt, this message translates to:
-  /// **'Reprise do 1º turno'**
+  /// **'Caso: 4 de outubro'**
   String get apuracaoModeReplay;
 
   /// No description provided for @apuracaoLiveLede.
@@ -2128,7 +2194,7 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoLiveSoon.
   ///
   /// In pt, this message translates to:
-  /// **'A apuração ao vivo do {round}º turno começa em {date}, às 17h (Brasília). Enquanto isso, reveja o 1º turno.'**
+  /// **'A apuração ao vivo do {round}º turno começa em {date}, às 17h (Brasília). Os resultados finais de cada cargo, em cada estado e município, estão em Resultados.'**
   String apuracaoLiveSoon(int round, String date);
 
   /// No description provided for @apuracaoLiveWaiting.
@@ -2178,6 +2244,12 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)'**
   String get entendaSourceFatoOuBoato;
+
+  /// No description provided for @apuracaoSeeResults.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver os resultados finais'**
+  String get apuracaoSeeResults;
 }
 
 class _AppLocalizationsDelegate

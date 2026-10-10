@@ -13,7 +13,6 @@ import '../l10n/format.dart';
 import '../l10n/l10n.dart';
 import '../live/live_controller.dart';
 import '../replay/replay_controller.dart';
-import '../showcase/design_system_screen.dart';
 
 /// The count: TSE's national file vs the independent sum of states. Live
 /// while TSE publishes (or once live files exist), otherwise the 1st-round
@@ -74,18 +73,6 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
               : status.open
               ? l.apuracaoLiveLede(status.round ?? 1)
               : l.apuracaoLiveEndedLede(status.round ?? 1),
-          actions: [
-            if (!isWideLayout(context) || shellKindOf(context) != ShellKind.web)
-              IconButton(
-                tooltip: l.apuracaoDesignSystem,
-                icon: Icon(AtlasIcons.sistema(context)),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const DesignSystemScreen(),
-                  ),
-                ),
-              ),
-          ],
           children: [
             if (liveFrame != null) ...[
               Align(
@@ -102,7 +89,15 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
               const SizedBox(height: Space.x5),
             ] else if (_liveNotice(context, status) case final notice?) ...[
               _Notice(text: notice),
-              const SizedBox(height: Space.x5),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () =>
+                      ShellScope.of(context)?.go(Section.resultados),
+                  child: Text(l.apuracaoSeeResults),
+                ),
+              ),
+              const SizedBox(height: Space.x3),
             ],
             if (showLive)
               ..._liveBody(context, wide, status, liveFrame)

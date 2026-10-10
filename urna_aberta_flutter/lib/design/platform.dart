@@ -34,8 +34,6 @@ abstract final class AtlasIcons {
       _pick(c, CupertinoIcons.checkmark_shield, Icons.verified_user_outlined);
   static IconData entenda(BuildContext c) =>
       _pick(c, CupertinoIcons.book, Icons.menu_book_outlined);
-  static IconData sistema(BuildContext c) =>
-      _pick(c, CupertinoIcons.square_grid_2x2, Icons.grid_view_outlined);
   static IconData external(BuildContext c) =>
       _pick(c, CupertinoIcons.arrow_up_right_square, Icons.open_in_new);
   static IconData copy(BuildContext c) =>

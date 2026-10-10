@@ -84,6 +84,14 @@ const _lacracao2026 =
     '$_tse/comunicacao/noticias/2026/Setembro/sistemas-das-eleicoes-gerais-de-2026-sao-assinados-digitalmente-e-lacrados-pelo-tse';
 const _testeIntegridade =
     '$_tse/comunicacao/noticias/2026/Agosto/como-funciona-o-teste-de-integridade-a-prova-dos-nove-da-urna-eletronica';
+const _codigoEleitoral =
+    'https://www.planalto.gov.br/ccivil_03/leis/l4737compilado.htm';
+const _res23677 =
+    '$_tse/legislacao/compilada/res/2021/resolucao-no-23-677-de-16-de-dezembro-de-2021';
+const _stfSobras2024 =
+    'https://noticias.stf.jus.br/postsnoticias/supremo-invalida-regra-sobre-distribuicao-de-sobras-eleitorais-em-eleicoes-proporcionais/';
+const _stfSobras2025 =
+    'https://noticias.stf.jus.br/postsnoticias/decisao-do-stf-sobre-distribuicao-de-sobras-eleitorais-vale-desde-2022/';
 const _testeIntegridade2026 =
     '$_tse/comunicacao/noticias/2026/Outubro/teste-de-integridade-no-tse-confirma-correspondencia-entre-cedulas-e-votos-registrados-nas-urnas';
 
@@ -192,6 +200,24 @@ List<_Chapter> _chapters(AppLocalizations l) => [
     [
       _SourceRef(l.entendaSourceFatoOuBoato, _fatoOuBoatoPause),
       _SourceRef(l.entendaSourceDivulgacao, _divulgacaoTecnica),
+    ],
+  ),
+  _Chapter(
+    l.entendaChSeatsTitle,
+    l.entendaChSeatsSummary,
+    [
+      _Para(l.entendaChSeatsPara1),
+      _Para(l.entendaChSeatsPara2),
+      _Para(l.entendaChSeatsPara3),
+      _Para(l.entendaChSeatsPara4),
+      _Para(l.entendaChSeatsPara5),
+      _Callout(l.entendaChSeatsCallout),
+    ],
+    [
+      _SourceRef(l.entendaSourceCodigoEleitoral, _codigoEleitoral),
+      _SourceRef(l.entendaSourceRes23677, _res23677),
+      _SourceRef(l.entendaSourceStfSobras2024, _stfSobras2024),
+      _SourceRef(l.entendaSourceStfSobras2025, _stfSobras2025),
     ],
   ),
   _Chapter(

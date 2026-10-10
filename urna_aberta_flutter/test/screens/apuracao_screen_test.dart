@@ -113,6 +113,14 @@ void main() {
     expect(find.textContaining('19:52'), findsWidgets);
   });
 
+  testWidgets('no headline about one night, no design-system shortcut', (
+    tester,
+  ) async {
+    await pumpScreen(tester, StubSource());
+    expect(find.text('A contagem não parou.'), findsNothing);
+    expect(find.byTooltip('Sistema de design'), findsNothing);
+  });
+
   testWidgets('non-live data carries the simulation stamp', (tester) async {
     await pumpScreen(tester, StubSource());
     expect(find.byType(SimulationStamp), findsWidgets);
@@ -222,6 +230,9 @@ void main() {
       expect(find.textContaining('começa em 25/10, às 17h'), findsOneWidget);
       expect(find.byType(ReplayBar), findsOneWidget);
       expect(find.byType(LiveStamp), findsNothing);
+      // The replay is a case study, and final results are a tap away.
+      expect(find.textContaining('caso real'), findsOneWidget);
+      expect(find.text('Ver os resultados finais'), findsOneWidget);
     });
 
     testWidgets('polls closed, no file yet: says it is waiting', (
@@ -253,7 +264,7 @@ void main() {
     ) async {
       final source = StubSource()..liveStatus = liveNow();
       await pumpScreen(tester, source);
-      await tester.tap(find.text('Reprise do 1º turno'));
+      await tester.tap(find.text('Caso: 4 de outubro'));
       await tester.pump();
       await tester.pump();
       expect(find.byType(ReplayBar), findsOneWidget);
