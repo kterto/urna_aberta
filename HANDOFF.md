@@ -8,12 +8,12 @@ Built with **Serverpod** (Dart backend) and **Flutter** (mobile + web) for the S
 
 ## 1. Why this exists
 
-On election night (Oct 4, 2026), the TSE (Superior Electoral Court) national **presidential** results page froze at **64.81%** for about 50–60 minutes. It then jumped to roughly 84%.
+On election night (Oct 4, 2026), the TSE (Superior Electoral Court) national **presidential** results view stopped updating at **64.81%** from about **19:14 to 20:04** Brasília time (~50 minutes). TSE's note gives no figure for the moment it resumed (press reports of a jump to ~84% are unsourced).
 
-- According to TSE, a data-processing bottleneck stalled the module that generates the **"Brasil" (national) publication files** for President.
-- **Per-state (UF) files kept updating normally** the whole time.
-- TSE states that *totalization* (vote counting) was not affected, only *publication*.
-- The freeze fueled fraud claims on social media, and TSE published an official fact-check denying them.
+- According to TSE, a data-processing contention ("contenção no processamento de dados"), after a rise in data volume, stalled the module that generates the **"Brasil" (national) publication files** for President.
+- **The state view was not affected**: per-UF files, which also carry the President votes, kept being published without interruption.
+- Ballot box reports kept being transmitted, received and published. Totalization went on, *except for a brief moment when it was suspended under the security protocol* (TSE's wording).
+- The freeze fueled fraud claims on social media; TSE's fact-check (Fato ou Boato, 06/10/2026, updated 09/10) is the primary source: https://www.justicaeleitoral.jus.br/fato-ou-boato/checagens/2026/e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente
 
 **Key insight:** anyone summing the per-UF presidential files (or per-section files) during the freeze saw the count keep moving. The count never stopped; only the national display did. A tool that shows this live, explains it, and lets people check results down to their own polling section can reduce distrust with transparency instead of rhetoric.
 
@@ -262,5 +262,6 @@ urna-aberta/
 - TSE technical info for results distribution (specs, FAQ, simulation): https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divulgacao-de-resultados
 - EA17 Boletim de Urna spec: https://www.tse.jus.br/eleicoes/eleicoes-2022/arquivos/interessados/ea17-arquivo-de-boletim-de-urna
 - EA18 Section aux file spec: https://www.tse.jus.br/eleicoes/arquivos/tse-ea18-arquivo-auxiliar-de-secao
-- TSE fact-check on the Oct 4 publication freeze: https://tribunadosertao.com.br/politica/2026/10/06/991646-e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente
+- TSE fact-check on the Oct 4 publication freeze (primary): https://www.justicaeleitoral.jus.br/fato-ou-boato/checagens/2026/e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente
+- Press copy of the same: https://tribunadosertao.com.br/politica/2026/10/06/991646-e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente
 - Coverage of the ~50-min interruption and the 2nd-round fix: https://m.imirante.com/noticias/brasil/2026/10/06/ipolitica-falha-no-tse-divulgacao-de-votos-para-por-50-minutos

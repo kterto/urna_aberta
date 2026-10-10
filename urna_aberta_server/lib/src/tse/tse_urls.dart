@@ -36,6 +36,12 @@ class Scope {
   bool get isExterior => code == 'zz';
 
   @override
+  bool operator ==(Object other) => other is Scope && other.code == code;
+
+  @override
+  int get hashCode => code.hashCode;
+
+  @override
   String toString() => code;
 }
 

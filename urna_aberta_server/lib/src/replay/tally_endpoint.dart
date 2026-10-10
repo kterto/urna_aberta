@@ -1,6 +1,7 @@
 import 'package:serverpod/serverpod.dart';
 
 import '../generated/protocol.dart';
+import '../live/live_service.dart';
 import 'replay_service.dart';
 
 /// National file vs independent sum of states, on the replay clock.
@@ -24,4 +25,8 @@ class TallyEndpoint extends Endpoint {
 
   Future<List<DivergenceEvent>> divergence(Session session, DateTime at) =>
       ReplayService.divergence(session, at);
+
+  /// The presidential count TSE is publishing now (or the next one), from
+  /// the files the live poll stored.
+  Future<LiveStatus> live(Session session) => LiveService.status(session);
 }

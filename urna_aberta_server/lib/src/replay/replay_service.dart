@@ -3,6 +3,7 @@ import 'package:serverpod/serverpod.dart';
 import '../generated/protocol.dart';
 import '../ingestion/snapshot_store.dart';
 import '../tally/aggregator.dart' as tally;
+import '../tally/frame.dart';
 import '../tse/tse_urls.dart';
 import 'synthetic_night.dart';
 
@@ -20,8 +21,12 @@ abstract final class ReplayService {
 
   static final start = _brt(4, 17, 0);
   static final end = _brt(5, 1, 0);
-  static final freezeStart = _brt(4, 21, 2);
-  static final freezeEnd = _brt(4, 21, 57);
+  /// TSE, "É falso que a interrupção na divulgação dos resultados tenha
+  /// fraudado o resultado do 1º turno para presidente" (Fato ou Boato,
+  /// 06/10/2026): the "Brasil" files stopped at 64.81% around 19:14 and
+  /// were restored at 20:04, Brasília time.
+  static final freezeStart = _brt(4, 19, 14);
+  static final freezeEnd = _brt(4, 20, 4);
 
   static const maxTimelinePoints = 2000;
 
@@ -91,32 +96,11 @@ abstract final class ReplayService {
   static Future<TallyFrame> frame(Session session, DateTime at) async {
     final l = await _loaded(session);
     final (origin, national, states) = l.at(at);
-    final sum = tally.sumOfStates(states);
-    final numbers = {...national.votes.keys, ...sum.votes.keys};
-    return TallyFrame(
+    return buildTallyFrame(
       at: at,
       origin: origin,
-      nationalPct: national.sectionsTotalizedPct,
-      statesPct: sum.sectionsTotalizedPct,
-      missingScopes: sum.missing,
-      candidates: [
-        for (final n in numbers)
-          CandidateVotes(
-            candidateNumber: n,
-            national: national.votes[n] ?? 0,
-            states: sum.votes[n] ?? 0,
-            ballotName: l.national.candidates[n]?.ballotName,
-            party: l.national.candidates[n]?.party,
-          ),
-      ]..sort((a, b) => b.states.compareTo(a.states)),
-      ufs: [
-        for (final s in states)
-          UfProgress(
-            scopeCode: s.scope,
-            sectionsTotal: s.sectionsTotal,
-            sectionsTotalized: s.sectionsTotalized,
-          ),
-      ]..sort((a, b) => a.scopeCode.compareTo(b.scopeCode)),
+      national: national,
+      states: states,
     );
   }
 

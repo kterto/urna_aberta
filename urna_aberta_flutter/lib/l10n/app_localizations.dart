@@ -501,7 +501,7 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoTimelineSource.
   ///
   /// In pt, this message translates to:
-  /// **'Curva sintética que termina nos arquivos finais reais do TSE, com a pausa nacional de {pct} simulada.'**
+  /// **'Curva sintética que termina nos arquivos finais reais do TSE. A pausa nacional em {pct}, das 19h14 às 20h04, segue o horário informado pelo TSE.'**
   String apuracaoTimelineSource(String pct);
 
   /// No description provided for @apuracaoCandidateNumber.
@@ -711,25 +711,25 @@ abstract class AppLocalizations {
   /// No description provided for @entendaPausePara1.
   ///
   /// In pt, this message translates to:
-  /// **'Na noite de 4 de outubro de 2026, a página nacional de resultados para Presidente ficou parada em 64,81% por cerca de 50 a 60 minutos. Depois, saltou para perto de 84%.'**
+  /// **'Na noite de 4 de outubro de 2026, por volta das 19h14 (horário de Brasília), a visualização nacional (\"Brasil\") dos resultados para presidente parou de ser atualizada, quando 64,81% dos dados haviam sido divulgados. A geração desses arquivos foi restabelecida às 20h04, cerca de 50 minutos depois.'**
   String get entendaPausePara1;
 
   /// No description provided for @entendaPausePara2.
   ///
   /// In pt, this message translates to:
-  /// **'Segundo o TSE, um gargalo no processamento travou o módulo que gera os arquivos de publicação \"Brasil\". Os arquivos de cada estado continuaram sendo atualizados normalmente durante todo o tempo.'**
+  /// **'Segundo o TSE, uma contenção no processamento de dados, depois de um aumento no volume de dados, paralisou o módulo que gera os arquivos de divulgação da visualização \"Brasil\". A visualização estadual não foi afetada: os arquivos de cada estado, que também trazem os votos para presidente, continuaram a ser publicados sem interrupção.'**
   String get entendaPausePara2;
 
   /// No description provided for @entendaPauseCallout.
   ///
   /// In pt, this message translates to:
-  /// **'Totalização é a contagem oficial. Divulgação é a publicação dessa contagem. O que parou foi a divulgação nacional.'**
+  /// **'Apuração é a contagem feita por cada urna. Totalização é a soma dessas contagens. Divulgação é a publicação na internet. O que parou foi a divulgação nacional.'**
   String get entendaPauseCallout;
 
   /// No description provided for @entendaPausePara3.
   ///
   /// In pt, this message translates to:
-  /// **'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay: as duas fontes lado a lado.'**
+  /// **'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay, com a pausa no mesmo horário. A evolução dos estados durante a pausa é uma curva sintética: a Urna Aberta guardou apenas os arquivos finais daquela noite.'**
   String get entendaPausePara3;
 
   /// No description provided for @entendaInProduction.
@@ -1482,6 +1482,84 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Tentar de novo'**
   String get verificarRetry;
+
+  /// No description provided for @apuracaoModeLive.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ao vivo'**
+  String get apuracaoModeLive;
+
+  /// No description provided for @apuracaoModeReplay.
+  ///
+  /// In pt, this message translates to:
+  /// **'Reprise do 1º turno'**
+  String get apuracaoModeReplay;
+
+  /// No description provided for @apuracaoLiveLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Presidente, {round}º turno, ao vivo. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Os números se atualizam a cada 30 segundos.'**
+  String apuracaoLiveLede(int round);
+
+  /// No description provided for @apuracaoLiveEndedLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Presidente, {round}º turno. Os últimos arquivos do TSE guardados pela Urna Aberta durante a apuração.'**
+  String apuracaoLiveEndedLede(int round);
+
+  /// No description provided for @apuracaoLiveSoon.
+  ///
+  /// In pt, this message translates to:
+  /// **'A apuração ao vivo do {round}º turno começa em {date}, às 17h (Brasília). Enquanto isso, reveja o 1º turno.'**
+  String apuracaoLiveSoon(int round, String date);
+
+  /// No description provided for @apuracaoLiveWaiting.
+  ///
+  /// In pt, this message translates to:
+  /// **'As urnas do {round}º turno fecharam. Aguardando os primeiros arquivos do TSE; enquanto isso, reveja o 1º turno.'**
+  String apuracaoLiveWaiting(int round);
+
+  /// No description provided for @apuracaoLiveStale.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem conexão com o servidor: estes são os números de {time}.'**
+  String apuracaoLiveStale(String time);
+
+  /// No description provided for @apuracaoLiveTimelineTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'A apuração do {round}º turno'**
+  String apuracaoLiveTimelineTitle(int round);
+
+  /// No description provided for @apuracaoLiveTimelineSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cada ponto é um momento em que um arquivo do TSE mudou, guardado pela Urna Aberta com a assinatura conferida.'**
+  String get apuracaoLiveTimelineSource;
+
+  /// No description provided for @apuracaoLiveNoNational.
+  ///
+  /// In pt, this message translates to:
+  /// **'ainda sem arquivo'**
+  String get apuracaoLiveNoNational;
+
+  /// No description provided for @atlasLive.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ao vivo'**
+  String get atlasLive;
+
+  /// No description provided for @entendaPausePara2b.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE informa ainda que, durante a pausa, os boletins de urna continuaram a ser transmitidos, recebidos e publicados, e que o cálculo da totalização seguiu normalmente, exceto por um breve momento em que foi suspenso pelo protocolo de segurança.'**
+  String get entendaPausePara2b;
+
+  /// No description provided for @entendaSourceFatoOuBoato.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)'**
+  String get entendaSourceFatoOuBoato;
 }
 
 class _AppLocalizationsDelegate

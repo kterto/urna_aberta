@@ -266,7 +266,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String apuracaoTimelineSource(String pct) {
-    return 'Synthetic curve that ends at TSE\'s real final files, with the national pause at $pct simulated.';
+    return 'Synthetic curve that ends at TSE\'s real final files. The national pause at $pct, 19:14 to 20:04, follows the times TSE reported.';
   }
 
   @override
@@ -385,19 +385,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get entendaPausePara1 =>
-      'On the night of October 4, 2026, the national results page for President stood still at 64.81% for about 50 to 60 minutes. Then it jumped to around 84%.';
+      'On the night of October 4, 2026, at about 19:14 (Brasília time), the national (\"Brasil\") view of the results for President stopped updating, when 64.81% of the data had been published. Generation of those files was restored at 20:04, about 50 minutes later.';
 
   @override
   String get entendaPausePara2 =>
-      'According to TSE, a processing bottleneck stalled the module that generates the \"Brasil\" (national) publication files. Each state\'s files kept being updated normally the whole time.';
+      'According to TSE, a data-processing contention, after a rise in data volume, stalled the module that generates the publication files for the \"Brasil\" view. The state view was not affected: each state\'s files, which also carry the votes for President, kept being published without interruption.';
 
   @override
   String get entendaPauseCallout =>
-      'Totalization (totalização) is the official count. Publication (divulgação) is the release of that count. What stopped was the national publication.';
+      'Counting (apuração) is done by each voting machine. Totalization (totalização) is the sum of those counts. Publication (divulgação) is the release on the internet. What stopped was the national publication.';
 
   @override
   String get entendaPausePara3 =>
-      'Anyone adding up the per-state (UF) files during the pause saw the count keep going. That is what the Count screen shows in the replay: both sources side by side.';
+      'Anyone adding up the per-state (UF) files during the pause saw the count keep going. That is what the Count screen shows in the replay, with the pause at the same time. How the states moved during the pause is a synthetic curve: Urna Aberta kept only that night\'s final files.';
 
   @override
   String get entendaInProduction =>
@@ -856,4 +856,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verificarRetry => 'Try again';
+
+  @override
+  String get apuracaoModeLive => 'Live';
+
+  @override
+  String get apuracaoModeReplay => '1st round replay';
+
+  @override
+  String apuracaoLiveLede(int round) {
+    return 'President, round $round, live. TSE\'s national file and the sum of each state\'s files, side by side. Figures refresh every 30 seconds.';
+  }
+
+  @override
+  String apuracaoLiveEndedLede(int round) {
+    return 'President, round $round. The latest TSE files Urna Aberta stored during the count.';
+  }
+
+  @override
+  String apuracaoLiveSoon(int round, String date) {
+    return 'Live counting for round $round starts on $date at 5 pm Brasília time. Meanwhile, replay the 1st round.';
+  }
+
+  @override
+  String apuracaoLiveWaiting(int round) {
+    return 'Polls for round $round have closed. Waiting for TSE\'s first files; meanwhile, replay the 1st round.';
+  }
+
+  @override
+  String apuracaoLiveStale(String time) {
+    return 'No connection to the server: these are the figures from $time.';
+  }
+
+  @override
+  String apuracaoLiveTimelineTitle(int round) {
+    return 'The round $round count';
+  }
+
+  @override
+  String get apuracaoLiveTimelineSource =>
+      'Each point is a moment a TSE file changed, stored by Urna Aberta with its signature checked.';
+
+  @override
+  String get apuracaoLiveNoNational => 'no file yet';
+
+  @override
+  String get atlasLive => 'Live';
+
+  @override
+  String get entendaPausePara2b =>
+      'TSE also states that during the pause the ballot box reports (boletins de urna) kept being transmitted, received and published, and that totalization went on normally, except for a brief moment when it was suspended under the security protocol.';
+
+  @override
+  String get entendaSourceFatoOuBoato =>
+      'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (fact-check, Oct 6, 2026)';
 }

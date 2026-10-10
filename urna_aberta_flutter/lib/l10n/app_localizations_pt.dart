@@ -260,7 +260,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String apuracaoTimelineSource(String pct) {
-    return 'Curva sintética que termina nos arquivos finais reais do TSE, com a pausa nacional de $pct simulada.';
+    return 'Curva sintética que termina nos arquivos finais reais do TSE. A pausa nacional em $pct, das 19h14 às 20h04, segue o horário informado pelo TSE.';
   }
 
   @override
@@ -380,19 +380,19 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get entendaPausePara1 =>
-      'Na noite de 4 de outubro de 2026, a página nacional de resultados para Presidente ficou parada em 64,81% por cerca de 50 a 60 minutos. Depois, saltou para perto de 84%.';
+      'Na noite de 4 de outubro de 2026, por volta das 19h14 (horário de Brasília), a visualização nacional (\"Brasil\") dos resultados para presidente parou de ser atualizada, quando 64,81% dos dados haviam sido divulgados. A geração desses arquivos foi restabelecida às 20h04, cerca de 50 minutos depois.';
 
   @override
   String get entendaPausePara2 =>
-      'Segundo o TSE, um gargalo no processamento travou o módulo que gera os arquivos de publicação \"Brasil\". Os arquivos de cada estado continuaram sendo atualizados normalmente durante todo o tempo.';
+      'Segundo o TSE, uma contenção no processamento de dados, depois de um aumento no volume de dados, paralisou o módulo que gera os arquivos de divulgação da visualização \"Brasil\". A visualização estadual não foi afetada: os arquivos de cada estado, que também trazem os votos para presidente, continuaram a ser publicados sem interrupção.';
 
   @override
   String get entendaPauseCallout =>
-      'Totalização é a contagem oficial. Divulgação é a publicação dessa contagem. O que parou foi a divulgação nacional.';
+      'Apuração é a contagem feita por cada urna. Totalização é a soma dessas contagens. Divulgação é a publicação na internet. O que parou foi a divulgação nacional.';
 
   @override
   String get entendaPausePara3 =>
-      'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay: as duas fontes lado a lado.';
+      'Quem somava os arquivos por UF durante a pausa via a contagem seguir. É isso que a tela Apuração mostra no replay, com a pausa no mesmo horário. A evolução dos estados durante a pausa é uma curva sintética: a Urna Aberta guardou apenas os arquivos finais daquela noite.';
 
   @override
   String get entendaInProduction =>
@@ -853,4 +853,58 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get verificarRetry => 'Tentar de novo';
+
+  @override
+  String get apuracaoModeLive => 'Ao vivo';
+
+  @override
+  String get apuracaoModeReplay => 'Reprise do 1º turno';
+
+  @override
+  String apuracaoLiveLede(int round) {
+    return 'Presidente, $roundº turno, ao vivo. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Os números se atualizam a cada 30 segundos.';
+  }
+
+  @override
+  String apuracaoLiveEndedLede(int round) {
+    return 'Presidente, $roundº turno. Os últimos arquivos do TSE guardados pela Urna Aberta durante a apuração.';
+  }
+
+  @override
+  String apuracaoLiveSoon(int round, String date) {
+    return 'A apuração ao vivo do $roundº turno começa em $date, às 17h (Brasília). Enquanto isso, reveja o 1º turno.';
+  }
+
+  @override
+  String apuracaoLiveWaiting(int round) {
+    return 'As urnas do $roundº turno fecharam. Aguardando os primeiros arquivos do TSE; enquanto isso, reveja o 1º turno.';
+  }
+
+  @override
+  String apuracaoLiveStale(String time) {
+    return 'Sem conexão com o servidor: estes são os números de $time.';
+  }
+
+  @override
+  String apuracaoLiveTimelineTitle(int round) {
+    return 'A apuração do $roundº turno';
+  }
+
+  @override
+  String get apuracaoLiveTimelineSource =>
+      'Cada ponto é um momento em que um arquivo do TSE mudou, guardado pela Urna Aberta com a assinatura conferida.';
+
+  @override
+  String get apuracaoLiveNoNational => 'ainda sem arquivo';
+
+  @override
+  String get atlasLive => 'Ao vivo';
+
+  @override
+  String get entendaPausePara2b =>
+      'O TSE informa ainda que, durante a pausa, os boletins de urna continuaram a ser transmitidos, recebidos e publicados, e que o cálculo da totalização seguiu normalmente, exceto por um breve momento em que foi suspenso pelo protocolo de segurança.';
+
+  @override
+  String get entendaSourceFatoOuBoato =>
+      'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)';
 }

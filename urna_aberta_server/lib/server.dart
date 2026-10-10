@@ -6,6 +6,9 @@ import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 
 import 'src/cache_busting.dart';
 import 'src/generated/serverpod.dart';
+import 'src/live/elections.dart';
+import 'src/live/live_ingestor.dart';
+import 'src/live/live_poll_call.dart';
 import 'src/replay/fixture_seeder.dart';
 import 'src/secao/secao_endpoint.dart';
 import 'src/secao/section_directories.dart';
@@ -123,10 +126,48 @@ void run(List<String> args) async {
     ).call,
   );
 
+  final live = _liveIngestor(tse, urls);
+
   // Start the server.
   await pod.start();
 
   await _seedReplayFixtures(pod);
+
+  if (live != null) {
+    LivePollCall.ingestor = live;
+    final session = await pod.createSession();
+    try {
+      await pod.futureCalls.cancel(LivePollCall.id);
+      await pod.futureCalls
+          .callRecurring(identifier: LivePollCall.id)
+          .every(LiveIngestor.pollEvery, start: DateTime.now().toUtc())
+          .livePollCall
+          .poll();
+      session.log('Live polling scheduled.');
+    } catch (e, st) {
+      session.log(
+        'Live polling not scheduled: $e',
+        level: LogLevel.error,
+        exception: e,
+        stackTrace: st,
+      );
+    } finally {
+      await session.close();
+    }
+  }
+}
+
+/// Election-night polling of TSE, on unless `URNA_LIVE=off`. Outside a
+/// live window it only re-reads EA11 every few hours.
+LiveIngestor? _liveIngestor(TseClient tse, TseUrls urls) {
+  if (Platform.environment['URNA_LIVE'] == 'off') return null;
+  final live = LiveIngestor(client: tse, urls: urls);
+  // Known elections until the first EA11 refresh succeeds.
+  final archived = File('../fixtures/2026-1t/oficial/comum/config/ele-c.json');
+  if (archived.existsSync()) {
+    live.elections = parseElections(archived.readAsBytesSync());
+  }
+  return live;
 }
 
 /// Stores the archived 1st-round files so the replay works offline.

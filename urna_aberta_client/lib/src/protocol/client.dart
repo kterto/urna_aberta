@@ -23,6 +23,7 @@ import 'package:urna_aberta_client/src/protocol/file_verification.dart'
     as _i4bcni6a;
 import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
     as _i0ezu2ai;
+import 'package:urna_aberta_client/src/protocol/live_status.dart' as _iz8cte89;
 import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
     as _iawxlp65;
 import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
@@ -321,6 +322,15 @@ class EndpointTally extends _isc.EndpointRef {
         'tally',
         'divergence',
         {'at': at},
+      );
+
+  /// The presidential count TSE is publishing now (or the next one), from
+  /// the files the live poll stored.
+  _ida.Future<_iz8cte89.LiveStatus> live() =>
+      caller.callServerEndpoint<_iz8cte89.LiveStatus>(
+        'tally',
+        'live',
+        {},
       );
 }
 

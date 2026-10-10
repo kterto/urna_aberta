@@ -45,5 +45,25 @@ void main() {
       expect(find.text('Sources'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('pause chapter follows TSE\'s note ($w px)', (tester) async {
+      await pumpEntenda(tester, const Locale('pt'), size);
+      await tester.tap(find.text('4 de outubro de 2026'));
+      await tester.pumpAndSettle();
+      // TSE, Fato ou Boato, 06/10/2026: 19:14 to 20:04, at 64.81%.
+      expect(find.textContaining('19h14'), findsOneWidget);
+      expect(find.textContaining('20h04'), findsOneWidget);
+      expect(
+        find.textContaining('exceto por um breve momento'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('84%'), findsNothing);
+      expect(find.textContaining('Fato ou Boato'), findsOneWidget);
+      expect(
+        find.text('Rascunho · revisar fontes'.toUpperCase()),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
   }
 }

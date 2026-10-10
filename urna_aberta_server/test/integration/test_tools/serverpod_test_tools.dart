@@ -21,8 +21,11 @@ import 'package:urna_aberta_server/src/generated/divergence_event.dart'
     as _it5gv87d;
 import 'package:urna_aberta_server/src/generated/file_verification.dart'
     as _i5a4izj1;
+import 'package:urna_aberta_server/src/generated/future_calls.dart'
+    as _iplz5ub8;
 import 'package:urna_aberta_server/src/generated/greetings/greeting.dart'
     as _i13zhb17;
+import 'package:urna_aberta_server/src/generated/live_status.dart' as _ikfybxr9;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
     as _i5vkvva1;
 import 'package:urna_aberta_server/src/generated/replay_night.dart'
@@ -160,6 +163,8 @@ void withServerpod(
 }
 
 class TestEndpoints {
+  late final futureCalls = _FutureCalls();
+
   late final _EmailIdpEndpoint emailIdp;
 
   late final _JwtRefreshEndpoint jwtRefresh;
@@ -205,6 +210,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
   }
+}
+
+class _FutureCalls {
+  late final livePollCall = _LivePollCallFutureCall();
 }
 
 class _EmailIdpEndpoint {
@@ -705,6 +714,36 @@ class _TallyEndpoint {
       }
     });
   }
+
+  _ida.Future<_ikfybxr9.LiveStatus> live(
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tally',
+            method: 'live',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tally',
+          methodName: 'live',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ikfybxr9.LiveStatus>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _SecaoEndpoint {
@@ -929,5 +968,20 @@ class _VerificarEndpoint {
         await _localUniqueSession.close();
       }
     });
+  }
+}
+
+class _LivePollCallFutureCall {
+  Future<void> poll(_ist.TestSessionBuilder sessionBuilder) async {
+    var _localUniqueSession =
+        (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild();
+    try {
+      await _iplz5ub8.LivePollCallPollFutureCall().invoke(
+        _localUniqueSession,
+        null,
+      );
+    } finally {
+      await _localUniqueSession.close();
+    }
   }
 }

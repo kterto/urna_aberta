@@ -16,6 +16,7 @@ tally:
   - frame:
   - timeline:
   - divergence:
+  - live:
 secao:
   - municipios:
   - zonas:

@@ -144,7 +144,8 @@ class _ChapterScreen extends StatelessWidget {
                       .copyWith(color: p.ink),
                 ),
                 const SizedBox(height: Space.x3),
-                SimulationStamp(label: l.entendaDraftStamp),
+                // Chapter 6 is written from TSE's note; the others are drafts.
+                if (index != 5) SimulationStamp(label: l.entendaDraftStamp),
                 const SizedBox(height: Space.x6),
                 if (index == 5) ...[
                   para(
@@ -153,6 +154,7 @@ class _ChapterScreen extends StatelessWidget {
                   para(
                     l.entendaPausePara2,
                   ),
+                  para(l.entendaPausePara2b),
                   Container(
                     margin: const EdgeInsets.only(bottom: Space.x4),
                     padding: const EdgeInsets.all(Space.x4),
@@ -180,6 +182,13 @@ class _ChapterScreen extends StatelessWidget {
                 const SizedBox(height: Space.x4),
                 Text(l.entendaSources, style: t.titleSmall),
                 const SizedBox(height: Space.x2),
+                if (index == 5) ...[
+                  _Source(
+                    l.entendaSourceFatoOuBoato,
+                    'https://www.justicaeleitoral.jus.br/fato-ou-boato/checagens/2026/e-falso-que-a-interrupcao-na-divulgacao-dos-resultados-tenha-fraudado-o-resultado-do-1o-turno-para-presidente',
+                  ),
+                  const SizedBox(height: Space.x2),
+                ],
                 _Source(
                   l.entendaSourceDivulgacao,
                   'https://www.tse.jus.br/eleicoes/informacoes-tecnicas-sobre-a-divulgacao-de-resultados',

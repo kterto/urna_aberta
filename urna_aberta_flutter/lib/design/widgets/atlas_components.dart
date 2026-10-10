@@ -223,6 +223,51 @@ class SimulationStamp extends StatelessWidget {
   }
 }
 
+/// Marks figures that come from TSE files fetched during the count: a
+/// solid rule and a dot, where [SimulationStamp] is dashed.
+class LiveStamp extends StatelessWidget {
+  const LiveStamp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.atlas;
+    final c = p.status(VerificationStatus.valid);
+    final label = context.l10n.atlasLive;
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: c, width: 1.5),
+          borderRadius: BorderRadius.circular(Corner.key),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(color: c, shape: BoxShape.circle),
+                child: const SizedBox.square(dimension: 7),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label.toUpperCase(),
+                style: AtlasType.fileCode.copyWith(
+                  color: c,
+                  fontSize: 11,
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _DashedRectPainter extends CustomPainter {
   _DashedRectPainter(this.color);
 

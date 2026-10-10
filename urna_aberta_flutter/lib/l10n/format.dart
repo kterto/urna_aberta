@@ -19,8 +19,16 @@ extension AtlasFormat on BuildContext {
 
   String percent(num v, [int digits = 2]) => '${decimal(v, digits)}%';
 
-  /// `21:40`, Brasília time.
+  /// `19:52`, Brasília time.
   String hm(DateTime utc) => DateFormat.Hm(_tag).format(brasilia(utc));
+
+  /// `25/10` / `Oct 25`, Brasília calendar.
+  String day(DateTime utc) {
+    final b = brasilia(utc);
+    return Localizations.localeOf(this).languageCode == 'pt'
+        ? DateFormat('dd/MM', _tag).format(b)
+        : DateFormat.MMMd(_tag).format(b);
+  }
 
   /// `05/10 12:51` / `Oct 5, 12:51`, Brasília time.
   String dayHm(DateTime utc) {

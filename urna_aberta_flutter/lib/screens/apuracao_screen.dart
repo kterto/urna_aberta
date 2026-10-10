@@ -11,10 +11,13 @@ import '../design/widgets/map_plate.dart';
 import '../design/widgets/replay_bar.dart';
 import '../l10n/format.dart';
 import '../l10n/l10n.dart';
+import '../live/live_controller.dart';
 import '../replay/replay_controller.dart';
 import '../showcase/design_system_screen.dart';
 
-/// Live tally: TSE national file vs independent sum of states.
+/// The count: TSE's national file vs the independent sum of states. Live
+/// while TSE publishes (or once live files exist), otherwise the 1st-round
+/// replay.
 class ApuracaoScreen extends StatefulWidget {
   const ApuracaoScreen({super.key});
 
@@ -24,6 +27,10 @@ class ApuracaoScreen extends StatefulWidget {
 
 class _ApuracaoScreenState extends State<ApuracaoScreen> {
   ReplayController? _replay;
+  LiveController? _live;
+
+  /// The viewer switched from the live count to the replay.
+  bool _replayChosen = false;
 
   /// Same threshold the server uses to flag a divergence event.
   static const _divergenceGap = 0.5;
@@ -40,11 +47,13 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _replay ??= ReplayController(TallyScope.of(context))..load();
+    _live ??= LiveController(TallyScope.of(context))..load();
   }
 
   @override
   void dispose() {
     _replay?.dispose();
+    _live?.dispose();
     super.dispose();
   }
 
@@ -53,25 +62,210 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     final wide = MediaQuery.sizeOf(context).width >= Breakpoint.expanded;
     final l = context.l10n;
     return ListenableBuilder(
-      listenable: _replay!,
-      builder: (context, _) => AtlasPage(
-        title: wide ? l.apuracaoHeadline : l.navApuracao,
-        lede: l.apuracaoLede,
-        actions: [
-          if (!isWideLayout(context) || shellKindOf(context) != ShellKind.web)
-            IconButton(
-              tooltip: l.apuracaoDesignSystem,
-              icon: Icon(AtlasIcons.sistema(context)),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const DesignSystemScreen(),
+      listenable: Listenable.merge([_replay!, _live!]),
+      builder: (context, _) {
+        final status = _live!.status;
+        final liveFrame = status?.frame;
+        final showLive = status != null && liveFrame != null && !_replayChosen;
+        return AtlasPage(
+          title: wide ? l.apuracaoHeadline : l.navApuracao,
+          lede: !showLive
+              ? l.apuracaoLede
+              : status.open
+              ? l.apuracaoLiveLede(status.round ?? 1)
+              : l.apuracaoLiveEndedLede(status.round ?? 1),
+          actions: [
+            if (!isWideLayout(context) || shellKindOf(context) != ShellKind.web)
+              IconButton(
+                tooltip: l.apuracaoDesignSystem,
+                icon: Icon(AtlasIcons.sistema(context)),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DesignSystemScreen(),
+                  ),
                 ),
               ),
+          ],
+          children: [
+            if (liveFrame != null) ...[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: AtlasSegmented<bool>(
+                  segments: {
+                    false: l.apuracaoModeLive,
+                    true: l.apuracaoModeReplay,
+                  },
+                  selected: _replayChosen,
+                  onChanged: (v) => setState(() => _replayChosen = v),
+                ),
+              ),
+              const SizedBox(height: Space.x5),
+            ] else if (_liveNotice(context, status) case final notice?) ...[
+              _Notice(text: notice),
+              const SizedBox(height: Space.x5),
+            ],
+            if (showLive)
+              ..._liveBody(context, wide, status, liveFrame)
+            else
+              ..._body(context, wide),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Before any live file: when the live count starts, or that it has.
+  String? _liveNotice(BuildContext context, LiveStatus? s) {
+    final round = s?.round, opens = s?.opensAt;
+    if (s == null || round == null || opens == null) return null;
+    final l = context.l10n;
+    if (s.open) return l.apuracaoLiveWaiting(round);
+    if (opens.isAfter(DateTime.now())) {
+      return l.apuracaoLiveSoon(round, context.day(opens));
+    }
+    return null;
+  }
+
+  static FileCode _resultFile(int election, String scope) {
+    final e6 = election.toString().padLeft(6, '0');
+    final name = '$scope-c0001-e$e6-u.json';
+    return FileCode(
+      name,
+      url: scope.startsWith('<')
+          ? null
+          : Uri.parse(
+              'https://resultados.tse.jus.br/oficial/ele2026/$election/dados/$scope/$name',
             ),
+    );
+  }
+
+  /// Panels from the latest live files the server stored.
+  List<Widget> _liveBody(
+    BuildContext context,
+    bool wide,
+    LiveStatus status,
+    TallyFrame frame,
+  ) {
+    final l = context.l10n;
+    final code = status.electionCode!;
+    final round = status.round ?? 1;
+    final brFile = _resultFile(code, 'br');
+    final ufFiles = _resultFile(code, '<uf>');
+    final updated = l.apuracaoUpdatedAt(context.hm(frame.at));
+    final diverging = frame.statesPct - frame.nationalPct > _divergenceGap;
+
+    final duo = Plate(
+      title: l.apuracaoDuoTitle,
+      trailing: status.open ? const LiveStamp() : null,
+      fonte: FonteLine(
+        plateNumber: 5,
+        source: l.apuracaoDuoSource,
+        codes: [brFile, ufFiles],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_live!.stale)
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.x4),
+              child: _Notice(text: l.apuracaoLiveStale(context.hm(frame.at))),
+            ),
+          AnimatedSwitcher(
+            duration: Motion.of(context, Motion.standard),
+            child: diverging
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: Space.x4),
+                    child: DivergenceBanner(
+                      onLearnMore: () => ShellScope.of(context)?.go(3),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          SourceDuo(
+            national: frame.nationalPct,
+            states: frame.statesPct,
+            nationalNote: frame.missingScopes.contains('br')
+                ? l.apuracaoLiveNoNational
+                : updated,
+            statesNote: updated,
+          ),
         ],
-        children: _body(context, wide),
       ),
     );
+
+    final map = MapPlate(
+      pct: {
+        for (final u in frame.ufs)
+          if (u.scopeCode != 'zz')
+            u.scopeCode.toUpperCase(): u.sectionsTotal == 0
+                ? 0
+                : u.sectionsTotalized * 100 / u.sectionsTotal,
+      },
+      momentLabel: context.hm(frame.at),
+    );
+
+    final votes = Plate(
+      title: l.apuracaoVotesTitle,
+      fonte: FonteLine(
+        plateNumber: 6,
+        source: l.apuracaoVotesSource,
+        codes: [brFile],
+      ),
+      child: MirroredBars(
+        rows: [
+          for (final c in frame.candidates)
+            MirroredRow(_candidateLabel(l, c), c.national, c.states),
+        ],
+      ),
+    );
+
+    final timeline = status.timeline.length < 2
+        ? null
+        : Plate(
+            title: l.apuracaoLiveTimelineTitle(round),
+            fonte: FonteLine(
+              plateNumber: 7,
+              source: l.apuracaoLiveTimelineSource,
+            ),
+            child: TimelineChart(
+              samples: [
+                for (final p in status.timeline)
+                  TimelineSample(brasilia(p.at), p.nationalPct, p.statesPct),
+              ],
+              now: status.timeline.length - 1,
+            ),
+          );
+
+    return _layout(wide, duo: duo, map: map, votes: votes, timeline: timeline);
+  }
+
+  static List<Widget> _layout(
+    bool wide, {
+    required Widget duo,
+    required Widget map,
+    required Widget votes,
+    Widget? timeline,
+  }) {
+    const gap = SizedBox(height: Space.x5, width: Space.x5);
+    return [
+      if (wide)
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 7, child: map),
+            gap,
+            Expanded(flex: 5, child: Column(children: [duo, gap, votes])),
+          ],
+        )
+      else ...[
+        duo,
+        gap,
+        map,
+        gap,
+        votes,
+      ],
+      if (timeline != null) ...[gap, timeline],
+    ];
   }
 
   List<Widget> _body(BuildContext context, bool wide) {
@@ -191,28 +385,10 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
       ),
     );
 
-    const gap = SizedBox(height: Space.x5, width: Space.x5);
     return [
       replay,
-      gap,
-      if (wide)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(flex: 7, child: map),
-            gap,
-            Expanded(flex: 5, child: Column(children: [duo, gap, votes])),
-          ],
-        )
-      else ...[
-        duo,
-        gap,
-        map,
-        gap,
-        votes,
-      ],
-      gap,
-      timeline,
+      const SizedBox(height: Space.x5),
+      ..._layout(wide, duo: duo, map: map, votes: votes, timeline: timeline),
     ];
   }
 
@@ -220,6 +396,43 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     final name = c.ballotName;
     if (name == null) return l.apuracaoCandidateNumber(c.candidateNumber);
     return '${c.candidateNumber} · $name (${c.party})';
+  }
+}
+
+class _Notice extends StatelessWidget {
+  const _Notice({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.atlas;
+    return Semantics(
+      liveRegion: true,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: p.plate,
+          border: Border.all(color: p.rule),
+          borderRadius: BorderRadius.circular(Corner.plate),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(Space.x4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(AtlasIcons.pending(context), size: 18, color: p.inkMuted),
+              const SizedBox(width: Space.x3),
+              Expanded(
+                child: Text(
+                  text,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

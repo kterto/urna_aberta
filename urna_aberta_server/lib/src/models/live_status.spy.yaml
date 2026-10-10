@@ -1,0 +1,15 @@
+### The presidential count TSE is publishing now, or the next one.
+class: LiveStatus
+fields:
+  ### Null when EA11 lists no presidential election.
+  electionCode: int?
+  round: int?
+  ### Live window, UTC: from 17:00 Brasília on election day to 06:00 next day.
+  opensAt: DateTime?
+  closesAt: DateTime?
+  open: bool
+  ### The latest stored live files; null until the first one arrives.
+  frame: TallyFrame?
+  ### One point per moment a stored file changed.
+  timeline: List<TimelinePoint>
+  divergence: List<DivergenceEvent>

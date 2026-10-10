@@ -29,7 +29,9 @@ Future<void> pumpScreen(
 }
 
 void main() {
-  testWidgets('on a narrow screen each file row spans the plate', (tester) async {
+  testWidgets('on a narrow screen each file row spans the plate', (
+    tester,
+  ) async {
     await pumpScreen(
       tester,
       FakeVerificarSource(),

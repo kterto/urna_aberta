@@ -35,6 +35,7 @@ import 'divergence_event.dart' as _i3f5hnmb;
 import 'file_not_stored.dart' as _i0m7v5qb;
 import 'file_verification.dart' as _ikk6q8b9;
 import 'greetings/greeting.dart' as _izw8z7ou;
+import 'live_status.dart' as _i5q61ine;
 import 'municipio_ref.dart' as _i663s1cn;
 import 'replay_night.dart' as _i1vi4thm;
 import 'replay_unavailable.dart' as _i6npibdt;
@@ -60,6 +61,7 @@ export 'divergence_event.dart';
 export 'file_not_stored.dart';
 export 'file_verification.dart';
 export 'greetings/greeting.dart';
+export 'live_status.dart';
 export 'municipio_ref.dart';
 export 'replay_night.dart';
 export 'replay_unavailable.dart';
@@ -701,6 +703,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _izw8z7ou.Greeting) {
       return _izw8z7ou.Greeting.fromJson(data) as T;
     }
+    if (t == _i5q61ine.LiveStatus) {
+      return _i5q61ine.LiveStatus.fromJson(data) as T;
+    }
     if (t == _i663s1cn.MunicipioRef) {
       return _i663s1cn.MunicipioRef.fromJson(data) as T;
     }
@@ -783,6 +788,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _is.getType<_izw8z7ou.Greeting?>()) {
       return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
     }
+    if (t == _is.getType<_i5q61ine.LiveStatus?>()) {
+      return (data != null ? _i5q61ine.LiveStatus.fromJson(data) : null) as T;
+    }
     if (t == _is.getType<_i663s1cn.MunicipioRef?>()) {
       return (data != null ? _i663s1cn.MunicipioRef.fromJson(data) : null) as T;
     }
@@ -845,6 +853,18 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == List<_iuhijha9.VotoResult>) {
       return (data as List)
               .map((e) => deserialize<_iuhijha9.VotoResult>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i4neo0h8.TimelinePoint>) {
+      return (data as List)
+              .map((e) => deserialize<_i4neo0h8.TimelinePoint>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i3f5hnmb.DivergenceEvent>) {
+      return (data as List)
+              .map((e) => deserialize<_i3f5hnmb.DivergenceEvent>(e))
               .toList()
           as T;
     }
@@ -954,6 +974,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       _i0m7v5qb.FileNotStoredException => 'FileNotStoredException',
       _ikk6q8b9.FileVerification => 'FileVerification',
       _izw8z7ou.Greeting => 'Greeting',
+      _i5q61ine.LiveStatus => 'LiveStatus',
       _i663s1cn.MunicipioRef => 'MunicipioRef',
       _i1vi4thm.ReplayNight => 'ReplayNight',
       _i6npibdt.ReplayUnavailableException => 'ReplayUnavailableException',
@@ -1003,6 +1024,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'FileVerification';
       case _izw8z7ou.Greeting():
         return 'Greeting';
+      case _i5q61ine.LiveStatus():
+        return 'LiveStatus';
       case _i663s1cn.MunicipioRef():
         return 'MunicipioRef';
       case _i1vi4thm.ReplayNight():
@@ -1088,6 +1111,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'Greeting') {
       return deserialize<_izw8z7ou.Greeting>(data['data']);
+    }
+    if (dataClassName == 'LiveStatus') {
+      return deserialize<_i5q61ine.LiveStatus>(data['data']);
     }
     if (dataClassName == 'MunicipioRef') {
       return deserialize<_i663s1cn.MunicipioRef>(data['data']);

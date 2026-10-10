@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
 import 'package:urna_aberta_flutter/design/widgets/atlas_components.dart';
+import 'package:urna_aberta_flutter/design/widgets/replay_bar.dart';
 import 'package:urna_aberta_flutter/replay/replay_controller.dart';
 import 'package:urna_aberta_flutter/screens/apuracao_screen.dart';
 import '../support/test_app.dart';
@@ -10,6 +11,18 @@ DateTime brt(int day, int hour, int minute) =>
     DateTime.utc(2026, 10, day, hour + 3, minute);
 
 class StubSource implements TallySource {
+  /// Before the 2nd round: nothing live yet. Far-future dates keep the
+  /// "starts on" notice true whenever the test runs.
+  LiveStatus liveStatus = LiveStatus(
+    electionCode: 6258,
+    round: 2,
+    opensAt: DateTime.utc(2099, 10, 25, 20),
+    closesAt: DateTime.utc(2099, 10, 26, 9),
+    open: false,
+    timeline: [],
+    divergence: [],
+  );
+
   StubSource({this.origin = DataOrigin.synthetic, this.fail});
 
   final DataOrigin origin;
@@ -24,8 +37,8 @@ class StubSource implements TallySource {
       officeCode: 1,
       start: brt(4, 17, 0),
       end: brt(5, 1, 0),
-      freezeStart: brt(4, 21, 2),
-      freezeEnd: brt(4, 21, 57),
+      freezeStart: brt(4, 19, 14),
+      freezeEnd: brt(4, 20, 4),
       finalsGeneratedAt: brt(5, 12, 52),
     );
   }
@@ -62,6 +75,9 @@ class StubSource implements TallySource {
     )
       TimelinePoint(at: t, nationalPct: 10, statesPct: 12),
   ];
+
+  @override
+  Future<LiveStatus> live() async => liveStatus;
 }
 
 Future<void> pumpScreen(
@@ -94,7 +110,7 @@ void main() {
     expect(find.textContaining('64,81'), findsWidgets);
     expect(find.textContaining('74,8'), findsWidgets);
     expect(find.textContaining('FULANO DE TAL'), findsOneWidget);
-    expect(find.textContaining('21:40'), findsWidgets);
+    expect(find.textContaining('19:52'), findsWidgets);
   });
 
   testWidgets('non-live data carries the simulation stamp', (tester) async {
@@ -147,8 +163,112 @@ void main() {
       expect(find.text('64.81%'), findsWidgets);
       expect(find.textContaining('64,81'), findsNothing);
       expect(find.text('Simulated replay'.toUpperCase()), findsOneWidget);
-      expect(find.text('frozen since 21:02'), findsOneWidget);
+      expect(find.text('frozen since 19:14'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
+
+  group('live count', () {
+    LiveStatus liveNow({bool withFrame = true}) => LiveStatus(
+      electionCode: 6258,
+      round: 2,
+      opensAt: DateTime.utc(2026, 10, 25, 20),
+      closesAt: DateTime.utc(2099, 10, 26, 9),
+      open: true,
+      frame: withFrame
+          ? TallyFrame(
+              at: DateTime.utc(2026, 10, 25, 22, 15),
+              origin: DataOrigin.live,
+              nationalPct: 51.2,
+              statesPct: 55.4,
+              missingScopes: [],
+              candidates: [
+                CandidateVotes(
+                  candidateNumber: 13,
+                  national: 900,
+                  states: 950,
+                  ballotName: 'BELTRANO',
+                  party: 'YY',
+                ),
+              ],
+              ufs: [
+                UfProgress(
+                  scopeCode: 'ba',
+                  sectionsTotal: 10,
+                  sectionsTotalized: 6,
+                ),
+              ],
+            )
+          : null,
+      timeline: [
+        TimelinePoint(
+          at: DateTime.utc(2026, 10, 25, 20, 30),
+          nationalPct: 10,
+          statesPct: 11,
+        ),
+        TimelinePoint(
+          at: DateTime.utc(2026, 10, 25, 22, 15),
+          nationalPct: 51.2,
+          statesPct: 55.4,
+        ),
+      ],
+      divergence: [],
+    );
+
+    testWidgets('before the count: the replay, and when live starts', (
+      tester,
+    ) async {
+      await pumpScreen(tester, StubSource());
+      expect(find.textContaining('começa em 25/10, às 17h'), findsOneWidget);
+      expect(find.byType(ReplayBar), findsOneWidget);
+      expect(find.byType(LiveStamp), findsNothing);
+    });
+
+    testWidgets('polls closed, no file yet: says it is waiting', (
+      tester,
+    ) async {
+      final source = StubSource()..liveStatus = liveNow(withFrame: false);
+      await pumpScreen(tester, source);
+      expect(find.textContaining('Aguardando os primeiros'), findsOneWidget);
+      expect(find.byType(ReplayBar), findsOneWidget);
+    });
+
+    testWidgets('live files: the live count, marked live, no replay clock', (
+      tester,
+    ) async {
+      final source = StubSource()..liveStatus = liveNow();
+      await pumpScreen(tester, source);
+      expect(find.byType(LiveStamp), findsOneWidget);
+      expect(find.byType(ReplayBar), findsNothing);
+      expect(find.byType(SimulationStamp), findsNothing);
+      expect(find.textContaining('2º turno, ao vivo'), findsOneWidget);
+      expect(find.textContaining('51,2'), findsWidgets);
+      expect(find.textContaining('BELTRANO'), findsOneWidget);
+      expect(find.text('atualizado 19:15'), findsWidgets);
+      expect(find.text('br-c0001-e006258-u.json'), findsWidgets);
+    });
+
+    testWidgets('the viewer can switch to the replay and back', (
+      tester,
+    ) async {
+      final source = StubSource()..liveStatus = liveNow();
+      await pumpScreen(tester, source);
+      await tester.tap(find.text('Reprise do 1º turno'));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byType(ReplayBar), findsOneWidget);
+      await tester.tap(find.text('Ao vivo'));
+      await tester.pump();
+      expect(find.byType(ReplayBar), findsNothing);
+    });
+
+    testWidgets('in English', (tester) async {
+      final source = StubSource()..liveStatus = liveNow();
+      await pumpScreen(tester, source, locale: const Locale('en'));
+      expect(find.textContaining('round 2, live'), findsOneWidget);
+      expect(find.textContaining('51.2'), findsWidgets);
+      expect(find.text('LIVE'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

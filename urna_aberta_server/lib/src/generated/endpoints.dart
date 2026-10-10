@@ -15,12 +15,15 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _iacs;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
+import 'package:urna_aberta_server/src/generated/future_calls.dart'
+    as _iplz5ub8;
 import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../greetings/greeting_endpoint.dart' as _il624ik7;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
 import '../secao/secao_endpoint.dart' as _i5402ufq;
 import '../verify/verificar_endpoint.dart' as _i11vp49h;
+export 'future_calls.dart' show ServerpodFutureCallsGetter;
 
 class Endpoints extends _is.EndpointDispatch {
   @override
@@ -377,6 +380,16 @@ class Endpoints extends _is.EndpointDispatch {
                     params['at'],
                   ),
         ),
+        'live': _is.MethodConnector(
+          name: 'live',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['tally'] as _iphjbc6w.TallyEndpoint).live(session),
+        ),
       },
     );
     connectors['secao'] = _is.EndpointConnector(
@@ -534,5 +547,10 @@ class Endpoints extends _is.EndpointDispatch {
       ..initializeEndpoints(server);
     modules['serverpod_auth_core'] = _iacs.Endpoints()
       ..initializeEndpoints(server);
+  }
+
+  @override
+  _is.FutureCallDispatch? get futureCalls {
+    return _iplz5ub8.FutureCalls();
   }
 }

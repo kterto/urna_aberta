@@ -13,8 +13,8 @@ final _night = ReplayNight(
   officeCode: 1,
   start: brt(4, 17, 0),
   end: brt(5, 1, 0),
-  freezeStart: brt(4, 21, 2),
-  freezeEnd: brt(4, 21, 57),
+  freezeStart: brt(4, 19, 14),
+  freezeEnd: brt(4, 20, 4),
   finalsGeneratedAt: brt(5, 12, 52),
 );
 
@@ -29,6 +29,17 @@ TallyFrame frameAt(DateTime at) => TallyFrame(
 );
 
 class FakeSource implements TallySource {
+  /// Before the 2nd round: nothing live yet.
+  LiveStatus liveStatus = LiveStatus(
+    electionCode: 6258,
+    round: 2,
+    opensAt: DateTime.utc(2026, 10, 25, 20),
+    closesAt: DateTime.utc(2026, 10, 26, 9),
+    open: false,
+    timeline: [],
+    divergence: [],
+  );
+
   final frameRequests = <DateTime>[];
   final pending = <Completer<TallyFrame>>[];
   bool holdFrames = false;
@@ -62,6 +73,9 @@ class FakeSource implements TallySource {
     )
       TimelinePoint(at: t, nationalPct: 0, statesPct: 0),
   ];
+
+  @override
+  Future<LiveStatus> live() async => liveStatus;
 }
 
 class FakeTimer implements Timer {
@@ -101,11 +115,11 @@ void main() {
   test('load opens inside the national freeze, paused', () async {
     await c.load();
     expect(c.night, _night);
-    expect(c.now, brt(4, 21, 40));
+    expect(c.now, brt(4, 19, 52));
     expect(c.playing, isFalse);
-    expect(c.frame!.at, brt(4, 21, 40));
+    expect(c.frame!.at, brt(4, 19, 52));
     expect(c.timeline, hasLength(8 * 60 + 1));
-    expect(c.nowIndex, 4 * 60 + 40);
+    expect(c.nowIndex, 2 * 60 + 52);
   });
 
   test('a failed load keeps the error and can be retried', () async {
@@ -125,7 +139,7 @@ void main() {
     c.togglePlay();
     expect(timers.single.isActive, isTrue);
     c.advance(const Duration(seconds: 6));
-    expect(c.now, brt(4, 21, 41));
+    expect(c.now, brt(4, 19, 53));
   });
 
   test('a new frame is fetched once per virtual minute', () async {
@@ -135,7 +149,7 @@ void main() {
     source.frameRequests.clear();
     c.advance(const Duration(milliseconds: 500));
     c.advance(const Duration(milliseconds: 500));
-    expect(source.frameRequests, [brt(4, 21, 41)]);
+    expect(source.frameRequests, [brt(4, 19, 53)]);
   });
 
   test(
@@ -145,13 +159,13 @@ void main() {
       source.holdFrames = true;
       c.setSpeed(60);
       c.togglePlay();
-      c.advance(const Duration(seconds: 1)); // asks 21:41
-      c.advance(const Duration(seconds: 1)); // asks 21:42
-      source.pending[1].complete(frameAt(brt(4, 21, 42)));
+      c.advance(const Duration(seconds: 1)); // asks 19:53
+      c.advance(const Duration(seconds: 1)); // asks 19:54
+      source.pending[1].complete(frameAt(brt(4, 19, 54)));
       await pumpEventQueue();
-      source.pending[0].complete(frameAt(brt(4, 21, 41)));
+      source.pending[0].complete(frameAt(brt(4, 19, 53)));
       await pumpEventQueue();
-      expect(c.frame!.at, brt(4, 21, 42));
+      expect(c.frame!.at, brt(4, 19, 54));
     },
   );
 
@@ -189,7 +203,7 @@ void main() {
     // A background tab delivers one tick after 1 s instead of every 250 ms.
     wall = wall.add(const Duration(seconds: 1));
     timers.single.callback(timers.single);
-    expect(c.now, brt(4, 21, 41));
+    expect(c.now, brt(4, 19, 53));
   });
 
   test('pausing cancels the timer', () async {

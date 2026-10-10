@@ -60,13 +60,15 @@ void main() {
         expect(night.origin, DataOrigin.synthetic);
         expect(night.electionCode, 6257);
         expect(night.start, brt(4, 17, 0));
-        expect(night.freezeStart, brt(4, 21, 2));
-        expect(night.freezeEnd, brt(4, 21, 57));
+        // TSE, Fato ou Boato, 06/10/2026: the "Brasil" files stopped at
+        // 64.81% around 19:14 and were restored at 20:04.
+        expect(night.freezeStart, brt(4, 19, 14));
+        expect(night.freezeEnd, brt(4, 20, 4));
         expect(night.finalsGeneratedAt.isAfter(night.end), isTrue);
       });
 
       test('mid-freeze frame: national stuck, states moving', () async {
-        final f = await tally.frame(sessionBuilder, brt(4, 21, 30));
+        final f = await tally.frame(sessionBuilder, brt(4, 19, 50));
         expect(f.origin, DataOrigin.synthetic);
         expect(f.nationalPct, closeTo(64.81, 0.005));
         expect(f.statesPct - f.nationalPct, greaterThan(5));
@@ -119,12 +121,12 @@ void main() {
       });
 
       test('divergence: open during the freeze, closed after', () async {
-        final during = await tally.divergence(sessionBuilder, brt(4, 21, 30));
+        final during = await tally.divergence(sessionBuilder, brt(4, 19, 50));
         expect(during.single.endedAt, isNull);
         expect(during.single.origin, DataOrigin.synthetic);
 
         final after = await tally.divergence(sessionBuilder, brt(5, 2, 0));
-        expect(after.single.endedAt, brt(4, 21, 57));
+        expect(after.single.endedAt, brt(4, 20, 4));
         expect(after.single.maxGap, greaterThan(10));
       });
     });

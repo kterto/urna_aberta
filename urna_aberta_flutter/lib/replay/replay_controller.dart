@@ -13,6 +13,9 @@ abstract interface class TallySource {
     DateTime to,
     int stepSeconds,
   );
+
+  /// The presidential count TSE is publishing now, or the next one.
+  Future<LiveStatus> live();
 }
 
 class ServerTallySource implements TallySource {
@@ -32,6 +35,9 @@ class ServerTallySource implements TallySource {
     DateTime to,
     int stepSeconds,
   ) => _client.tally.timeline(from, to, stepSeconds);
+
+  @override
+  Future<LiveStatus> live() => _client.tally.live();
 }
 
 typedef PeriodicTimer =
@@ -53,8 +59,9 @@ class ReplayController extends ChangeNotifier {
   static const tick = Duration(milliseconds: 250);
   static const speeds = [1, 10, 60];
 
-  /// The replay opens 38 minutes into the national freeze (21:40 on the
-  /// night of Oct 4), where the two sources are furthest apart.
+  /// The replay opens 38 minutes into the national freeze (19:52 on the
+  /// night of Oct 4; TSE dates the freeze 19:14–20:04), near where the two
+  /// sources are furthest apart.
   static const openingIntoFreeze = Duration(minutes: 38);
 
   ReplayNight? _night;
