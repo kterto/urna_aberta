@@ -12,6 +12,7 @@ import 'src/live/live_poll_call.dart';
 import 'src/meu_local/meu_local_endpoint.dart';
 import 'src/replay/fixture_seeder.dart';
 import 'src/reports/relatorios_endpoint.dart';
+import 'src/reports/report_builder.dart';
 import 'src/reports/report_plan.dart';
 import 'src/reports/report_service.dart';
 import 'src/results/resultados_endpoint.dart';
@@ -129,10 +130,17 @@ void run(List<String> args) async {
         pleito: pleito,
         archive: _archive,
       );
-  MeuLocalEndpoint.sections = SecaoEndpoint.service = SectionService(
-    client: tse,
-    urls: urls,
-    directory: sectionDirectories(3220, 2026).call,
+  final sectionServices = <int, SectionService>{};
+  SectionService sectionService(int pleito, int year) =>
+      sectionServices[pleito] ??= SectionService(
+        client: tse,
+        urls: TseUrls.oficial(year: year),
+        directory: sectionDirectories(pleito, year).call,
+        pleito: pleito,
+      );
+  MeuLocalEndpoint.sections = SecaoEndpoint.service = sectionService(
+    3220,
+    2026,
   );
 
   final live = _liveIngestor(tse, urls);
@@ -148,6 +156,7 @@ void run(List<String> args) async {
       municipalities: results.municipalities,
       sections: (pleito, year, uf) => sectionDirectories(pleito, year)(uf),
     ),
+    builder: ReportBuilder.fromServices(results, sectionService),
     ratePerSecond: 20,
   );
 

@@ -165,6 +165,8 @@ class OfficeResult {
     required this.sectionsTotalized,
     required this.totals,
     required this.lists,
+    this.electorate,
+    this.turnout,
   });
 
   final int election, round;
@@ -180,6 +182,10 @@ class OfficeResult {
   final int sectionsTotal, sectionsTotalized;
   final Totals totals;
   final List<ElectoralList> lists;
+
+  /// Voters registered (`e.te`) and who turned out (`e.c`), when the file
+  /// has them.
+  final int? electorate, turnout;
 
   Iterable<Candidate> get candidates => lists.expand((l) => l.candidates);
 }
@@ -209,6 +215,7 @@ OfficeResult parseOfficeResult(List<int> bytes, {String? uf}) {
       (throw FormatException('EA20: unknown office $officeCode'));
   final s = _map(json['s'], 's');
   final v = _map(json['v'], 'v');
+  final e = json['e'] is Map<String, dynamic> ? json['e'] as Map : const {};
   final qe = carg['qe'];
 
   return OfficeResult(
@@ -238,6 +245,8 @@ OfficeResult parseOfficeResult(List<int> bytes, {String? uf}) {
       for (final a in _list(carg['agr'], 'carg.agr'))
         _electoralList(_map(a, 'agr[]')),
     ],
+    electorate: e['te'] == null ? null : _int(e['te'], 'e.te'),
+    turnout: e['c'] == null ? null : _int(e['c'], 'e.c'),
   );
 }
 

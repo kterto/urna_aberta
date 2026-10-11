@@ -30,6 +30,7 @@ class ReportItem {
     required this.place,
     required this.results,
     required this.sections,
+    this.reference,
     this.sectionsWithoutFiles = 0,
     this.breakdown = const [],
   });
@@ -39,6 +40,10 @@ class ReportItem {
   final ReportPlace place;
   final List<ResultNeed> results;
   final List<SectionNeed> sections;
+
+  /// For a sum of sections: the file of the race they belong to, read for
+  /// candidate names and party labels (the BU has only numbers).
+  final ResultNeed? reference;
 
   /// Sections TSE lists in the place with no urna files: never requested.
   final int sectionsWithoutFiles;
@@ -53,6 +58,7 @@ class ReportPlan {
   ReportPlan(this.items) {
     void add(ReportItem i) {
       results.addAll(i.results);
+      if (i.reference case final r?) results.add(r);
       sections.addAll(i.sections);
       i.breakdown.forEach(add);
     }
@@ -131,6 +137,7 @@ class ReportPlanner {
               place: place,
               results: item.results,
               sections: item.sections,
+              reference: item.reference,
               sectionsWithoutFiles: item.sectionsWithoutFiles,
               breakdown: [
                 for (final sub in await _subPlaces(e, o, place, spec.breakdown))
@@ -232,6 +239,11 @@ class ReportPlanner {
           place: place,
           results: const [],
           sections: sections,
+          reference: (
+            election: e.code,
+            office: o,
+            scope: _race(o, uf, place.municipio!),
+          ),
           sectionsWithoutFiles: withoutFiles,
         );
     }
@@ -302,6 +314,13 @@ class ReportPlanner {
     }
     return scope;
   }
+
+  /// The scope whose file covers the whole race a city's sections vote in.
+  static Scope _race(Office o, String uf, int municipio) => switch (o.level) {
+    OfficeLevel.federal => Scope.brazil(),
+    OfficeLevel.state => Scope.uf(uf),
+    OfficeLevel.municipal => Scope.municipality(uf, municipio),
+  };
 
   /// The rows under [place] for [breakdown]; none when it is not finer.
   Future<List<ReportPlace>> _subPlaces(

@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import 'package:urna_aberta_server/src/generated/protocol.dart';
 import 'package:urna_aberta_server/src/live/elections.dart';
 import 'package:urna_aberta_server/src/reports/relatorios_endpoint.dart';
+import 'package:urna_aberta_server/src/reports/report_builder.dart';
 import 'package:urna_aberta_server/src/reports/report_plan.dart';
 import 'package:urna_aberta_server/src/reports/report_service.dart';
 import 'package:urna_aberta_server/src/results/resultados_endpoint.dart';
@@ -54,12 +55,12 @@ void main() {
 
     setUp(() async {
       final tse = TseClient(http: ArchiveTse(), bucket: _NoWait());
-      ResultadosEndpoint.service = ResultsService(
+      final results = ResultadosEndpoint.service = ResultsService(
         client: tse,
         elections: () => ea11,
         now: () => now,
       );
-      SecaoEndpoint.service = SectionService(
+      final sections = SecaoEndpoint.service = SectionService(
         client: tse,
         urls: TseUrls.oficial(),
         directory: fixtureDirectory,
@@ -72,6 +73,7 @@ void main() {
           sections: (pleito, year, uf) => fixtureDirectory(uf),
           now: () => now,
         ),
+        builder: ReportBuilder.fromServices(results, (_, _) => sections),
         ratePerSecond: 20,
       );
       final user = await AuthUser.db.insertRow(
@@ -126,7 +128,8 @@ void main() {
           ),
         ),
       );
-      expect([q.files, q.stored], [34 * 3, 3]);
+      // Plus Brazil's file, for the candidates' names.
+      expect([q.files, q.stored], [34 * 3 + 1, 3]);
     });
 
     test('a spec naming anything TSE does not list is refused', () async {
@@ -137,6 +140,83 @@ void main() {
         ),
         throwsA(isA<ReportRefused>()),
       );
+    });
+
+    group('building', () {
+      Future<List<ReportTable>> build(
+        List<int> offices,
+        ReportPlace place,
+        ReportBreakdown breakdown,
+      ) => RelatoriosEndpoint.service.build(
+        ana.build(),
+        ReportSpec(
+          elections: [6257, 6259],
+          offices: offices,
+          places: [place],
+          breakdown: breakdown,
+          language: 'pt',
+        ),
+      );
+
+      String describe(List<ReportTable> tables) => [
+        for (final t in tables)
+          for (final d in t.check ?? const [])
+            '${t.item.office.name} ${d.what}: TSE ${d.tse}, ours ${d.ours}',
+      ].join('; ');
+
+      test("the 22 AC cities add up to TSE's AC file", () async {
+        final tables = await build([1], ac, ReportBreakdown.municipio);
+        final t = tables.single;
+        expect(t.breakdown, hasLength(22));
+        expect(t.check, isEmpty, reason: describe(tables));
+      });
+
+      test(
+        "every BU of Porto Walter's zone adds up to TSE's Porto Walter file",
+        () async {
+          final tables = await build(
+            [1, 3],
+            ReportPlace(
+              kind: ReportPlaceKind.municipio,
+              uf: 'ac',
+              municipio: 1066,
+            ),
+            ReportBreakdown.zona,
+          );
+          expect(tables, hasLength(2));
+          for (final t in tables) {
+            final zone = t.breakdown.single.$2;
+            expect(zone.sectionsCounted, 34);
+            expect(zone.excluded, isEmpty);
+            expect(zone.sources, hasLength(34 * 3));
+          }
+          expect(
+            tables.map((t) => t.check),
+            everyElement(isEmpty),
+            reason: describe(tables),
+          );
+        },
+      );
+
+      test('a region is our sum, with no TSE total to compare', () async {
+        final tables = await build(
+          [1],
+          ReportPlace(kind: ReportPlaceKind.regiao, regiao: 'n'),
+          ReportBreakdown.uf,
+        );
+        expect(tables.single.check, isNull);
+        expect(tables.single.tally.sources, hasLength(7));
+      });
+
+      test('progress counts every file read', () async {
+        final seen = <(int, int)>[];
+        await RelatoriosEndpoint.service.build(
+          ana.build(),
+          _spec([1], ac),
+          onProgress: (done, total) => seen.add((done, total)),
+        );
+        expect(seen, [(1, 1)]);
+      });
     });
   });
 }

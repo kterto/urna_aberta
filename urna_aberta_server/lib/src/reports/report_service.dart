@@ -1,13 +1,19 @@
 import 'package:serverpod/serverpod.dart' hide Scope;
 
 import '../generated/protocol.dart';
+import 'report_builder.dart';
 import 'report_plan.dart';
 
 /// Reports: quoting a spec, and (later) queuing and building it.
 class ReportService {
-  ReportService({required this.planner, required this.ratePerSecond});
+  ReportService({
+    required this.planner,
+    required this.builder,
+    required this.ratePerSecond,
+  });
 
   final ReportPlanner planner;
+  final ReportBuilder builder;
 
   /// The TSE client's rate, for the time estimate.
   final double ratePerSecond;
@@ -24,6 +30,14 @@ class ReportService {
       sectionsWithoutFiles: plan.sectionsWithoutFiles,
     );
   }
+
+  /// Plans [spec] and reads every file it needs into its tables.
+  Future<List<ReportTable>> build(
+    Session session,
+    ReportSpec spec, {
+    void Function(int done, int total)? onProgress,
+  }) async =>
+      builder.build(session, await planner.plan(spec), onProgress: onProgress);
 
   /// Files of [plan] already stored: a result file of that scope, or a
   /// looked-up section (its three files).

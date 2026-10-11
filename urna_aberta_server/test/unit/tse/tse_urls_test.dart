@@ -262,10 +262,6 @@ void main() {
       final mun = Scope.municipality('sp', 71072);
       expect(() => y2024.result(619, sp, Office.vereador), throwsArgumentError);
       expect(
-        () => urls.result(6259, mun, Office.governador),
-        throwsArgumentError,
-      );
-      expect(
         () => urls.result(6259, df, Office.deputadoEstadual),
         throwsArgumentError,
       );
@@ -278,8 +274,29 @@ void main() {
         throwsArgumentError,
       );
       expect(
-        () => urls.result(6257, mun, Office.presidente),
+        () => urls.result(6259, mun, Office.deputadoDistrital),
         throwsArgumentError,
+      );
+      expect(
+        () => urls.result(
+          6259,
+          Scope.municipality('df', 97012),
+          Office.deputadoEstadual,
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('a city has its own file for federal and state offices too', () {
+      final porto = Scope.municipality('ac', 1066);
+      expect(
+        urls.resultJws(6257, porto, Office.presidente).toString(),
+        'https://resultados.tse.jus.br/oficial/ele2026/6257/dados/ac/'
+        'ac01066-c0001-e006257-u.jws',
+      );
+      expect(
+        urls.resultJws(6259, porto, Office.deputadoFederal).path,
+        endsWith('/ac/ac01066-c0006-e006259-u.jws'),
       );
     });
   });

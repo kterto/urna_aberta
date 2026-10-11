@@ -135,18 +135,21 @@ void main() {
 
     test('a zone is the sum of its sections', () async {
       final p = await planner.plan(spec([1, 3], [zona('ac', 1066, 4)]));
-      expect(p.results, isEmpty);
       expect(p.sections, hasLength(34));
+      // Names come from each race's file: Brazil for President, AC for
+      // Governor.
+      expect(scopes(p), {'br', 'ac'});
+      expect(p.items.first.reference!.scope.code, 'br');
       // Each section reads its aux file, BU and signature file, once for
       // both offices.
-      expect(p.files, 34 * 3);
+      expect(p.files, 34 * 3 + 2);
       expect(requestedDirs.toSet(), {(3220, 'ac')});
     });
 
     test('a section is its three files', () async {
       final p = await planner.plan(spec([1], [secao('ac', 1066, 4, 77)]));
       expect(p.sections.single.id.secao, 77);
-      expect(p.files, 3);
+      expect(p.files, 3 + 1);
     });
   });
 

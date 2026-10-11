@@ -1,6 +1,6 @@
 # Plan: reports anyone can configure
 
-Status (11/10/2026): approved, with sign-in required, an opt-in public link and a limit of 3,000 files.
+Status (11/10/2026): approved, with sign-in required, an opt-in public link and a limit of 3,000 files. Steps 1 and 2 done: the AC cities add up to TSE's AC file and the 34 BUs of Porto Walter's zone to TSE's Porto Walter file, figure by figure.
 
 ## Goal
 

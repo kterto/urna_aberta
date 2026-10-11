@@ -259,18 +259,18 @@ class TseUrls {
   Uri resultJws(int election, Scope scope, Office office) =>
       signatureOf(result(election, scope, office));
 
-  /// Each office is published only for the scopes that elect it.
+  /// Each office is published for the scopes that elect it and, for
+  /// federal and state offices, for each city inside them.
   static void _checkScope(Scope scope, Office office) {
     final ok = switch (office.level) {
-      OfficeLevel.federal => !scope.isMunicipality,
+      OfficeLevel.federal => true,
       OfficeLevel.municipal => scope.isMunicipality,
       OfficeLevel.state =>
-        !scope.isMunicipality &&
-            !scope.isBrazil &&
+        !scope.isBrazil &&
             !scope.isExterior &&
             switch (office) {
-              Office.deputadoEstadual => scope.code != 'df',
-              Office.deputadoDistrital => scope.code == 'df',
+              Office.deputadoEstadual => scope.uf != 'df',
+              Office.deputadoDistrital => scope.uf == 'df',
               _ => true,
             },
     };

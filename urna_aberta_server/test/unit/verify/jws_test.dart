@@ -83,8 +83,10 @@ void main() {
               .whereType<File>()
               .where((f) => f.path.endsWith('.jws')),
       ];
-      // 83 President/Governor/Senator, 54 deputies, 67 municipal, 2 EA12.
-      expect(signed, hasLength(206));
+      // 83 President/Governor/Senator, 54 deputies, 67 municipal, 3 EA12,
+      // and for reports President in the 22 AC cities and Governor in
+      // Porto Walter.
+      expect(signed, hasLength(230));
       for (final f in signed) {
         final jws = TseJws.parse(f.readAsStringSync());
         final plain = File(f.path.replaceFirst(RegExp(r'\.jws$'), '.json'));

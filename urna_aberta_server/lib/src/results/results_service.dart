@@ -56,6 +56,22 @@ class ResultsService {
     ];
   }
 
+  /// One result file a report planner has already checked against EA11
+  /// and EA12: read once, stored, re-read while the count is on.
+  Future<(OfficeResult, ResultFile, Uri)> load(
+    Session session,
+    int electionCode,
+    Office office,
+    Scope scope,
+  ) async {
+    final election = _election(electionCode);
+    final uri = TseUrls.oficial(
+      year: election.day.$1,
+    ).resultJws(election.code, scope, office);
+    final (parsed, file) = await _load(session, election, office, scope, uri);
+    return (parsed, file, uri);
+  }
+
   Future<OfficeReport> result(
     Session session,
     int electionCode,

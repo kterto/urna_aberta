@@ -48,3 +48,21 @@ the file is written; URLs built only from EA11/EA12 entries):
 TSE's Resultados app fetches only these signed files; the JSON is the JWS
 payload. In a municipal file the scope is only the municipality code
 (`cdabr` `71072`, `tpabr` `mu`): the UF comes from the folder.
+
+## Report sums
+
+Fetched 11/10/2026 with `dart run bin/archive_report_fixtures.dart` from
+`urna_aberta_server` (5 req/s; URLs only from the archived EA12, the section
+config and each aux file), listed in `2026-1t/manifest-reports.json`:
+
+- EA12 for election 6257, signed (`mun-e006257-cm.jws`);
+- President in each of the 22 AC cities (`ac<mun5>-c0001-e006257-u.jws`),
+  and Governor in Porto Walter (`ac01066-c0003-e006259-u.jws`): TSE
+  publishes a file per city for general elections too;
+- every section of Porto Walter (01066), zona 0004: 34 aux files, BUs and
+  signature files, all totalized.
+
+The tests check that the 22 cities add up to TSE's AC file, and that the
+34 BUs add up to TSE's Porto Walter file for both offices, figure by figure.
+The first 23 files were fetched by an earlier run of the script, whose
+manifest entries were rebuilt from the archived bytes (no HTTP validators).
