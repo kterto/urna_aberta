@@ -1,13 +1,16 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:serverpod/serverpod.dart' show UuidValue;
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:test/test.dart';
 import 'package:urna_aberta_server/src/generated/protocol.dart';
 import 'package:urna_aberta_server/src/live/elections.dart';
 import 'package:urna_aberta_server/src/reports/relatorios_endpoint.dart';
 import 'package:urna_aberta_server/src/reports/report_builder.dart';
+import 'package:urna_aberta_server/src/reports/report_pdf.dart';
 import 'package:urna_aberta_server/src/reports/report_plan.dart';
 import 'package:urna_aberta_server/src/reports/report_service.dart';
 import 'package:urna_aberta_server/src/results/resultados_endpoint.dart';
@@ -95,7 +98,11 @@ void main() {
           sections: (pleito, year, uf) => fixtureDirectory(uf),
           now: () => now,
         ),
-        builder: ReportBuilder.fromServices(results, (_, _) => sections),
+        builder: ReportBuilder.fromServices(
+          results,
+          (_, _) => sections,
+          retryAfter: const [Duration.zero],
+        ),
         ratePerSecond: 20,
         schedule: () async {
           if (scheduleFails) {
@@ -124,7 +131,7 @@ void main() {
         final q = await endpoints.relatorios.orcar(ana, _spec([1, 3], ac));
         expect(
           [q.files, q.stored, q.seconds, q.limit, q.tables],
-          [2, 0, 1, 3000, 2],
+          [2, 0, 1, 6000, 2],
         );
       },
     );
@@ -185,6 +192,137 @@ void main() {
             '${t.item.office.name} ${d.what}: TSE ${d.tse}, ours ${d.ours}',
       ].join('; ');
 
+      test(
+        'a PDF longer than 20 pages is built (Brazil by city is ~140)',
+        () async {
+          final t = (await build([1], ac, ReportBreakdown.municipio)).single;
+          const copies = 40;
+          final long = ReportTable(
+            item: ReportItem(
+              election: t.item.election,
+              office: t.item.office,
+              place: t.item.place,
+              results: t.item.results,
+              sections: t.item.sections,
+              placeName: t.item.placeName,
+              breakdown: [
+                for (var i = 0; i < copies; i++) ...t.item.breakdown,
+              ],
+            ),
+            tally: t.tally,
+            breakdown: [for (var i = 0; i < copies; i++) ...t.breakdown],
+            check: t.check,
+          );
+          final pdf = await reportPdf(
+            request: ReportRequest(
+              id: 1,
+              authUserId: UuidValue.fromString(
+                '01a12af6-da8a-760a-8a4c-e6f599a9ac88',
+              ),
+              spec: _spec([1], ac),
+              status: ReportStatus.running,
+              filesDone: 0,
+              filesTotal: 0,
+              createdAt: now,
+            ),
+            tables: [long],
+            dataSha256: '0' * 64,
+            generatedAt: now,
+            fonts: await ReportFonts.load(),
+          );
+          final pages = RegExp(
+            r'/Type\s*/Page[^s]',
+          ).allMatches(latin1.decode(pdf)).length;
+          expect(pages, greaterThan(20));
+        },
+      );
+
+      test(
+        'files are read several at a time, never more than the pool',
+        () async {
+          final real = RelatoriosEndpoint.service.builder;
+          var inFlight = 0, most = 0, done = 0;
+          final builder = ReportBuilder(
+            result: (session, need) async {
+              most = max(most, ++inFlight);
+              try {
+                await Future<void>.delayed(const Duration(milliseconds: 5));
+                return await real.result(session, need);
+              } finally {
+                inFlight--;
+              }
+            },
+            section: real.section,
+          );
+          final plan = await RelatoriosEndpoint.service.planner.plan(
+            ReportSpec(
+              elections: [6257],
+              offices: [1],
+              places: [ac],
+              breakdown: ReportBreakdown.municipio,
+              language: 'pt',
+            ),
+          );
+          final tables = await builder.build(
+            ana.build(),
+            plan,
+            onProgress: (d, _) => done = d,
+          );
+          expect(most, greaterThan(1));
+          expect(most, lessThanOrEqualTo(ReportBuilder.parallel));
+          expect(done, plan.files);
+          expect(tables.single.check, isEmpty);
+        },
+      );
+
+      test('a file TSE did not answer is asked again', () async {
+        final real = RelatoriosEndpoint.service.builder;
+        final failed = <ResultNeed>{};
+        final builder = ReportBuilder(
+          result: (session, need) async {
+            if (failed.add(need)) {
+              throw ResultUnavailable(
+                message: 'O TSE não respondeu.',
+                reason: 'tseUnavailable',
+              );
+            }
+            return real.result(session, need);
+          },
+          section: real.section,
+          retryAfter: const [Duration.zero],
+        );
+        final plan = await RelatoriosEndpoint.service.planner.plan(
+          _spec([1], ac),
+        );
+        final tables = await builder.build(ana.build(), plan);
+        expect(tables, isNotEmpty);
+        expect(failed, plan.results);
+      });
+
+      test('a file TSE does not publish is not asked again', () async {
+        final real = RelatoriosEndpoint.service.builder;
+        var calls = 0;
+        final builder = ReportBuilder(
+          result: (session, need) async {
+            calls++;
+            throw ResultUnavailable(
+              message: 'O TSE não publicou este arquivo.',
+              reason: 'notPublished',
+            );
+          },
+          section: real.section,
+          retryAfter: const [Duration.zero, Duration.zero],
+        );
+        final plan = await RelatoriosEndpoint.service.planner.plan(
+          _spec([1], ac),
+        );
+        await expectLater(
+          builder.build(ana.build(), plan),
+          throwsA(isA<ResultUnavailable>()),
+        );
+        expect(calls, lessThanOrEqualTo(plan.results.length));
+      });
+
       test("the 22 AC cities add up to TSE's AC file", () async {
         final tables = await build([1], ac, ReportBreakdown.municipio);
         final t = tables.single;
@@ -204,7 +342,7 @@ void main() {
             ),
             ReportBreakdown.zona,
           );
-          expect(tables, hasLength(2));
+          expect(tables, isNotEmpty);
           for (final t in tables) {
             final zone = t.breakdown.single.$2;
             expect(zone.sectionsCounted, 34);

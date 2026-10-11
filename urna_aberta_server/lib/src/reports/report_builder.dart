@@ -31,14 +31,30 @@ class ReportTable {
 /// Reads every file a [ReportPlan] needs, once each, then sums them into
 /// [ReportTable]s.
 class ReportBuilder {
-  ReportBuilder({required this.result, required this.section});
+  ReportBuilder({
+    required this.result,
+    required this.section,
+    this.retryAfter = _retryAfter,
+  });
+
+  static const _retryAfter = [
+    Duration(seconds: 2),
+    Duration(seconds: 10),
+    Duration(seconds: 30),
+  ];
+
+  /// Waits before asking again for a file TSE did not answer: one read in
+  /// thousands times out, and the whole report would fail with it.
+  final List<Duration> retryAfter;
 
   /// Reads result files through [results] and sections through the
   /// [sections] service of their pleito.
   factory ReportBuilder.fromServices(
     ResultsService results,
-    SectionService Function(int pleito, int year) sections,
-  ) => ReportBuilder(
+    SectionService Function(int pleito, int year) sections, {
+    List<Duration>? retryAfter,
+  }) => ReportBuilder(
+    retryAfter: retryAfter ?? _retryAfter,
     result: (session, need) async {
       final (r, file, uri) = await results.load(
         session,
@@ -71,13 +87,14 @@ class ReportBuilder {
   }) async {
     var done = 0;
     final results = <ResultNeed, (OfficeResult, TallySource)>{};
-    for (final need in plan.results) {
-      results[need] = await result(session, need);
+    await _each(plan.results, (need) async {
+      results[need] = await _retrying(() => result(session, need));
       onProgress?.call(++done, plan.files);
-    }
+    });
     final sections = <SectionNeed, SectionReport>{};
+    // One at a time: each lookup stores its files in a transaction.
     for (final need in plan.sections) {
-      sections[need] = await section(session, need);
+      sections[need] = await _retrying(() => section(session, need));
       done += 3;
       onProgress?.call(done, plan.files);
     }
@@ -108,6 +125,47 @@ class ReportBuilder {
     return [
       for (final item in plan.items) _table(item, tallyOf([item]), tallyOf),
     ];
+  }
+
+  Future<T> _retrying<T>(Future<T> Function() read) async {
+    for (final wait in retryAfter) {
+      try {
+        return await read();
+      } on ResultUnavailable catch (e) {
+        if (e.reason != 'tseUnavailable') rethrow;
+      } on SectionUnavailableException {
+        // TSE did not answer, or served a file that could not be read.
+      }
+      await Future<void>.delayed(wait);
+    }
+    return read();
+  }
+
+  /// Result files read at once. Each read waits mostly on TSE's answer, so
+  /// one at a time managed under 2 a second; the TSE client's token bucket
+  /// still caps the rate.
+  static const parallel = 8;
+
+  /// Runs [work] on every need, [parallel] at a time; the first error stops
+  /// the rest from starting and is rethrown once the running ones end.
+  static Future<void> _each<T>(
+    Iterable<T> needs,
+    Future<void> Function(T) work,
+  ) async {
+    final queue = needs.iterator;
+    Object? error;
+    Future<void> worker() async {
+      while (error == null && queue.moveNext()) {
+        try {
+          await work(queue.current);
+        } catch (e) {
+          error ??= e;
+          rethrow;
+        }
+      }
+    }
+
+    await Future.wait([for (var i = 0; i < parallel; i++) worker()]);
   }
 
   ReportTable _table(

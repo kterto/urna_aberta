@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:test/test.dart';
@@ -123,6 +125,35 @@ void main() {
     final r = await client.fetch(uri);
     expect(utf8.decode((r as NotModified).cachedBody), 'A');
   });
+
+  for (final failure in [
+    TimeoutException('slow'),
+    const SocketException('reset'),
+    const HttpException('closed'),
+  ]) {
+    test(
+      'a ${failure.runtimeType} is a TseUnreachable, without a pause',
+      () async {
+        final failing = TseClient(
+          http: _Throwing(failure),
+          bucket: _CountingBucket(() {}),
+          now: () => now,
+        );
+        await expectLater(failing.fetch(uri), throwsA(isA<TseUnreachable>()));
+        expect(failing.pausedUntil, isNull);
+      },
+    );
+  }
+}
+
+class _Throwing implements TseHttp {
+  _Throwing(this.error);
+
+  final Object error;
+
+  @override
+  Future<TseHttpResponse> get(Uri uri, Map<String, String> headers) =>
+      Future.error(error);
 }
 
 class _CountingBucket extends TokenBucket {

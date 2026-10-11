@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'token_bucket.dart';
@@ -71,6 +72,17 @@ class TseBackingOff extends TseException {
   String toString() => 'TseBackingOff until $until: $uri';
 }
 
+/// No answer: a timeout or a dropped connection. Nothing pauses, since TSE
+/// did not refuse anything; asking again later may work.
+class TseUnreachable extends TseException {
+  TseUnreachable(super.uri, this.cause);
+
+  final Object cause;
+
+  @override
+  String toString() => 'TseUnreachable($cause): $uri';
+}
+
 class TseHttpError extends TseException {
   TseHttpError(super.uri, this.status);
 
@@ -126,7 +138,16 @@ class TseClient {
     };
 
     await _bucket.acquire();
-    final r = await _http.get(uri, headers);
+    final TseHttpResponse r;
+    try {
+      r = await _http.get(uri, headers);
+    } on TimeoutException catch (e) {
+      throw TseUnreachable(uri, e);
+    } on SocketException catch (e) {
+      throw TseUnreachable(uri, e);
+    } on HttpException catch (e) {
+      throw TseUnreachable(uri, e);
+    }
 
     switch (r.status) {
       case 200:
