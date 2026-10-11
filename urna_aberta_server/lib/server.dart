@@ -160,11 +160,13 @@ void run(List<String> args) async {
     ),
     builder: ReportBuilder.fromServices(results, sectionService),
     ratePerSecond: 20,
+    webBase: _webBase(pod.config.webServer),
     schedule: () =>
         pod.futureCalls.callWithDelay(Duration.zero).reportCall.drain(),
   );
   ReportCall.service = reports;
   pod.webServer.addRoute(PublicReportRoute(reports), '/r/**');
+  pod.webServer.addRoute(ReportDownloadRoute(reports), '/d/**');
 
   // Start the server.
   await pod.start();
@@ -268,4 +270,19 @@ Future<void> _resumeReports(Serverpod pod, ReportService reports) async {
   } finally {
     await session.close();
   }
+}
+
+/// The web server's public address, for links handed to viewers.
+Uri _webBase(ServerConfig? web) {
+  if (web == null) return Uri.parse('http://localhost:8082/');
+  final port = switch ((web.publicScheme, web.publicPort)) {
+    ('https', 443) || ('http', 80) => null,
+    (_, final p) => p,
+  };
+  return Uri(
+    scheme: web.publicScheme,
+    host: web.publicHost,
+    port: port,
+    path: '/',
+  );
 }

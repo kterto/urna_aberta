@@ -471,6 +471,78 @@ void main() {
         expect(await service.publishedFile(session, token, 'csv'), isNull);
       });
 
+      test('a request names its places', () async {
+        final r = await relatorios.pedir(
+          ana,
+          ReportSpec(
+            elections: [6257],
+            offices: [1],
+            places: [porto, ac],
+            breakdown: ReportBreakdown.none,
+            language: 'pt',
+          ),
+        );
+        expect(r.placeNames, ['PORTO WALTER (AC)', 'AC']);
+      });
+
+      test('a download link serves the file for ten minutes', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        final service = RelatoriosEndpoint.service;
+        final session = sessionBuilder.build();
+        final link = Uri.parse(await relatorios.link(ana, r.id!, 'pdf'));
+        expect(link.path, startsWith('/d/'));
+        final token = link.pathSegments.last;
+        expect(service.openLink(token), (r.id, 'pdf'));
+        final pdf = await service.linkedFile(session, token);
+        expect(ascii.decode(Uint8List.sublistView(pdf!, 0, 5)), '%PDF-');
+
+        // Tampered: another report or format under the same signature.
+        final [payload, signature] = token.split('.');
+        final forged = base64Url
+            .encode(utf8.encode('${r.id! + 1}.pdf.9999999999'))
+            .replaceAll('=', '');
+        expect(service.openLink('$forged.$signature'), isNull);
+        expect(service.openLink('$payload.x$signature'), isNull);
+        expect(service.openLink('garbage'), isNull);
+
+        await expectLater(
+          relatorios.link(bia, r.id!, 'pdf'),
+          throwsA(isA<ReportRefused>()),
+        );
+      });
+
+      test('a download link expires', () async {
+        var clock = now;
+        final service = ReportService(
+          planner: RelatoriosEndpoint.service.planner,
+          builder: RelatoriosEndpoint.service.builder,
+          ratePerSecond: 20,
+          now: () => clock,
+        );
+        RelatoriosEndpoint.service = service;
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        final token = Uri.parse(
+          await relatorios.link(ana, r.id!, 'csv'),
+        ).pathSegments.last;
+        clock = now.add(const Duration(minutes: 9));
+        expect(service.openLink(token), isNotNull);
+        clock = now.add(const Duration(minutes: 11));
+        expect(service.openLink(token), isNull);
+      });
+
+      test('the public link is the published page', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        expect(await relatorios.linkPublico(ana, r.id!), isNull);
+        final p = await relatorios.publicar(ana, r.id!, true);
+        expect(
+          await relatorios.linkPublico(ana, r.id!),
+          'http://localhost:8082/r/${p.publicToken}',
+        );
+      });
+
       test('only a ready report can be published', () async {
         final r = await relatorios.pedir(ana, _spec([1], ac));
         await expectLater(

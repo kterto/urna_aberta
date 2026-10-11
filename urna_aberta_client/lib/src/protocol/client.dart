@@ -443,6 +443,28 @@ class EndpointRelatorios extends _isc.EndpointRef {
     },
   );
 
+  /// A download link for a ready report's file, valid for ten minutes:
+  /// opening it in a browser saves the file, on any platform.
+  _ida.Future<String> link(
+    int id,
+    String formato,
+  ) => caller.callServerEndpoint<String>(
+    'relatorios',
+    'link',
+    {
+      'id': id,
+      'formato': formato,
+    },
+  );
+
+  /// The public page of a published report, or null.
+  _ida.Future<String?> linkPublico(int id) =>
+      caller.callServerEndpoint<String?>(
+        'relatorios',
+        'linkPublico',
+        {'id': id},
+      );
+
   _ida.Future<void> apagar(int id) => caller.callServerEndpoint<void>(
     'relatorios',
     'apagar',

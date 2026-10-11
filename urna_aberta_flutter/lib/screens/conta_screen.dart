@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../conta/conta_controller.dart';
+import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
 import '../l10n/l10n.dart';
+import '../relatorios/relatorios_source.dart';
+import 'meus_relatorios_screen.dart';
+import 'novo_relatorio_screen.dart';
 
 /// Meu local: sign in, see and delete the saved polling place.
 class ContaScreen extends StatelessWidget {
@@ -35,6 +39,10 @@ class ContaScreen extends StatelessWidget {
         showBack: true,
         children: [
           if (!conta.signedIn) _signIn(context, conta) else _place(context),
+          if (conta.signedIn && RelatoriosScope.maybeOf(context) != null) ...[
+            const SizedBox(height: Space.x4),
+            _reports(context),
+          ],
         ],
       ),
     );
@@ -120,6 +128,35 @@ class ContaScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _reports(BuildContext context) {
+  final l = context.l10n;
+  return Plate(
+    title: l.relatoriosPlate,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l.relatoriosPlateBody),
+        const SizedBox(height: Space.x4),
+        Wrap(
+          spacing: Space.x3,
+          runSpacing: Space.x2,
+          children: [
+            FilledButton.icon(
+              onPressed: () => NovoRelatorioScreen.open(context),
+              icon: Icon(AtlasIcons.report(context), size: 18),
+              label: Text(l.relatoriosNew),
+            ),
+            OutlinedButton(
+              onPressed: () => MeusRelatoriosScreen.push(context),
+              child: Text(l.relatoriosMine),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
 
 class _Muted extends StatelessWidget {

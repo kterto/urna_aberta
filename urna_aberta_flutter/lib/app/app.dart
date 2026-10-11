@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../conta/conta_controller.dart';
 import '../design/theme.dart';
 import '../l10n/l10n.dart';
+import '../relatorios/relatorios_source.dart';
 import '../replay/replay_controller.dart';
 import '../resultados/resultados_controller.dart';
 import '../secao/secao_controller.dart';
@@ -21,6 +22,7 @@ class UrnaAbertaApp extends StatelessWidget {
     required this.verificarSource,
     required this.resultadosSource,
     this.conta,
+    this.relatoriosSource,
   });
 
   final TallySource tallySource;
@@ -30,6 +32,9 @@ class UrnaAbertaApp extends StatelessWidget {
 
   /// The viewer's account; none in builds without sign-in.
   final ContaController? conta;
+
+  /// Reports; their screens and buttons are hidden without it.
+  final RelatoriosSource? relatoriosSource;
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +63,15 @@ class UrnaAbertaApp extends StatelessWidget {
                 darkTheme: atlasTheme(Brightness.dark),
                 themeMode: themeModeNotifier.value,
                 home: const AppShell(),
-                builder: (context, child) => conta == null
-                    ? child!
-                    : ContaScope(controller: conta!, child: child!),
+                builder: (context, child) {
+                  var app = child!;
+                  if (relatoriosSource case final source?) {
+                    app = RelatoriosScope(source: source, child: app);
+                  }
+                  return conta == null
+                      ? app
+                      : ContaScope(controller: conta!, child: app);
+                },
               ),
             ),
           ),

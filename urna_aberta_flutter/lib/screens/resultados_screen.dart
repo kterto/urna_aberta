@@ -9,7 +9,10 @@ import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
 import '../l10n/format.dart';
 import '../l10n/l10n.dart';
+import '../relatorios/novo_relatorio_controller.dart';
+import '../relatorios/relatorios_source.dart';
 import '../resultados/resultados_controller.dart';
+import 'novo_relatorio_screen.dart';
 
 /// Resultados: any office, any state or municipality, from TSE's signed
 /// file; for proportional offices, Urna Aberta's own seat allocation next
@@ -87,6 +90,27 @@ String _scopeLabel(AppLocalizations l, String code) => switch (code) {
   _ => code.toUpperCase(),
 };
 
+/// A report on what Resultados shows: its voting day, office and place.
+ReportDraft _draft(ResultadosController c) {
+  final uf = c.uf!;
+  final m = c.municipio;
+  final place = m != null
+      ? ReportPlace(
+          kind: ReportPlaceKind.municipio,
+          uf: uf,
+          municipio: m.codigo,
+        )
+      : uf == 'br'
+      ? ReportPlace(kind: ReportPlaceKind.br)
+      : ReportPlace(kind: ReportPlaceKind.uf, uf: uf);
+  return ReportDraft(
+    day: c.election!.day,
+    offices: {c.office!},
+    places: [place],
+    names: {if (m != null) cityKey(place)!: m.nome},
+  );
+}
+
 class _Controls extends StatelessWidget {
   const _Controls({required this.c});
 
@@ -163,6 +187,16 @@ class _Controls extends StatelessWidget {
                 onSelected: (m) {
                   if (m != null) c.selectMunicipio(m);
                 },
+              ),
+            if (RelatoriosScope.maybeOf(context) != null &&
+                c.election != null &&
+                c.office != null &&
+                c.uf != null)
+              OutlinedButton.icon(
+                onPressed: () =>
+                    NovoRelatorioScreen.open(context, draft: _draft(c)),
+                icon: Icon(AtlasIcons.report(context), size: 18),
+                label: Text(l.relatoriosFromHere),
               ),
           ],
         ),

@@ -27,6 +27,7 @@ abstract class ReportRequest
     required this.authUserId,
     this.authUser,
     required this.spec,
+    this.placeNames,
     required this.status,
     required this.filesDone,
     required this.filesTotal,
@@ -43,6 +44,7 @@ abstract class ReportRequest
     required _isc.UuidValue authUserId,
     _iacc.AuthUser? authUser,
     required _iqf2o9z7.ReportSpec spec,
+    List<String>? placeNames,
     required _i5iav6pq.ReportStatus status,
     required int filesDone,
     required int filesTotal,
@@ -68,6 +70,11 @@ abstract class ReportRequest
       spec: _ihdok87d.Protocol().deserialize<_iqf2o9z7.ReportSpec>(
         jsonSerialization['spec'],
       ),
+      placeNames: jsonSerialization['placeNames'] == null
+          ? null
+          : _ihdok87d.Protocol().deserialize<List<String>>(
+              jsonSerialization['placeNames'],
+            ),
       status: _i5iav6pq.ReportStatus.fromJson(
         (jsonSerialization['status'] as String),
       ),
@@ -101,6 +108,9 @@ abstract class ReportRequest
 
   _iqf2o9z7.ReportSpec spec;
 
+  /// The spec's places as people name them, in order (`PORTO WALTER (AC)`).
+  List<String>? placeNames;
+
   _i5iav6pq.ReportStatus status;
 
   /// TSE files read so far, of those the report needs.
@@ -132,6 +142,7 @@ abstract class ReportRequest
     _isc.UuidValue? authUserId,
     _iacc.AuthUser? authUser,
     _iqf2o9z7.ReportSpec? spec,
+    List<String>? placeNames,
     _i5iav6pq.ReportStatus? status,
     int? filesDone,
     int? filesTotal,
@@ -150,6 +161,7 @@ abstract class ReportRequest
       'authUserId': authUserId.toJson(),
       if (authUser != null) 'authUser': authUser?.toJson(),
       'spec': spec.toJson(),
+      if (placeNames != null) 'placeNames': placeNames?.toJson(),
       'status': status.toJson(),
       'filesDone': filesDone,
       'filesTotal': filesTotal,
@@ -170,6 +182,7 @@ abstract class ReportRequest
       'authUserId': authUserId.toJson(),
       if (authUser != null) 'authUser': authUser?.toJson(),
       'spec': spec.toJsonForProtocol(),
+      if (placeNames != null) 'placeNames': placeNames?.toJson(),
       'status': status.toJson(),
       'filesDone': filesDone,
       'filesTotal': filesTotal,
@@ -196,6 +209,7 @@ class _ReportRequestImpl extends ReportRequest {
     required _isc.UuidValue authUserId,
     _iacc.AuthUser? authUser,
     required _iqf2o9z7.ReportSpec spec,
+    List<String>? placeNames,
     required _i5iav6pq.ReportStatus status,
     required int filesDone,
     required int filesTotal,
@@ -210,6 +224,7 @@ class _ReportRequestImpl extends ReportRequest {
          authUserId: authUserId,
          authUser: authUser,
          spec: spec,
+         placeNames: placeNames,
          status: status,
          filesDone: filesDone,
          filesTotal: filesTotal,
@@ -230,6 +245,7 @@ class _ReportRequestImpl extends ReportRequest {
     _isc.UuidValue? authUserId,
     Object? authUser = _Undefined,
     _iqf2o9z7.ReportSpec? spec,
+    Object? placeNames = _Undefined,
     _i5iav6pq.ReportStatus? status,
     int? filesDone,
     int? filesTotal,
@@ -247,6 +263,9 @@ class _ReportRequestImpl extends ReportRequest {
           ? authUser
           : this.authUser?.copyWith(),
       spec: spec ?? this.spec.copyWith(),
+      placeNames: placeNames is List<String>?
+          ? placeNames
+          : this.placeNames?.map((e0) => e0).toList(),
       status: status ?? this.status,
       filesDone: filesDone ?? this.filesDone,
       filesTotal: filesTotal ?? this.filesTotal,

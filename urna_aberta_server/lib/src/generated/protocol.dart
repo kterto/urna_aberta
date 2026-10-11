@@ -371,6 +371,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'protocol:ReportSpec',
         ),
         _isp.ColumnDefinition(
+          name: 'placeNames',
+          columnType: _isp.ColumnType.json,
+          isNullable: true,
+          dartType: 'List<String>?',
+        ),
+        _isp.ColumnDefinition(
           name: 'status',
           columnType: _isp.ColumnType.text,
           isNullable: false,
@@ -1378,6 +1384,12 @@ class Protocol extends _is.DatabaseSerializationManager {
       return (data as List)
               .map((e) => deserialize<_i8xvblpk.CandidateReport>(e))
               .toList()
+          as T;
+    }
+    if (t == _is.getType<List<String>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<String>(e)).toList()
+              : null)
           as T;
     }
     if (t == List<_ivpf0ztf.ReportPlace>) {

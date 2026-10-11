@@ -853,5 +853,173 @@
   "secaoSaveAsMine": "Salvar como meu local",
   "secaoIsMine": "Este é o seu local",
   "secaoSaved": "Local salvo. Minha seção e Resultados vão abrir nele.",
-  "secaoSaveFailed": "Não foi possível salvar este local."
+  "secaoSaveFailed": "Não foi possível salvar este local.",
+  "relatoriosNew": "Novo relatório",
+  "relatoriosNewLede": "Escolha eleições, cargos e locais. A Urna Aberta lê os arquivos assinados do TSE, soma o que precisar somar e entrega um PDF e um CSV.",
+  "relatoriosMine": "Meus relatórios",
+  "relatoriosMineLede": "Os relatórios que você pediu. Ficam guardados até você apagá-los.",
+  "relatoriosSignIn": "Entre para montar relatórios",
+  "relatoriosSignInBody": "Os relatórios ficam na sua conta: você acompanha a montagem, baixa os arquivos e, se quiser, publica um link.",
+  "relatoriosSignInAction": "Entrar",
+  "relatoriosDays": "Eleições",
+  "relatoriosDaysHint": "Um ou mais dias de votação. Escolha dois para comparar turnos.",
+  "relatoriosOffices": "Cargos",
+  "relatoriosPlaces": "Locais",
+  "relatoriosNoPlaces": "Nenhum local ainda.",
+  "relatoriosAddPlace": "Adicionar",
+  "relatoriosPlaceKind": "Tipo de local",
+  "relatoriosKindBr": "Brasil",
+  "relatoriosKindRegiao": "Região",
+  "relatoriosKindUf": "UF",
+  "relatoriosKindMunicipio": "Município",
+  "relatoriosKindZona": "Zona",
+  "relatoriosKindSecao": "Seção",
+  "relatoriosSectionsOnly": "Zonas e seções, por enquanto, só para o 1º turno de 2026 (4 de outubro).",
+  "relatoriosRemovePlace": "Remover {place}",
+  "@relatoriosRemovePlace": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosZoneLabel": "{city}, zona {zona}",
+  "@relatoriosZoneLabel": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "zona": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosSectionLabel": "{city}, zona {zona}, seção {secao}",
+  "@relatoriosSectionLabel": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "zona": {
+        "type": "String"
+      },
+      "secao": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosBreakdown": "Detalhamento",
+  "relatoriosBreakdownHint": "Uma linha por UF, município ou zona dentro de cada local, conferida com o total do TSE quando ele existe.",
+  "relatoriosBreakdownNone": "Nenhum",
+  "relatoriosBreakdownUf": "Por UF",
+  "relatoriosBreakdownMunicipio": "Por município",
+  "relatoriosBreakdownZona": "Por zona",
+  "relatoriosLanguage": "Idioma do PDF",
+  "relatoriosQuote": "Antes de gerar",
+  "relatoriosQuoteBody": "Lê {files} arquivos do TSE, {stored} já guardados aqui. Cerca de {time} para buscar o resto. {tables} tabelas.",
+  "@relatoriosQuoteBody": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      },
+      "stored": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "tables": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosSeconds": "{seconds} s",
+  "@relatoriosSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosMinutes": "{minutes} min",
+  "@relatoriosMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosQuoting": "Calculando o que o relatório vai ler…",
+  "relatoriosIncomplete": "Escolha ao menos uma eleição, um cargo e um local.",
+  "relatoriosTooLarge": "Grande demais: leria mais de {limit} arquivos do TSE. Escolha menos locais ou um detalhamento menor.",
+  "@relatoriosTooLarge": {
+    "placeholders": {
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosRefusedInvalid": "O TSE não publica essa combinação de eleição, cargo e local.",
+  "relatoriosRefusedNotPublished": "O TSE ainda não publicou resultados dessa eleição.",
+  "relatoriosRefusedBusy": "Você já tem um relatório na fila. Espere ele terminar.",
+  "relatoriosQuoteError": "Não foi possível calcular agora. Tente de novo.",
+  "relatoriosWithoutFiles": "{count} seções ainda sem arquivos da urna ficam de fora.",
+  "@relatoriosWithoutFiles": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosGenerate": "Gerar relatório",
+  "relatoriosStatusQueued": "Na fila",
+  "relatoriosStatusRunning": "Montando",
+  "relatoriosStatusReady": "Pronto",
+  "relatoriosStatusFailed": "Falhou",
+  "relatoriosProgress": "{done} de {total} arquivos",
+  "@relatoriosProgress": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosDownloadPdf": "Baixar PDF",
+  "relatoriosDownloadCsv": "Baixar CSV",
+  "relatoriosPublish": "Publicar link",
+  "relatoriosUnpublish": "Tirar link do ar",
+  "relatoriosCopyLink": "Copiar link",
+  "relatoriosLinkCopied": "Link copiado.",
+  "relatoriosPublicNote": "Publicado: qualquer pessoa com o link vê este relatório.",
+  "relatoriosDelete": "Apagar",
+  "relatoriosDeleted": "Relatório apagado.",
+  "relatoriosRetry": "Tentar de novo",
+  "relatoriosFailedTse": "O TSE não respondeu enquanto o relatório era montado.",
+  "relatoriosFailedOther": "Não foi possível montar este relatório.",
+  "relatoriosEmpty": "Você ainda não pediu nenhum relatório.",
+  "relatoriosLoadError": "Não foi possível carregar seus relatórios.",
+  "relatoriosRequestedAt": "Pedido em {at}",
+  "@relatoriosRequestedAt": {
+    "placeholders": {
+      "at": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosActionFailed": "Não deu certo. Tente de novo.",
+  "relatoriosFromHere": "Gerar relatório",
+  "relatoriosPlate": "Relatórios",
+  "relatoriosPlateBody": "Monte relatórios de qualquer eleição, cargo e local, em PDF e CSV, conferidos com os arquivos do TSE.",
+  "relatoriosSha": "SHA-256 dos dados: {hash}",
+  "@relatoriosSha": {
+    "placeholders": {
+      "hash": {
+        "type": "String"
+      }
+    }
+  },
+  "relatoriosElectionsError": "Não foi possível carregar a lista de eleições do TSE."
 }

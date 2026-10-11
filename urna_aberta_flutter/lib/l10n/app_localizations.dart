@@ -2364,6 +2364,431 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Não foi possível salvar este local.'**
   String get secaoSaveFailed;
+
+  /// No description provided for @relatoriosNew.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novo relatório'**
+  String get relatoriosNew;
+
+  /// No description provided for @relatoriosNewLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha eleições, cargos e locais. A Urna Aberta lê os arquivos assinados do TSE, soma o que precisar somar e entrega um PDF e um CSV.'**
+  String get relatoriosNewLede;
+
+  /// No description provided for @relatoriosMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Meus relatórios'**
+  String get relatoriosMine;
+
+  /// No description provided for @relatoriosMineLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Os relatórios que você pediu. Ficam guardados até você apagá-los.'**
+  String get relatoriosMineLede;
+
+  /// No description provided for @relatoriosSignIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre para montar relatórios'**
+  String get relatoriosSignIn;
+
+  /// No description provided for @relatoriosSignInBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Os relatórios ficam na sua conta: você acompanha a montagem, baixa os arquivos e, se quiser, publica um link.'**
+  String get relatoriosSignInBody;
+
+  /// No description provided for @relatoriosSignInAction.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar'**
+  String get relatoriosSignInAction;
+
+  /// No description provided for @relatoriosDays.
+  ///
+  /// In pt, this message translates to:
+  /// **'Eleições'**
+  String get relatoriosDays;
+
+  /// No description provided for @relatoriosDaysHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Um ou mais dias de votação. Escolha dois para comparar turnos.'**
+  String get relatoriosDaysHint;
+
+  /// No description provided for @relatoriosOffices.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cargos'**
+  String get relatoriosOffices;
+
+  /// No description provided for @relatoriosPlaces.
+  ///
+  /// In pt, this message translates to:
+  /// **'Locais'**
+  String get relatoriosPlaces;
+
+  /// No description provided for @relatoriosNoPlaces.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum local ainda.'**
+  String get relatoriosNoPlaces;
+
+  /// No description provided for @relatoriosAddPlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar'**
+  String get relatoriosAddPlace;
+
+  /// No description provided for @relatoriosPlaceKind.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tipo de local'**
+  String get relatoriosPlaceKind;
+
+  /// No description provided for @relatoriosKindBr.
+  ///
+  /// In pt, this message translates to:
+  /// **'Brasil'**
+  String get relatoriosKindBr;
+
+  /// No description provided for @relatoriosKindRegiao.
+  ///
+  /// In pt, this message translates to:
+  /// **'Região'**
+  String get relatoriosKindRegiao;
+
+  /// No description provided for @relatoriosKindUf.
+  ///
+  /// In pt, this message translates to:
+  /// **'UF'**
+  String get relatoriosKindUf;
+
+  /// No description provided for @relatoriosKindMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Município'**
+  String get relatoriosKindMunicipio;
+
+  /// No description provided for @relatoriosKindZona.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zona'**
+  String get relatoriosKindZona;
+
+  /// No description provided for @relatoriosKindSecao.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seção'**
+  String get relatoriosKindSecao;
+
+  /// No description provided for @relatoriosSectionsOnly.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zonas e seções, por enquanto, só para o 1º turno de 2026 (4 de outubro).'**
+  String get relatoriosSectionsOnly;
+
+  /// No description provided for @relatoriosRemovePlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover {place}'**
+  String relatoriosRemovePlace(String place);
+
+  /// No description provided for @relatoriosZoneLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'{city}, zona {zona}'**
+  String relatoriosZoneLabel(String city, String zona);
+
+  /// No description provided for @relatoriosSectionLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'{city}, zona {zona}, seção {secao}'**
+  String relatoriosSectionLabel(String city, String zona, String secao);
+
+  /// No description provided for @relatoriosBreakdown.
+  ///
+  /// In pt, this message translates to:
+  /// **'Detalhamento'**
+  String get relatoriosBreakdown;
+
+  /// No description provided for @relatoriosBreakdownHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Uma linha por UF, município ou zona dentro de cada local, conferida com o total do TSE quando ele existe.'**
+  String get relatoriosBreakdownHint;
+
+  /// No description provided for @relatoriosBreakdownNone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum'**
+  String get relatoriosBreakdownNone;
+
+  /// No description provided for @relatoriosBreakdownUf.
+  ///
+  /// In pt, this message translates to:
+  /// **'Por UF'**
+  String get relatoriosBreakdownUf;
+
+  /// No description provided for @relatoriosBreakdownMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Por município'**
+  String get relatoriosBreakdownMunicipio;
+
+  /// No description provided for @relatoriosBreakdownZona.
+  ///
+  /// In pt, this message translates to:
+  /// **'Por zona'**
+  String get relatoriosBreakdownZona;
+
+  /// No description provided for @relatoriosLanguage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Idioma do PDF'**
+  String get relatoriosLanguage;
+
+  /// No description provided for @relatoriosQuote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Antes de gerar'**
+  String get relatoriosQuote;
+
+  /// No description provided for @relatoriosQuoteBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Lê {files} arquivos do TSE, {stored} já guardados aqui. Cerca de {time} para buscar o resto. {tables} tabelas.'**
+  String relatoriosQuoteBody(
+    String files,
+    String stored,
+    String time,
+    String tables,
+  );
+
+  /// No description provided for @relatoriosSeconds.
+  ///
+  /// In pt, this message translates to:
+  /// **'{seconds} s'**
+  String relatoriosSeconds(String seconds);
+
+  /// No description provided for @relatoriosMinutes.
+  ///
+  /// In pt, this message translates to:
+  /// **'{minutes} min'**
+  String relatoriosMinutes(String minutes);
+
+  /// No description provided for @relatoriosQuoting.
+  ///
+  /// In pt, this message translates to:
+  /// **'Calculando o que o relatório vai ler…'**
+  String get relatoriosQuoting;
+
+  /// No description provided for @relatoriosIncomplete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha ao menos uma eleição, um cargo e um local.'**
+  String get relatoriosIncomplete;
+
+  /// No description provided for @relatoriosTooLarge.
+  ///
+  /// In pt, this message translates to:
+  /// **'Grande demais: leria mais de {limit} arquivos do TSE. Escolha menos locais ou um detalhamento menor.'**
+  String relatoriosTooLarge(String limit);
+
+  /// No description provided for @relatoriosRefusedInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE não publica essa combinação de eleição, cargo e local.'**
+  String get relatoriosRefusedInvalid;
+
+  /// No description provided for @relatoriosRefusedNotPublished.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE ainda não publicou resultados dessa eleição.'**
+  String get relatoriosRefusedNotPublished;
+
+  /// No description provided for @relatoriosRefusedBusy.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você já tem um relatório na fila. Espere ele terminar.'**
+  String get relatoriosRefusedBusy;
+
+  /// No description provided for @relatoriosQuoteError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível calcular agora. Tente de novo.'**
+  String get relatoriosQuoteError;
+
+  /// No description provided for @relatoriosWithoutFiles.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count} seções ainda sem arquivos da urna ficam de fora.'**
+  String relatoriosWithoutFiles(String count);
+
+  /// No description provided for @relatoriosGenerate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Gerar relatório'**
+  String get relatoriosGenerate;
+
+  /// No description provided for @relatoriosStatusQueued.
+  ///
+  /// In pt, this message translates to:
+  /// **'Na fila'**
+  String get relatoriosStatusQueued;
+
+  /// No description provided for @relatoriosStatusRunning.
+  ///
+  /// In pt, this message translates to:
+  /// **'Montando'**
+  String get relatoriosStatusRunning;
+
+  /// No description provided for @relatoriosStatusReady.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pronto'**
+  String get relatoriosStatusReady;
+
+  /// No description provided for @relatoriosStatusFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Falhou'**
+  String get relatoriosStatusFailed;
+
+  /// No description provided for @relatoriosProgress.
+  ///
+  /// In pt, this message translates to:
+  /// **'{done} de {total} arquivos'**
+  String relatoriosProgress(String done, String total);
+
+  /// No description provided for @relatoriosDownloadPdf.
+  ///
+  /// In pt, this message translates to:
+  /// **'Baixar PDF'**
+  String get relatoriosDownloadPdf;
+
+  /// No description provided for @relatoriosDownloadCsv.
+  ///
+  /// In pt, this message translates to:
+  /// **'Baixar CSV'**
+  String get relatoriosDownloadCsv;
+
+  /// No description provided for @relatoriosPublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Publicar link'**
+  String get relatoriosPublish;
+
+  /// No description provided for @relatoriosUnpublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tirar link do ar'**
+  String get relatoriosUnpublish;
+
+  /// No description provided for @relatoriosCopyLink.
+  ///
+  /// In pt, this message translates to:
+  /// **'Copiar link'**
+  String get relatoriosCopyLink;
+
+  /// No description provided for @relatoriosLinkCopied.
+  ///
+  /// In pt, this message translates to:
+  /// **'Link copiado.'**
+  String get relatoriosLinkCopied;
+
+  /// No description provided for @relatoriosPublicNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Publicado: qualquer pessoa com o link vê este relatório.'**
+  String get relatoriosPublicNote;
+
+  /// No description provided for @relatoriosDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Apagar'**
+  String get relatoriosDelete;
+
+  /// No description provided for @relatoriosDeleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatório apagado.'**
+  String get relatoriosDeleted;
+
+  /// No description provided for @relatoriosRetry.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tentar de novo'**
+  String get relatoriosRetry;
+
+  /// No description provided for @relatoriosFailedTse.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE não respondeu enquanto o relatório era montado.'**
+  String get relatoriosFailedTse;
+
+  /// No description provided for @relatoriosFailedOther.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível montar este relatório.'**
+  String get relatoriosFailedOther;
+
+  /// No description provided for @relatoriosEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não pediu nenhum relatório.'**
+  String get relatoriosEmpty;
+
+  /// No description provided for @relatoriosLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar seus relatórios.'**
+  String get relatoriosLoadError;
+
+  /// No description provided for @relatoriosRequestedAt.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido em {at}'**
+  String relatoriosRequestedAt(String at);
+
+  /// No description provided for @relatoriosActionFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não deu certo. Tente de novo.'**
+  String get relatoriosActionFailed;
+
+  /// No description provided for @relatoriosFromHere.
+  ///
+  /// In pt, this message translates to:
+  /// **'Gerar relatório'**
+  String get relatoriosFromHere;
+
+  /// No description provided for @relatoriosPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatórios'**
+  String get relatoriosPlate;
+
+  /// No description provided for @relatoriosPlateBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Monte relatórios de qualquer eleição, cargo e local, em PDF e CSV, conferidos com os arquivos do TSE.'**
+  String get relatoriosPlateBody;
+
+  /// No description provided for @relatoriosSha.
+  ///
+  /// In pt, this message translates to:
+  /// **'SHA-256 dos dados: {hash}'**
+  String relatoriosSha(String hash);
+
+  /// No description provided for @relatoriosElectionsError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar a lista de eleições do TSE.'**
+  String get relatoriosElectionsError;
 }
 
 class _AppLocalizationsDelegate

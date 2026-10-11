@@ -65,6 +65,12 @@ abstract final class AtlasIcons {
     CupertinoIcons.person_crop_circle,
     Icons.account_circle_outlined,
   );
+  static IconData report(BuildContext c) =>
+      _pick(c, CupertinoIcons.doc_text, Icons.description_outlined);
+  static IconData download(BuildContext c) =>
+      _pick(c, CupertinoIcons.arrow_down_doc, Icons.download_outlined);
+  static IconData link(BuildContext c) =>
+      _pick(c, CupertinoIcons.link, Icons.link);
   static IconData theme(BuildContext c) =>
       _pick(c, CupertinoIcons.circle_lefthalf_fill, Icons.contrast);
 }

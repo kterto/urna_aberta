@@ -38,5 +38,14 @@ class RelatoriosEndpoint extends Endpoint {
   Future<ReportRequest> publicar(Session session, int id, bool publico) =>
       service.publish(session, id, publico);
 
+  /// A download link for a ready report's file, valid for ten minutes:
+  /// opening it in a browser saves the file, on any platform.
+  Future<String> link(Session session, int id, String formato) =>
+      service.downloadLink(session, id, formato);
+
+  /// The public page of a published report, or null.
+  Future<String?> linkPublico(Session session, int id) =>
+      service.publicLink(session, id);
+
   Future<void> apagar(Session session, int id) => service.delete(session, id);
 }

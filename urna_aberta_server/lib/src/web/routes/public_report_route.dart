@@ -37,24 +37,45 @@ class PublicReportRoute extends Route {
     }
     final data = await service.publishedFile(session, token, format);
     if (data == null) return Response.notFound();
-    return Response.ok(
+    return reportFileResponse(data, format, token.substring(0, 8));
+  }
+}
+
+/// A download link from `relatorios.link`: `/d/<token>`, valid for
+/// [ReportService.linkLifetime].
+class ReportDownloadRoute extends Route {
+  ReportDownloadRoute(this.service);
+
+  final ReportService service;
+
+  @override
+  Future<Result> handleCall(Session session, Request request) async {
+    final token = request.url.pathSegments.lastOrNull ?? '';
+    final opened = service.openLink(token);
+    if (opened == null) return Response.notFound();
+    final data = await service.linkedFile(session, token);
+    if (data == null) return Response.notFound();
+    return reportFileResponse(data, opened.$2, '${opened.$1}');
+  }
+}
+
+/// A report file, saved by the browser as `urna-aberta-relatorio-<name>`.
+Response reportFileResponse(ByteData data, String format, String name) =>
+    Response.ok(
       body: Body.fromData(
         Uint8List.sublistView(data),
         mimeType: MimeType.parse(
           ReportService.formats[format]!.split(';').first,
         ),
-        encoding: utf8,
+        encoding: format == 'csv' ? utf8 : null,
       ),
       headers: Headers.fromMap({
         'content-disposition': [
-          'attachment; filename="urna-aberta-relatorio-${_short(token)}.$format"',
+          'attachment; filename="urna-aberta-relatorio-$name.$format"',
         ],
+        'cache-control': ['private, no-store'],
       }),
     );
-  }
-
-  static String _short(String token) => token.substring(0, 8);
-}
 
 /// The page of a published report, in Portuguese and English.
 String publicReportPage(ReportRequest r) {

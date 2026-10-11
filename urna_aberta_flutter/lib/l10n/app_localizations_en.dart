@@ -1424,4 +1424,256 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get secaoSaveFailed => 'This place could not be saved.';
+
+  @override
+  String get relatoriosNew => 'New report';
+
+  @override
+  String get relatoriosNewLede =>
+      'Choose elections, offices and places. Urna Aberta reads TSE\'s signed files, adds up what needs adding up and gives you a PDF and a CSV.';
+
+  @override
+  String get relatoriosMine => 'My reports';
+
+  @override
+  String get relatoriosMineLede =>
+      'The reports you asked for. They are kept until you delete them.';
+
+  @override
+  String get relatoriosSignIn => 'Sign in to build reports';
+
+  @override
+  String get relatoriosSignInBody =>
+      'Reports belong to your account: you follow them as they are built, download the files and, if you want, publish a link.';
+
+  @override
+  String get relatoriosSignInAction => 'Sign in';
+
+  @override
+  String get relatoriosDays => 'Elections';
+
+  @override
+  String get relatoriosDaysHint =>
+      'One or more voting days. Pick two to compare rounds.';
+
+  @override
+  String get relatoriosOffices => 'Offices';
+
+  @override
+  String get relatoriosPlaces => 'Places';
+
+  @override
+  String get relatoriosNoPlaces => 'No places yet.';
+
+  @override
+  String get relatoriosAddPlace => 'Add';
+
+  @override
+  String get relatoriosPlaceKind => 'Kind of place';
+
+  @override
+  String get relatoriosKindBr => 'Brazil';
+
+  @override
+  String get relatoriosKindRegiao => 'Region';
+
+  @override
+  String get relatoriosKindUf => 'State';
+
+  @override
+  String get relatoriosKindMunicipio => 'City';
+
+  @override
+  String get relatoriosKindZona => 'Zone';
+
+  @override
+  String get relatoriosKindSecao => 'Section';
+
+  @override
+  String get relatoriosSectionsOnly =>
+      'Zones and sections are, for now, only for the 2026 1st round (October 4).';
+
+  @override
+  String relatoriosRemovePlace(String place) {
+    return 'Remove $place';
+  }
+
+  @override
+  String relatoriosZoneLabel(String city, String zona) {
+    return '$city, zone $zona';
+  }
+
+  @override
+  String relatoriosSectionLabel(String city, String zona, String secao) {
+    return '$city, zone $zona, section $secao';
+  }
+
+  @override
+  String get relatoriosBreakdown => 'Breakdown';
+
+  @override
+  String get relatoriosBreakdownHint =>
+      'One row per state, city or zone inside each place, checked against TSE\'s total where there is one.';
+
+  @override
+  String get relatoriosBreakdownNone => 'None';
+
+  @override
+  String get relatoriosBreakdownUf => 'By state';
+
+  @override
+  String get relatoriosBreakdownMunicipio => 'By city';
+
+  @override
+  String get relatoriosBreakdownZona => 'By zone';
+
+  @override
+  String get relatoriosLanguage => 'PDF language';
+
+  @override
+  String get relatoriosQuote => 'Before you build it';
+
+  @override
+  String relatoriosQuoteBody(
+    String files,
+    String stored,
+    String time,
+    String tables,
+  ) {
+    return 'Reads $files TSE files, $stored already stored here. About $time to fetch the rest. $tables tables.';
+  }
+
+  @override
+  String relatoriosSeconds(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String relatoriosMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get relatoriosQuoting => 'Working out what the report will read…';
+
+  @override
+  String get relatoriosIncomplete =>
+      'Choose at least one election, one office and one place.';
+
+  @override
+  String relatoriosTooLarge(String limit) {
+    return 'Too large: it would read more than $limit TSE files. Choose fewer places or a smaller breakdown.';
+  }
+
+  @override
+  String get relatoriosRefusedInvalid =>
+      'TSE does not publish that combination of election, office and place.';
+
+  @override
+  String get relatoriosRefusedNotPublished =>
+      'TSE has not published results for that election yet.';
+
+  @override
+  String get relatoriosRefusedBusy =>
+      'You already have a report in the queue. Wait for it to finish.';
+
+  @override
+  String get relatoriosQuoteError =>
+      'Could not work it out right now. Try again.';
+
+  @override
+  String relatoriosWithoutFiles(String count) {
+    return '$count sections with no voting machine files yet are left out.';
+  }
+
+  @override
+  String get relatoriosGenerate => 'Build report';
+
+  @override
+  String get relatoriosStatusQueued => 'Queued';
+
+  @override
+  String get relatoriosStatusRunning => 'Building';
+
+  @override
+  String get relatoriosStatusReady => 'Ready';
+
+  @override
+  String get relatoriosStatusFailed => 'Failed';
+
+  @override
+  String relatoriosProgress(String done, String total) {
+    return '$done of $total files';
+  }
+
+  @override
+  String get relatoriosDownloadPdf => 'Download PDF';
+
+  @override
+  String get relatoriosDownloadCsv => 'Download CSV';
+
+  @override
+  String get relatoriosPublish => 'Publish a link';
+
+  @override
+  String get relatoriosUnpublish => 'Take link down';
+
+  @override
+  String get relatoriosCopyLink => 'Copy link';
+
+  @override
+  String get relatoriosLinkCopied => 'Link copied.';
+
+  @override
+  String get relatoriosPublicNote =>
+      'Published: anyone with the link can see this report.';
+
+  @override
+  String get relatoriosDelete => 'Delete';
+
+  @override
+  String get relatoriosDeleted => 'Report deleted.';
+
+  @override
+  String get relatoriosRetry => 'Try again';
+
+  @override
+  String get relatoriosFailedTse =>
+      'TSE did not respond while the report was being built.';
+
+  @override
+  String get relatoriosFailedOther => 'This report could not be built.';
+
+  @override
+  String get relatoriosEmpty => 'You have not asked for any reports yet.';
+
+  @override
+  String get relatoriosLoadError => 'Your reports could not be loaded.';
+
+  @override
+  String relatoriosRequestedAt(String at) {
+    return 'Requested $at';
+  }
+
+  @override
+  String get relatoriosActionFailed => 'That did not work. Try again.';
+
+  @override
+  String get relatoriosFromHere => 'Build a report';
+
+  @override
+  String get relatoriosPlate => 'Reports';
+
+  @override
+  String get relatoriosPlateBody =>
+      'Build reports on any election, office and place, as PDF and CSV, checked against TSE\'s files.';
+
+  @override
+  String relatoriosSha(String hash) {
+    return 'SHA-256 of the data: $hash';
+  }
+
+  @override
+  String get relatoriosElectionsError =>
+      'TSE\'s list of elections could not be loaded.';
 }

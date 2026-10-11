@@ -1423,4 +1423,257 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get secaoSaveFailed => 'Não foi possível salvar este local.';
+
+  @override
+  String get relatoriosNew => 'Novo relatório';
+
+  @override
+  String get relatoriosNewLede =>
+      'Escolha eleições, cargos e locais. A Urna Aberta lê os arquivos assinados do TSE, soma o que precisar somar e entrega um PDF e um CSV.';
+
+  @override
+  String get relatoriosMine => 'Meus relatórios';
+
+  @override
+  String get relatoriosMineLede =>
+      'Os relatórios que você pediu. Ficam guardados até você apagá-los.';
+
+  @override
+  String get relatoriosSignIn => 'Entre para montar relatórios';
+
+  @override
+  String get relatoriosSignInBody =>
+      'Os relatórios ficam na sua conta: você acompanha a montagem, baixa os arquivos e, se quiser, publica um link.';
+
+  @override
+  String get relatoriosSignInAction => 'Entrar';
+
+  @override
+  String get relatoriosDays => 'Eleições';
+
+  @override
+  String get relatoriosDaysHint =>
+      'Um ou mais dias de votação. Escolha dois para comparar turnos.';
+
+  @override
+  String get relatoriosOffices => 'Cargos';
+
+  @override
+  String get relatoriosPlaces => 'Locais';
+
+  @override
+  String get relatoriosNoPlaces => 'Nenhum local ainda.';
+
+  @override
+  String get relatoriosAddPlace => 'Adicionar';
+
+  @override
+  String get relatoriosPlaceKind => 'Tipo de local';
+
+  @override
+  String get relatoriosKindBr => 'Brasil';
+
+  @override
+  String get relatoriosKindRegiao => 'Região';
+
+  @override
+  String get relatoriosKindUf => 'UF';
+
+  @override
+  String get relatoriosKindMunicipio => 'Município';
+
+  @override
+  String get relatoriosKindZona => 'Zona';
+
+  @override
+  String get relatoriosKindSecao => 'Seção';
+
+  @override
+  String get relatoriosSectionsOnly =>
+      'Zonas e seções, por enquanto, só para o 1º turno de 2026 (4 de outubro).';
+
+  @override
+  String relatoriosRemovePlace(String place) {
+    return 'Remover $place';
+  }
+
+  @override
+  String relatoriosZoneLabel(String city, String zona) {
+    return '$city, zona $zona';
+  }
+
+  @override
+  String relatoriosSectionLabel(String city, String zona, String secao) {
+    return '$city, zona $zona, seção $secao';
+  }
+
+  @override
+  String get relatoriosBreakdown => 'Detalhamento';
+
+  @override
+  String get relatoriosBreakdownHint =>
+      'Uma linha por UF, município ou zona dentro de cada local, conferida com o total do TSE quando ele existe.';
+
+  @override
+  String get relatoriosBreakdownNone => 'Nenhum';
+
+  @override
+  String get relatoriosBreakdownUf => 'Por UF';
+
+  @override
+  String get relatoriosBreakdownMunicipio => 'Por município';
+
+  @override
+  String get relatoriosBreakdownZona => 'Por zona';
+
+  @override
+  String get relatoriosLanguage => 'Idioma do PDF';
+
+  @override
+  String get relatoriosQuote => 'Antes de gerar';
+
+  @override
+  String relatoriosQuoteBody(
+    String files,
+    String stored,
+    String time,
+    String tables,
+  ) {
+    return 'Lê $files arquivos do TSE, $stored já guardados aqui. Cerca de $time para buscar o resto. $tables tabelas.';
+  }
+
+  @override
+  String relatoriosSeconds(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String relatoriosMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get relatoriosQuoting => 'Calculando o que o relatório vai ler…';
+
+  @override
+  String get relatoriosIncomplete =>
+      'Escolha ao menos uma eleição, um cargo e um local.';
+
+  @override
+  String relatoriosTooLarge(String limit) {
+    return 'Grande demais: leria mais de $limit arquivos do TSE. Escolha menos locais ou um detalhamento menor.';
+  }
+
+  @override
+  String get relatoriosRefusedInvalid =>
+      'O TSE não publica essa combinação de eleição, cargo e local.';
+
+  @override
+  String get relatoriosRefusedNotPublished =>
+      'O TSE ainda não publicou resultados dessa eleição.';
+
+  @override
+  String get relatoriosRefusedBusy =>
+      'Você já tem um relatório na fila. Espere ele terminar.';
+
+  @override
+  String get relatoriosQuoteError =>
+      'Não foi possível calcular agora. Tente de novo.';
+
+  @override
+  String relatoriosWithoutFiles(String count) {
+    return '$count seções ainda sem arquivos da urna ficam de fora.';
+  }
+
+  @override
+  String get relatoriosGenerate => 'Gerar relatório';
+
+  @override
+  String get relatoriosStatusQueued => 'Na fila';
+
+  @override
+  String get relatoriosStatusRunning => 'Montando';
+
+  @override
+  String get relatoriosStatusReady => 'Pronto';
+
+  @override
+  String get relatoriosStatusFailed => 'Falhou';
+
+  @override
+  String relatoriosProgress(String done, String total) {
+    return '$done de $total arquivos';
+  }
+
+  @override
+  String get relatoriosDownloadPdf => 'Baixar PDF';
+
+  @override
+  String get relatoriosDownloadCsv => 'Baixar CSV';
+
+  @override
+  String get relatoriosPublish => 'Publicar link';
+
+  @override
+  String get relatoriosUnpublish => 'Tirar link do ar';
+
+  @override
+  String get relatoriosCopyLink => 'Copiar link';
+
+  @override
+  String get relatoriosLinkCopied => 'Link copiado.';
+
+  @override
+  String get relatoriosPublicNote =>
+      'Publicado: qualquer pessoa com o link vê este relatório.';
+
+  @override
+  String get relatoriosDelete => 'Apagar';
+
+  @override
+  String get relatoriosDeleted => 'Relatório apagado.';
+
+  @override
+  String get relatoriosRetry => 'Tentar de novo';
+
+  @override
+  String get relatoriosFailedTse =>
+      'O TSE não respondeu enquanto o relatório era montado.';
+
+  @override
+  String get relatoriosFailedOther => 'Não foi possível montar este relatório.';
+
+  @override
+  String get relatoriosEmpty => 'Você ainda não pediu nenhum relatório.';
+
+  @override
+  String get relatoriosLoadError =>
+      'Não foi possível carregar seus relatórios.';
+
+  @override
+  String relatoriosRequestedAt(String at) {
+    return 'Pedido em $at';
+  }
+
+  @override
+  String get relatoriosActionFailed => 'Não deu certo. Tente de novo.';
+
+  @override
+  String get relatoriosFromHere => 'Gerar relatório';
+
+  @override
+  String get relatoriosPlate => 'Relatórios';
+
+  @override
+  String get relatoriosPlateBody =>
+      'Monte relatórios de qualquer eleição, cargo e local, em PDF e CSV, conferidos com os arquivos do TSE.';
+
+  @override
+  String relatoriosSha(String hash) {
+    return 'SHA-256 dos dados: $hash';
+  }
+
+  @override
+  String get relatoriosElectionsError =>
+      'Não foi possível carregar a lista de eleições do TSE.';
 }

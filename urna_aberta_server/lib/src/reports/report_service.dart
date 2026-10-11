@@ -20,10 +20,15 @@ class ReportService {
     required this.planner,
     required this.builder,
     required this.ratePerSecond,
+    Uri? webBase,
     Future<void> Function()? schedule,
     DateTime Function()? now,
-  }) : _schedule = schedule ?? (() async {}),
+  }) : webBase = webBase ?? Uri.parse('http://localhost:8082/'),
+       _schedule = schedule ?? (() async {}),
        _now = now ?? DateTime.now;
+
+  /// The web server's public address, for links.
+  final Uri webBase;
 
   final ReportPlanner planner;
   final ReportBuilder builder;
@@ -82,6 +87,9 @@ class ReportService {
         status: ReportStatus.queued,
         filesDone: 0,
         filesTotal: plan.files,
+        placeNames: {
+          for (final i in plan.items) i.placeName,
+        }.toList(),
         createdAt: _now().toUtc(),
       ),
     );
@@ -119,6 +127,82 @@ class ReportService {
     final r = await _owned(session, id);
     return _file(session, r, format);
   }
+
+  /// How long a download link works.
+  static const linkLifetime = Duration(minutes: 10);
+
+  /// Signs download links; new on every start, so a restart only ends the
+  /// links already handed out.
+  final _linkKey = List<int>.generate(32, (_) => _random.nextInt(256));
+
+  /// A link anyone holding it can download one of the viewer's ready
+  /// reports from, for [linkLifetime]: `/d/<payload>.<signature>`. Lets
+  /// every platform download through the browser.
+  Future<String> downloadLink(Session session, int id, String format) async {
+    final r = await _owned(session, id);
+    if (r.status != ReportStatus.ready || !formats.containsKey(format)) {
+      throw ReportRefused(
+        message: 'Este relatório não tem o arquivo $format.',
+        reason: 'notFound',
+      );
+    }
+    final expires = _now().add(linkLifetime).millisecondsSinceEpoch ~/ 1000;
+    final payload = '$id.$format.$expires';
+    final token = '${_b64(utf8.encode(payload))}.${_b64(_sign(payload))}';
+    return webBase.resolve('d/$token').toString();
+  }
+
+  /// The report and format a download link names, while it is valid.
+  (int, String)? openLink(String token) {
+    final parts = token.split('.');
+    if (parts.length != 2) return null;
+    final String payload;
+    final List<int> signature;
+    try {
+      payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[0])));
+      signature = base64Url.decode(base64Url.normalize(parts[1]));
+    } on FormatException {
+      return null;
+    }
+    final expected = _sign(payload);
+    var diff = expected.length ^ signature.length;
+    for (var i = 0; i < expected.length && i < signature.length; i++) {
+      diff |= expected[i] ^ signature[i];
+    }
+    if (diff != 0) return null;
+    final fields = payload.split('.');
+    if (fields.length != 3) return null;
+    final id = int.tryParse(fields[0]);
+    final expires = int.tryParse(fields[2]);
+    if (id == null || expires == null) return null;
+    if (_now().millisecondsSinceEpoch ~/ 1000 > expires) return null;
+    return (id, fields[1]);
+  }
+
+  /// The file a valid download link names; null otherwise.
+  Future<ByteData?> linkedFile(Session session, String token) async {
+    final opened = openLink(token);
+    if (opened == null) return null;
+    final (id, format) = opened;
+    final r = await ReportRequest.db.findById(session, id);
+    if (r == null || r.status != ReportStatus.ready) return null;
+    return _file(session, r, format);
+  }
+
+  /// The public page of the viewer's published report; null when it is not
+  /// published.
+  Future<String?> publicLink(Session session, int id) async {
+    final r = await _owned(session, id);
+    return r.publicToken == null
+        ? null
+        : webBase.resolve('r/${r.publicToken}').toString();
+  }
+
+  List<int> _sign(String payload) =>
+      Hmac(sha256, _linkKey).convert(utf8.encode(payload)).bytes;
+
+  static String _b64(List<int> bytes) =>
+      base64Url.encode(bytes).replaceAll('=', '');
 
   /// Gives a ready report a public link, or takes it away.
   Future<ReportRequest> publish(Session session, int id, bool public) async {

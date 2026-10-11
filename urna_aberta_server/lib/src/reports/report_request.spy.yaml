@@ -6,6 +6,8 @@ table: report_request
 fields:
   authUser: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
   spec: ReportSpec
+  ### The spec's places as people name them, in order (`PORTO WALTER (AC)`).
+  placeNames: List<String>?
   status: ReportStatus
   ### TSE files read so far, of those the report needs.
   filesDone: int

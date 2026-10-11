@@ -553,6 +553,52 @@ class Endpoints extends _is.EndpointDispatch {
                         params['publico'],
                       ),
         ),
+        'link': _is.MethodConnector(
+          name: 'link',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'formato': _is.ParameterDescription(
+              name: 'formato',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .link(
+                        session,
+                        params['id'],
+                        params['formato'],
+                      ),
+        ),
+        'linkPublico': _is.MethodConnector(
+          name: 'linkPublico',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .linkPublico(
+                        session,
+                        params['id'],
+                      ),
+        ),
         'apagar': _is.MethodConnector(
           name: 'apagar',
           params: {

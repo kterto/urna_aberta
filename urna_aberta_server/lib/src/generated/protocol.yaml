@@ -26,6 +26,8 @@ relatorios:
   - acompanhar:
   - baixar:
   - publicar:
+  - link:
+  - linkPublico:
   - apagar:
 resultados:
   - eleicoes:

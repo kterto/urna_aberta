@@ -474,6 +474,12 @@ class Protocol extends _isc.SerializationManager {
               .toList()
           as T;
     }
+    if (t == _isc.getType<List<String>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<String>(e)).toList()
+              : null)
+          as T;
+    }
     if (t == List<_ivpf0ztf.ReportPlace>) {
       return (data as List)
               .map((e) => deserialize<_ivpf0ztf.ReportPlace>(e))
