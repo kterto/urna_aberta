@@ -1,0 +1,7 @@
+### A report spec that cannot be built. The message is Portuguese; the app
+### shows its own text by reason.
+exception: ReportRefused
+fields:
+  message: String
+  ### `invalidRequest`, `notPublished` or `tooLarge`.
+  reason: String

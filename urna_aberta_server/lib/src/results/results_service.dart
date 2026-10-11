@@ -49,7 +49,7 @@ class ResultsService {
   ];
 
   Future<List<MunicipioRef>> municipios(int electionCode, String uf) async {
-    final ea12 = await _ea12(_election(electionCode));
+    final ea12 = await municipalities(_election(electionCode));
     return [
       for (final m in ea12.byUf[uf.toLowerCase()] ?? const <Municipio>[])
         MunicipioRef(codigo: m.code, nome: m.name),
@@ -190,7 +190,10 @@ class ResultsService {
       if (m == null) throw ArgumentError.value(code);
       final scope = Scope.municipality(m[1]!, int.parse(m[2]!));
       final listed = election.allMunicipalities
-          ? (await _ea12(election)).byCode(scope.uf, scope.municipio!) != null
+          ? (await municipalities(
+                  election,
+                )).byCode(scope.uf, scope.municipio!) !=
+                null
           : election.targets.any((t) => t.$1 == scope);
       if (!listed) throw ArgumentError.value(code);
       return scope;
@@ -199,7 +202,8 @@ class ResultsService {
     }
   }
 
-  Future<Municipalities> _ea12(Election election) async {
+  /// The election's EA12, read once and checked against TSE's signature.
+  Future<Municipalities> municipalities(Election election) async {
     final cached = _municipalities[election.code];
     if (cached != null) return cached;
     _assertClosed(election);

@@ -34,6 +34,19 @@ void main() {
     expect(second.byCode('sp', 71072), isNotNull);
   });
 
+  test('a general election lists cities abroad, with no IBGE code', () {
+    final general = parseEa12(
+      File(
+        '../fixtures/2026-1t/oficial/ele2026/6257/config/mun-e006257-cm.json',
+      ).readAsBytesSync(),
+    );
+    expect(general.byUf.keys, hasLength(28));
+    final abidjan = general.byCode('zz', 29254)!;
+    expect(abidjan.name, 'ABIDJÃ');
+    expect(abidjan.ibge, isNull);
+    expect(general.byCode('sp', 71072)!.ibge, 3550308);
+  });
+
   test('malformed input is refused', () {
     expect(() => parseEa12(utf8.encode('{}')), throwsFormatException);
     expect(() => parseEa12(utf8.encode('[')), throwsFormatException);

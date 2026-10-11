@@ -1,0 +1,11 @@
+### A place a report covers. The fields its kind needs are set: `regiao`
+### for a region (n, ne, co, se, s); `uf` and below for the rest, as TSE
+### codes (lowercase UF, 5-digit municipality).
+class: ReportPlace
+fields:
+  kind: ReportPlaceKind
+  regiao: String?
+  uf: String?
+  municipio: int?
+  zona: int?
+  secao: int?

@@ -17,10 +17,13 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
 import 'package:urna_aberta_server/src/generated/future_calls.dart'
     as _iplz5ub8;
+import 'package:urna_aberta_server/src/generated/reports/report_spec.dart'
+    as _icv1nmb7;
 import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
 import '../meu_local/meu_local_endpoint.dart' as _i9rogxyk;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
+import '../reports/relatorios_endpoint.dart' as _igbubms3;
 import '../results/resultados_endpoint.dart' as _ignf5cub;
 import '../secao/secao_endpoint.dart' as _i5402ufq;
 import '../verify/verificar_endpoint.dart' as _i11vp49h;
@@ -52,6 +55,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'tally',
+          null,
+        ),
+      'relatorios': _igbubms3.RelatoriosEndpoint()
+        ..initialize(
+          server,
+          'relatorios',
           null,
         ),
       'resultados': _ignf5cub.ResultadosEndpoint()
@@ -434,6 +443,32 @@ class Endpoints extends _is.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['tally'] as _iphjbc6w.TallyEndpoint).live(session),
+        ),
+      },
+    );
+    connectors['relatorios'] = _is.EndpointConnector(
+      name: 'relatorios',
+      endpoint: endpoints['relatorios']!,
+      methodConnectors: {
+        'orcar': _is.MethodConnector(
+          name: 'orcar',
+          params: {
+            'spec': _is.ParameterDescription(
+              name: 'spec',
+              type: _is.getType<_icv1nmb7.ReportSpec>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .orcar(
+                        session,
+                        params['spec'],
+                      ),
         ),
       },
     );

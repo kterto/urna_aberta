@@ -11,6 +11,9 @@ import 'src/live/live_ingestor.dart';
 import 'src/live/live_poll_call.dart';
 import 'src/meu_local/meu_local_endpoint.dart';
 import 'src/replay/fixture_seeder.dart';
+import 'src/reports/relatorios_endpoint.dart';
+import 'src/reports/report_plan.dart';
+import 'src/reports/report_service.dart';
 import 'src/results/resultados_endpoint.dart';
 import 'src/results/results_service.dart';
 import 'src/secao/secao_endpoint.dart';
@@ -117,23 +120,35 @@ void run(List<String> args) async {
     bucket: TokenBucket(ratePerSecond: 20, burst: 5),
   );
   final urls = TseUrls.oficial();
+  // Section configs per pleito, each read once per UF.
+  final directories = <int, SectionDirectories>{};
+  SectionDirectories sectionDirectories(int pleito, int year) =>
+      directories[pleito] ??= SectionDirectories(
+        client: tse,
+        urls: TseUrls.oficial(year: year),
+        pleito: pleito,
+        archive: _archive,
+      );
   MeuLocalEndpoint.sections = SecaoEndpoint.service = SectionService(
     client: tse,
     urls: urls,
-    directory: SectionDirectories(
-      client: tse,
-      urls: urls,
-      pleito: 3220,
-      archive: _archive,
-    ).call,
+    directory: sectionDirectories(3220, 2026).call,
   );
 
   final live = _liveIngestor(tse, urls);
   // EA11 as the live poller last read it, else as archived.
   final archivedElections = _archivedElections();
-  ResultadosEndpoint.service = ResultsService(
+  final results = ResultadosEndpoint.service = ResultsService(
     client: tse,
     elections: () => live?.elections ?? archivedElections,
+  );
+  RelatoriosEndpoint.service = ReportService(
+    planner: ReportPlanner(
+      elections: () => live?.elections ?? archivedElections,
+      municipalities: results.municipalities,
+      sections: (pleito, year, uf) => sectionDirectories(pleito, year)(uf),
+    ),
+    ratePerSecond: 20,
   );
 
   // Start the server.

@@ -19,6 +19,8 @@ tally:
   - timeline:
   - divergence:
   - live:
+relatorios:
+  - orcar:
 resultados:
   - eleicoes:
   - municipios:

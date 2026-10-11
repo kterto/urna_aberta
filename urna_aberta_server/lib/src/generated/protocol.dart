@@ -46,6 +46,12 @@ import 'municipio_ref.dart' as _i663s1cn;
 import 'office_report.dart' as _ie6yu1i3;
 import 'replay_night.dart' as _i1vi4thm;
 import 'replay_unavailable.dart' as _i6npibdt;
+import 'reports/report_breakdown.dart' as _imbon9w7;
+import 'reports/report_place.dart' as _ivpf0ztf;
+import 'reports/report_place_kind.dart' as _ii4sj20c;
+import 'reports/report_quote.dart' as _incjw5yy;
+import 'reports/report_refused.dart' as _ic38joef;
+import 'reports/report_spec.dart' as _i8pq152b;
 import 'result_file.dart' as _ihi5zekk;
 import 'result_snapshot.dart' as _i4dv59av;
 import 'result_unavailable.dart' as _ip5wxoe5;
@@ -81,6 +87,12 @@ export 'municipio_ref.dart';
 export 'office_report.dart';
 export 'replay_night.dart';
 export 'replay_unavailable.dart';
+export 'reports/report_breakdown.dart';
+export 'reports/report_place.dart';
+export 'reports/report_place_kind.dart';
+export 'reports/report_quote.dart';
+export 'reports/report_refused.dart';
+export 'reports/report_spec.dart';
 export 'result_file.dart';
 export 'result_snapshot.dart';
 export 'result_unavailable.dart';
@@ -952,6 +964,24 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i6npibdt.ReplayUnavailableException) {
       return _i6npibdt.ReplayUnavailableException.fromJson(data) as T;
     }
+    if (t == _imbon9w7.ReportBreakdown) {
+      return _imbon9w7.ReportBreakdown.fromJson(data) as T;
+    }
+    if (t == _ivpf0ztf.ReportPlace) {
+      return _ivpf0ztf.ReportPlace.fromJson(data) as T;
+    }
+    if (t == _ii4sj20c.ReportPlaceKind) {
+      return _ii4sj20c.ReportPlaceKind.fromJson(data) as T;
+    }
+    if (t == _incjw5yy.ReportQuote) {
+      return _incjw5yy.ReportQuote.fromJson(data) as T;
+    }
+    if (t == _ic38joef.ReportRefused) {
+      return _ic38joef.ReportRefused.fromJson(data) as T;
+    }
+    if (t == _i8pq152b.ReportSpec) {
+      return _i8pq152b.ReportSpec.fromJson(data) as T;
+    }
     if (t == _ihi5zekk.ResultFile) {
       return _ihi5zekk.ResultFile.fromJson(data) as T;
     }
@@ -1070,6 +1100,27 @@ class Protocol extends _is.DatabaseSerializationManager {
               : null)
           as T;
     }
+    if (t == _is.getType<_imbon9w7.ReportBreakdown?>()) {
+      return (data != null ? _imbon9w7.ReportBreakdown.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_ivpf0ztf.ReportPlace?>()) {
+      return (data != null ? _ivpf0ztf.ReportPlace.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_ii4sj20c.ReportPlaceKind?>()) {
+      return (data != null ? _ii4sj20c.ReportPlaceKind.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_incjw5yy.ReportQuote?>()) {
+      return (data != null ? _incjw5yy.ReportQuote.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_ic38joef.ReportRefused?>()) {
+      return (data != null ? _ic38joef.ReportRefused.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i8pq152b.ReportSpec?>()) {
+      return (data != null ? _i8pq152b.ReportSpec.fromJson(data) : null) as T;
+    }
     if (t == _is.getType<_ihi5zekk.ResultFile?>()) {
       return (data != null ? _ihi5zekk.ResultFile.fromJson(data) : null) as T;
     }
@@ -1164,6 +1215,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == List<_i8xvblpk.CandidateReport>) {
       return (data as List)
               .map((e) => deserialize<_i8xvblpk.CandidateReport>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ivpf0ztf.ReportPlace>) {
+      return (data as List)
+              .map((e) => deserialize<_ivpf0ztf.ReportPlace>(e))
               .toList()
           as T;
     }
@@ -1285,6 +1342,12 @@ class Protocol extends _is.DatabaseSerializationManager {
       _ie6yu1i3.OfficeReport => 'OfficeReport',
       _i1vi4thm.ReplayNight => 'ReplayNight',
       _i6npibdt.ReplayUnavailableException => 'ReplayUnavailableException',
+      _imbon9w7.ReportBreakdown => 'ReportBreakdown',
+      _ivpf0ztf.ReportPlace => 'ReportPlace',
+      _ii4sj20c.ReportPlaceKind => 'ReportPlaceKind',
+      _incjw5yy.ReportQuote => 'ReportQuote',
+      _ic38joef.ReportRefused => 'ReportRefused',
+      _i8pq152b.ReportSpec => 'ReportSpec',
       _ihi5zekk.ResultFile => 'ResultFile',
       _i4dv59av.ResultSnapshot => 'ResultSnapshot',
       _ip5wxoe5.ResultUnavailable => 'ResultUnavailable',
@@ -1353,6 +1416,18 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'ReplayNight';
       case _i6npibdt.ReplayUnavailableException():
         return 'ReplayUnavailableException';
+      case _imbon9w7.ReportBreakdown():
+        return 'ReportBreakdown';
+      case _ivpf0ztf.ReportPlace():
+        return 'ReportPlace';
+      case _ii4sj20c.ReportPlaceKind():
+        return 'ReportPlaceKind';
+      case _incjw5yy.ReportQuote():
+        return 'ReportQuote';
+      case _ic38joef.ReportRefused():
+        return 'ReportRefused';
+      case _i8pq152b.ReportSpec():
+        return 'ReportSpec';
       case _ihi5zekk.ResultFile():
         return 'ResultFile';
       case _i4dv59av.ResultSnapshot():
@@ -1467,6 +1542,24 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'ReplayUnavailableException') {
       return deserialize<_i6npibdt.ReplayUnavailableException>(data['data']);
+    }
+    if (dataClassName == 'ReportBreakdown') {
+      return deserialize<_imbon9w7.ReportBreakdown>(data['data']);
+    }
+    if (dataClassName == 'ReportPlace') {
+      return deserialize<_ivpf0ztf.ReportPlace>(data['data']);
+    }
+    if (dataClassName == 'ReportPlaceKind') {
+      return deserialize<_ii4sj20c.ReportPlaceKind>(data['data']);
+    }
+    if (dataClassName == 'ReportQuote') {
+      return deserialize<_incjw5yy.ReportQuote>(data['data']);
+    }
+    if (dataClassName == 'ReportRefused') {
+      return deserialize<_ic38joef.ReportRefused>(data['data']);
+    }
+    if (dataClassName == 'ReportSpec') {
+      return deserialize<_i8pq152b.ReportSpec>(data['data']);
     }
     if (dataClassName == 'ResultFile') {
       return deserialize<_ihi5zekk.ResultFile>(data['data']);

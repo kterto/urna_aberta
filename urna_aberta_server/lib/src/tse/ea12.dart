@@ -17,7 +17,9 @@ class Municipio {
 
   /// TSE's 5-digit code, used in file names.
   final int code;
-  final int ibge;
+
+  /// IBGE's 7-digit code; null for cities abroad (UF `zz`).
+  final int? ibge;
   final String name;
   final bool capital;
   final List<int> zones;
@@ -62,7 +64,7 @@ Municipio _municipio(String uf, Object? m) {
     return Municipio(
       uf: uf.toLowerCase(),
       code: int.parse(cd),
-      ibge: int.parse(cdi),
+      ibge: cdi.isEmpty ? null : int.parse(cdi),
       name: nm,
       capital: c == 's',
       zones: [

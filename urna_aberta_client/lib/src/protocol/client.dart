@@ -33,6 +33,10 @@ import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
 import 'package:urna_aberta_client/src/protocol/office_report.dart'
     as _i8bxvetb;
 import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
+import 'package:urna_aberta_client/src/protocol/reports/report_quote.dart'
+    as _i9larcy2;
+import 'package:urna_aberta_client/src/protocol/reports/report_spec.dart'
+    as _ipm39ypz;
 import 'package:urna_aberta_client/src/protocol/section_report.dart'
     as _it6gukgl;
 import 'package:urna_aberta_client/src/protocol/tally_frame.dart' as _iirfdrc4;
@@ -364,6 +368,25 @@ class EndpointTally extends _isc.EndpointRef {
       );
 }
 
+/// Relatórios: reports anyone signed in can configure, over any election,
+/// office and place Urna Aberta covers.
+/// {@category Endpoint}
+class EndpointRelatorios extends _isc.EndpointRef {
+  EndpointRelatorios(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'relatorios';
+
+  /// What [spec] would read, how much is already stored, and how long the
+  /// rest would take. Refuses a spec naming anything TSE does not list.
+  _ida.Future<_i9larcy2.ReportQuote> orcar(_ipm39ypz.ReportSpec spec) =>
+      caller.callServerEndpoint<_i9larcy2.ReportQuote>(
+        'relatorios',
+        'orcar',
+        {'spec': spec},
+      );
+}
+
 /// Resultados: the published result of any office, in any scope, for every
 /// ordinary election TSE lists, with an independent seat allocation for
 /// proportional offices.
@@ -542,6 +565,7 @@ class Client extends _isc.ServerpodClientShared {
     jwtRefresh = EndpointJwtRefresh(this);
     meuLocal = EndpointMeuLocal(this);
     tally = EndpointTally(this);
+    relatorios = EndpointRelatorios(this);
     resultados = EndpointResultados(this);
     secao = EndpointSecao(this);
     verificar = EndpointVerificar(this);
@@ -555,6 +579,8 @@ class Client extends _isc.ServerpodClientShared {
   late final EndpointMeuLocal meuLocal;
 
   late final EndpointTally tally;
+
+  late final EndpointRelatorios relatorios;
 
   late final EndpointResultados resultados;
 
@@ -570,6 +596,7 @@ class Client extends _isc.ServerpodClientShared {
     'jwtRefresh': jwtRefresh,
     'meuLocal': meuLocal,
     'tally': tally,
+    'relatorios': relatorios,
     'resultados': resultados,
     'secao': secao,
     'verificar': verificar,

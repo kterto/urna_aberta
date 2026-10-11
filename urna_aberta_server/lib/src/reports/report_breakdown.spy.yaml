@@ -1,0 +1,8 @@
+### Optional rows under each place: one per UF, municipality or zone in it.
+enum: ReportBreakdown
+serialized: byName
+values:
+  - none
+  - uf
+  - municipio
+  - zona
