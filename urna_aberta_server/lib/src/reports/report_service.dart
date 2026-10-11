@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -57,9 +58,6 @@ class ReportService {
     'pdf': 'application/pdf',
     'csv': 'text/csv; charset=utf-8',
   };
-
-  /// Loaded once, on the first report.
-  Future<ReportFonts>? _fonts;
 
   /// Queues [spec] for the viewer. Refused when it names anything TSE does
   /// not list, reads more than [ReportPlanner.fileLimit] files, or the
@@ -336,16 +334,10 @@ class ReportService {
         },
       );
       await progressWrites;
-      final csv = reportCsv(tables);
-      final dataSha256 = sha256.convert(csv).toString();
+      // Every file is read; what is left is writing the report.
+      r = await _save(session, r.copyWith(filesDone: plan.files));
       final finishedAt = _now().toUtc();
-      final pdf = await reportPdf(
-        request: r,
-        tables: tables,
-        dataSha256: dataSha256,
-        generatedAt: finishedAt,
-        fonts: await (_fonts ??= ReportFonts.load()),
-      );
+      final (:csv, :dataSha256, :pdf) = await _render(r, tables, finishedAt);
       for (final (format, bytes) in [('csv', csv), ('pdf', pdf)]) {
         await session.storage.storeFile(
           storageId: storageId,
@@ -389,6 +381,26 @@ class ReportService {
       );
     }
   }
+
+  /// The report's CSV, its hash and its PDF, written on another isolate:
+  /// Brazil by municipality keeps the CPU for tens of seconds, and a server
+  /// that stops answering its health checks for that long is restarted.
+  static Future<({List<int> csv, String dataSha256, List<int> pdf})> _render(
+    ReportRequest request,
+    List<ReportTable> tables,
+    DateTime generatedAt,
+  ) => Isolate.run(() async {
+    final csv = reportCsv(tables);
+    final dataSha256 = sha256.convert(csv).toString();
+    final pdf = await reportPdf(
+      request: request,
+      tables: tables,
+      dataSha256: dataSha256,
+      generatedAt: generatedAt,
+      fonts: await ReportFonts.load(),
+    );
+    return (csv: csv, dataSha256: dataSha256, pdf: pdf);
+  });
 
   Future<ReportRequest> _save(Session session, ReportRequest r) async {
     final saved = await ReportRequest.db.updateRow(session, r);
