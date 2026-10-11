@@ -30,7 +30,7 @@ class RelatoriosEndpoint extends Endpoint {
   Stream<ReportRequest> acompanhar(Session session, int id) =>
       service.follow(session, id);
 
-  /// A ready report's file: `csv`.
+  /// A ready report's file: `pdf` or `csv`.
   Future<ByteData> baixar(Session session, int id, String formato) =>
       service.download(session, id, formato);
 

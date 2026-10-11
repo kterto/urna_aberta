@@ -417,7 +417,7 @@ class EndpointRelatorios extends _isc.EndpointRef {
         {},
       );
 
-  /// A ready report's file: `csv`.
+  /// A ready report's file: `pdf` or `csv`.
   _ida.Future<_idt.ByteData> baixar(
     int id,
     String formato,

@@ -299,6 +299,45 @@ void main() {
         expect(csv, contains('conferencia,confere,,,,1,,'));
       });
 
+      test(
+        'the PDF is stored next to the CSV, in the asked language',
+        () async {
+          // REPORT_PDF_OUT=<dir> keeps the PDFs, to look at them.
+          final out = Platform.environment['REPORT_PDF_OUT'];
+          for (final (name, language, places, offices, breakdown) in [
+            ('zona', 'pt', [porto], [1, 3], ReportBreakdown.zona),
+            ('cidades', 'en', [ac], [1], ReportBreakdown.municipio),
+            (
+              'deputados',
+              'pt',
+              [ReportPlace(kind: ReportPlaceKind.regiao, regiao: 'n')],
+              [6],
+              ReportBreakdown.uf,
+            ),
+          ]) {
+            final r = await relatorios.pedir(
+              ana,
+              ReportSpec(
+                elections: [6257, 6259],
+                offices: offices,
+                places: places,
+                breakdown: breakdown,
+                language: language,
+              ),
+            );
+            await drain();
+            final pdf = Uint8List.sublistView(
+              await relatorios.baixar(ana, r.id!, 'pdf'),
+            );
+            expect(ascii.decode(pdf.sublist(0, 5)), '%PDF-');
+            expect(pdf.length, greaterThan(20000));
+            if (out != null) {
+              File('$out/relatorio-$name.pdf').writeAsBytesSync(pdf);
+            }
+          }
+        },
+      );
+
       test('reports are built one after another, oldest first', () async {
         final first = await relatorios.pedir(ana, _spec([1], ac));
         final second = await relatorios.pedir(bia, _spec([3], ac));
@@ -424,7 +463,8 @@ void main() {
         expect(token, hasLength(22));
         expect((await service.published(session, token))!.id, r.id);
         expect(await service.publishedFile(session, token, 'csv'), isNotNull);
-        expect(await service.publishedFile(session, token, 'pdf'), isNull);
+        expect(await service.publishedFile(session, token, 'pdf'), isNotNull);
+        expect(await service.publishedFile(session, token, 'doc'), isNull);
 
         await relatorios.publicar(ana, r.id!, false);
         expect(await service.published(session, token), isNull);

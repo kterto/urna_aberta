@@ -59,6 +59,9 @@ class Tally {
   /// Rows are the candidacies of a single race; otherwise parties.
   final bool byCandidate;
 
+  /// Summed from sections' BUs rather than TSE result files.
+  bool fromBallots = false;
+
   int total = 0, valid = 0, nominal = 0, legend = 0, blank = 0;
   int nullVotes = 0, annulledSubJudice = 0;
 
@@ -184,7 +187,8 @@ Tally sumSections(
   required int listed,
 }) {
   final t = Tally(office: office, byCandidate: !office.proportional)
-    ..sectionsTotal = listed;
+    ..sectionsTotal = listed
+    ..fromBallots = true;
   final names = {for (final c in reference.candidates) c.number: c};
   final parties = {
     for (final l in reference.lists)

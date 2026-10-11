@@ -10,6 +10,7 @@ import '../generated/protocol.dart';
 import '../tse/tse_client.dart';
 import 'report_builder.dart';
 import 'report_csv.dart';
+import 'report_pdf.dart';
 import 'report_plan.dart';
 
 /// Reports: quoting a spec, queuing it, building it in the background one
@@ -47,7 +48,13 @@ class ReportService {
       'relatorios/$id/relatorio.$format';
 
   /// The report's formats, by extension.
-  static const formats = {'csv': 'text/csv; charset=utf-8'};
+  static const formats = {
+    'pdf': 'application/pdf',
+    'csv': 'text/csv; charset=utf-8',
+  };
+
+  /// Loaded once, on the first report.
+  Future<ReportFonts>? _fonts;
 
   /// Queues [spec] for the viewer. Refused when it names anything TSE does
   /// not list, reads more than [ReportPlanner.fileLimit] files, or the
@@ -240,18 +247,29 @@ class ReportService {
       );
       await progressWrites;
       final csv = reportCsv(tables);
-      await session.storage.storeFile(
-        storageId: storageId,
-        path: filePath(r.id!, 'csv'),
-        byteData: ByteData.sublistView(Uint8List.fromList(csv)),
+      final dataSha256 = sha256.convert(csv).toString();
+      final finishedAt = _now().toUtc();
+      final pdf = await reportPdf(
+        request: r,
+        tables: tables,
+        dataSha256: dataSha256,
+        generatedAt: finishedAt,
+        fonts: await (_fonts ??= ReportFonts.load()),
       );
+      for (final (format, bytes) in [('csv', csv), ('pdf', pdf)]) {
+        await session.storage.storeFile(
+          storageId: storageId,
+          path: filePath(r.id!, format),
+          byteData: ByteData.sublistView(Uint8List.fromList(bytes)),
+        );
+      }
       r = await _save(
         session,
         r.copyWith(
           status: ReportStatus.ready,
           filesDone: plan.files,
-          finishedAt: _now().toUtc(),
-          sha256: sha256.convert(csv).toString(),
+          finishedAt: finishedAt,
+          sha256: dataSha256,
         ),
       );
     } on Exception catch (e, st) {

@@ -1,6 +1,6 @@
 # Plan: reports anyone can configure
 
-Status (11/10/2026): approved, with sign-in required, an opt-in public link and a limit of 3,000 files. Steps 1 and 2 done: the AC cities add up to TSE's AC file and the 34 BUs of Porto Walter's zone to TSE's Porto Walter file, figure by figure.
+Status (11/10/2026): approved, with sign-in required, an opt-in public link and a limit of 3,000 files. Steps 1 to 4 done (spec and quote, sums, queue, PDF and CSV): the AC cities add up to TSE's AC file and the 34 BUs of Porto Walter's zone to TSE's Porto Walter file, figure by figure.
 
 ## Goal
 
@@ -52,7 +52,7 @@ Before queuing, `relatorios.orcar(spec)` checks the spec and returns a quote: th
 4. **Cross-checks**: every sum against TSE's total, with "confere" or the difference.
 5. **Appendix**: every file used, with its URL, SHA-256, TSE signature status and, for BUs, the voting machine signature status.
 
-Candidates get no colours (brand rule). The fonts are Archivo and Source Serif 4. The layout follows the Atlas plates.
+Candidates get no colours (brand rule). The fonts are Archivo and Source Serif 4, as static instances in `urna_aberta_server/web/pdf/fonts` (the `pdf` package cannot read variable fonts; cut with fontTools `varLib.instancer`, OFL). The layout follows the Atlas plates.
 
 The CSV is the same tables in long format: `eleicao, cargo, local, nivel, candidato|lista, votos, ...`.
 
@@ -104,4 +104,3 @@ Then step 4 of the hackathon list, health checks.
 
 ## Open points
 
-- The bundled fonts are variable TTFs. If the `pdf` package renders only the default weight, we add static Bold/Regular instances (OFL allows it).
