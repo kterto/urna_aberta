@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:test/test.dart';
@@ -52,9 +54,27 @@ void main() {
 
   withServerpod('relatorios', (sessionBuilder, endpoints) {
     late TestSessionBuilder ana;
+    late TestSessionBuilder bia;
+    late ArchiveTse http;
+    late int scheduled;
+
+    Future<TestSessionBuilder> signedIn() async {
+      final user = await AuthUser.db.insertRow(
+        sessionBuilder.build(),
+        AuthUser(scopeNames: {}),
+      );
+      return sessionBuilder.copyWith(
+        authentication: AuthenticationOverride.authenticationInfo(
+          user.id!.uuid,
+          {},
+        ),
+      );
+    }
 
     setUp(() async {
-      final tse = TseClient(http: ArchiveTse(), bucket: _NoWait());
+      http = ArchiveTse();
+      scheduled = 0;
+      final tse = TseClient(http: http, bucket: _NoWait());
       final results = ResultadosEndpoint.service = ResultsService(
         client: tse,
         elections: () => ea11,
@@ -75,17 +95,11 @@ void main() {
         ),
         builder: ReportBuilder.fromServices(results, (_, _) => sections),
         ratePerSecond: 20,
+        schedule: () async => scheduled++,
+        now: () => now,
       );
-      final user = await AuthUser.db.insertRow(
-        sessionBuilder.build(),
-        AuthUser(scopeNames: {}),
-      );
-      ana = sessionBuilder.copyWith(
-        authentication: AuthenticationOverride.authenticationInfo(
-          user.id!.uuid,
-          {},
-        ),
-      );
+      ana = await signedIn();
+      bia = await signedIn();
     });
 
     final ac = ReportPlace(kind: ReportPlaceKind.uf, uf: 'ac');
@@ -216,6 +230,249 @@ void main() {
           onProgress: (done, total) => seen.add((done, total)),
         );
         expect(seen, [(1, 1)]);
+      });
+    });
+
+    group('queue', () {
+      final relatorios = endpoints.relatorios;
+      final porto = ReportPlace(
+        kind: ReportPlaceKind.municipio,
+        uf: 'ac',
+        municipio: 1066,
+      );
+
+      Future<void> drain() =>
+          RelatoriosEndpoint.service.drain(sessionBuilder.build());
+
+      test('a request is queued and the queue is woken', () async {
+        final r = await relatorios.pedir(ana, _spec([1, 3], ac));
+        expect(r.status, ReportStatus.queued);
+        expect([r.filesDone, r.filesTotal], [0, 2]);
+        expect(scheduled, 1);
+        expect(await relatorios.listar(ana), [
+          isA<ReportRequest>().having((r) => r.id, 'id', r.id),
+        ]);
+      });
+
+      test('the queue builds the report and stores its CSV', () async {
+        final r = await relatorios.pedir(ana, _spec([1, 3], ac));
+        await drain();
+        final done = (await relatorios.listar(ana)).single;
+        expect(done.status, ReportStatus.ready);
+        expect(done.filesDone, done.filesTotal);
+        expect(done.sha256, hasLength(64));
+        final bytes = Uint8List.sublistView(
+          await relatorios.baixar(ana, r.id!, 'csv'),
+        );
+        // A BOM, so spreadsheet apps read the accents.
+        expect(bytes.take(3), [0xEF, 0xBB, 0xBF]);
+        final lines = utf8.decode(bytes).split('\n');
+        expect(lines.first, startsWith('eleicao,turno,cargo,local'));
+        expect(
+          lines,
+          contains(startsWith('6257,1,1,ac,AC,local,AC,tse,total,,,,488330')),
+        );
+        expect(lines.where((l) => l.startsWith('6259,1,3,ac,')), isNotEmpty);
+      });
+
+      test('a breakdown with a TSE total ends with its check', () async {
+        final r = await relatorios.pedir(
+          ana,
+          ReportSpec(
+            elections: [6257],
+            offices: [1],
+            places: [porto],
+            breakdown: ReportBreakdown.zona,
+            language: 'pt',
+          ),
+        );
+        await drain();
+        final csv = utf8.decode(
+          Uint8List.sublistView(await relatorios.baixar(ana, r.id!, 'csv')),
+        );
+        expect(
+          csv,
+          contains(
+            'ac01066z0004,"PORTO WALTER (AC), zona 4",soma,secoes_somadas,,,,34',
+          ),
+        );
+        expect(csv, contains('conferencia,confere,,,,1,,'));
+      });
+
+      test('reports are built one after another, oldest first', () async {
+        final first = await relatorios.pedir(ana, _spec([1], ac));
+        final second = await relatorios.pedir(bia, _spec([3], ac));
+        await Future.wait([drain(), drain()]);
+        final a = (await relatorios.listar(ana)).single;
+        final b = (await relatorios.listar(bia)).single;
+        expect([a.id, b.id], [first.id, second.id]);
+        expect([a.status, b.status], everyElement(ReportStatus.ready));
+        expect(b.startedAt!.isBefore(a.finishedAt!), isFalse);
+      });
+
+      test('one report in the queue per viewer', () async {
+        await relatorios.pedir(ana, _spec([1], ac));
+        await expectLater(
+          relatorios.pedir(ana, _spec([3], ac)),
+          throwsA(
+            isA<ReportRefused>().having((e) => e.reason, 'reason', 'busy'),
+          ),
+        );
+        await drain();
+        await relatorios.pedir(ana, _spec([3], ac));
+      });
+
+      test('a spec over the limit is refused', () async {
+        await expectLater(
+          relatorios.pedir(
+            ana,
+            _spec([1], ReportPlace(kind: ReportPlaceKind.br))
+              ..breakdown = ReportBreakdown.zona,
+          ),
+          throwsA(
+            isA<ReportRefused>().having((e) => e.reason, 'reason', 'tooLarge'),
+          ),
+        );
+      });
+
+      test('when TSE fails, the report fails and the queue goes on', () async {
+        http.failWith = 503;
+        final failing = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        http.failWith = null;
+        final r = (await relatorios.listar(ana)).single;
+        expect(r.id, failing.id);
+        expect(
+          [r.status, r.errorReason],
+          [
+            ReportStatus.failed,
+            'tseUnavailable',
+          ],
+        );
+        await expectLater(
+          relatorios.baixar(ana, r.id!, 'csv'),
+          throwsA(isA<ReportRefused>()),
+        );
+        final next = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        expect(
+          (await relatorios.listar(
+            ana,
+          )).singleWhere((r) => r.id == next.id).status,
+          ReportStatus.ready,
+        );
+      });
+
+      test('following a report streams it until it is ready', () async {
+        final r = await relatorios.pedir(ana, _spec([1, 3], ac));
+        final seen = <ReportStatus>[];
+        final done = relatorios
+            .acompanhar(ana, r.id!)
+            .map((r) => r.status)
+            .forEach(seen.add);
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await drain();
+        await done.timeout(const Duration(seconds: 10));
+        expect(seen.first, ReportStatus.queued);
+        expect(seen.last, ReportStatus.ready);
+        expect(seen, contains(ReportStatus.running));
+      });
+
+      test('a finished report streams once and ends', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        expect(
+          await relatorios.acompanhar(ana, r.id!).map((r) => r.status).toList(),
+          [ReportStatus.ready],
+        );
+      });
+
+      test(
+        "nobody else can see, follow or download a viewer's report",
+        () async {
+          final r = await relatorios.pedir(ana, _spec([1], ac));
+          await drain();
+          expect(await relatorios.listar(bia), isEmpty);
+          for (final call in [
+            () => relatorios.baixar(bia, r.id!, 'csv'),
+            () => relatorios.acompanhar(bia, r.id!).first,
+            () => relatorios.publicar(bia, r.id!, true),
+            () => relatorios.apagar(bia, r.id!),
+          ]) {
+            await expectLater(
+              call(),
+              throwsA(
+                isA<ReportRefused>().having(
+                  (e) => e.reason,
+                  'reason',
+                  'notFound',
+                ),
+              ),
+            );
+          }
+        },
+      );
+
+      test('a published report is readable by its token, until '
+          'unpublished', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        final service = RelatoriosEndpoint.service;
+        final session = sessionBuilder.build();
+        final published = await relatorios.publicar(ana, r.id!, true);
+        final token = published.publicToken!;
+        expect(token, hasLength(22));
+        expect((await service.published(session, token))!.id, r.id);
+        expect(await service.publishedFile(session, token, 'csv'), isNotNull);
+        expect(await service.publishedFile(session, token, 'pdf'), isNull);
+
+        await relatorios.publicar(ana, r.id!, false);
+        expect(await service.published(session, token), isNull);
+        expect(await service.publishedFile(session, token, 'csv'), isNull);
+      });
+
+      test('only a ready report can be published', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await expectLater(
+          relatorios.publicar(ana, r.id!, true),
+          throwsA(isA<ReportRefused>()),
+        );
+      });
+
+      test('deleting a report deletes its files', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        await drain();
+        await relatorios.apagar(ana, r.id!);
+        expect(await relatorios.listar(ana), isEmpty);
+        expect(
+          await sessionBuilder.build().storage.fileExists(
+            storageId: ReportService.storageId,
+            path: ReportService.filePath(r.id!, 'csv'),
+          ),
+          isFalse,
+        );
+      });
+
+      test('after a restart, a report left running is queued again', () async {
+        final r = await relatorios.pedir(ana, _spec([1], ac));
+        final session = sessionBuilder.build();
+        await ReportRequest.db.updateRow(
+          session,
+          r.copyWith(status: ReportStatus.running, filesDone: 1),
+        );
+        expect(await RelatoriosEndpoint.service.recover(session), isTrue);
+        final again = (await relatorios.listar(ana)).single;
+        expect([again.status, again.filesDone], [ReportStatus.queued, 0]);
+      });
+
+      test('deleting the account deletes its reports', () async {
+        await relatorios.pedir(ana, _spec([1], ac));
+        final session = sessionBuilder.build();
+        await AuthUser.db.deleteWhere(
+          session,
+          where: (t) => t.id.notEquals(null),
+        );
+        expect(await ReportRequest.db.count(session), 0);
       });
     });
   });

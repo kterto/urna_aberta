@@ -24,6 +24,8 @@ import 'package:urna_aberta_client/src/protocol/file_verification.dart'
     as _i4bcni6a;
 import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
     as _iawxlp65;
+import 'package:urna_aberta_client/src/protocol/reports/report_request.dart'
+    as _i4u38mzp;
 import 'package:urna_aberta_client/src/protocol/timeline_point.dart'
     as _ipzn9brv;
 import 'bu_check.dart' as _ijbwnxcy;
@@ -50,7 +52,9 @@ import 'reports/report_place.dart' as _ivpf0ztf;
 import 'reports/report_place_kind.dart' as _ii4sj20c;
 import 'reports/report_quote.dart' as _incjw5yy;
 import 'reports/report_refused.dart' as _ic38joef;
+import 'reports/report_request.dart' as _ixixo8eu;
 import 'reports/report_spec.dart' as _i8pq152b;
+import 'reports/report_status.dart' as _ie09c4o9;
 import 'result_file.dart' as _ihi5zekk;
 import 'result_snapshot.dart' as _i4dv59av;
 import 'result_unavailable.dart' as _ip5wxoe5;
@@ -91,7 +95,9 @@ export 'reports/report_place.dart';
 export 'reports/report_place_kind.dart';
 export 'reports/report_quote.dart';
 export 'reports/report_refused.dart';
+export 'reports/report_request.dart';
 export 'reports/report_spec.dart';
+export 'reports/report_status.dart';
 export 'result_file.dart';
 export 'result_snapshot.dart';
 export 'result_unavailable.dart';
@@ -216,8 +222,14 @@ class Protocol extends _isc.SerializationManager {
     if (t == _ic38joef.ReportRefused) {
       return _ic38joef.ReportRefused.fromJson(data) as T;
     }
+    if (t == _ixixo8eu.ReportRequest) {
+      return _ixixo8eu.ReportRequest.fromJson(data) as T;
+    }
     if (t == _i8pq152b.ReportSpec) {
       return _i8pq152b.ReportSpec.fromJson(data) as T;
+    }
+    if (t == _ie09c4o9.ReportStatus) {
+      return _ie09c4o9.ReportStatus.fromJson(data) as T;
     }
     if (t == _ihi5zekk.ResultFile) {
       return _ihi5zekk.ResultFile.fromJson(data) as T;
@@ -355,8 +367,15 @@ class Protocol extends _isc.SerializationManager {
       return (data != null ? _ic38joef.ReportRefused.fromJson(data) : null)
           as T;
     }
+    if (t == _isc.getType<_ixixo8eu.ReportRequest?>()) {
+      return (data != null ? _ixixo8eu.ReportRequest.fromJson(data) : null)
+          as T;
+    }
     if (t == _isc.getType<_i8pq152b.ReportSpec?>()) {
       return (data != null ? _i8pq152b.ReportSpec.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_ie09c4o9.ReportStatus?>()) {
+      return (data != null ? _ie09c4o9.ReportStatus.fromJson(data) : null) as T;
     }
     if (t == _isc.getType<_ihi5zekk.ResultFile?>()) {
       return (data != null ? _ihi5zekk.ResultFile.fromJson(data) : null) as T;
@@ -525,6 +544,12 @@ class Protocol extends _isc.SerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_i4u38mzp.ReportRequest>) {
+      return (data as List)
+              .map((e) => deserialize<_i4u38mzp.ReportRequest>(e))
+              .toList()
+          as T;
+    }
     if (t == List<_i35jelvf.ElectionSummary>) {
       return (data as List)
               .map((e) => deserialize<_i35jelvf.ElectionSummary>(e))
@@ -581,7 +606,9 @@ class Protocol extends _isc.SerializationManager {
       _ii4sj20c.ReportPlaceKind => 'ReportPlaceKind',
       _incjw5yy.ReportQuote => 'ReportQuote',
       _ic38joef.ReportRefused => 'ReportRefused',
+      _ixixo8eu.ReportRequest => 'ReportRequest',
       _i8pq152b.ReportSpec => 'ReportSpec',
+      _ie09c4o9.ReportStatus => 'ReportStatus',
       _ihi5zekk.ResultFile => 'ResultFile',
       _i4dv59av.ResultSnapshot => 'ResultSnapshot',
       _ip5wxoe5.ResultUnavailable => 'ResultUnavailable',
@@ -660,8 +687,12 @@ class Protocol extends _isc.SerializationManager {
         return 'ReportQuote';
       case _ic38joef.ReportRefused():
         return 'ReportRefused';
+      case _ixixo8eu.ReportRequest():
+        return 'ReportRequest';
       case _i8pq152b.ReportSpec():
         return 'ReportSpec';
+      case _ie09c4o9.ReportStatus():
+        return 'ReportStatus';
       case _ihi5zekk.ResultFile():
         return 'ResultFile';
       case _i4dv59av.ResultSnapshot():
@@ -788,8 +819,14 @@ class Protocol extends _isc.SerializationManager {
     if (dataClassName == 'ReportRefused') {
       return deserialize<_ic38joef.ReportRefused>(data['data']);
     }
+    if (dataClassName == 'ReportRequest') {
+      return deserialize<_ixixo8eu.ReportRequest>(data['data']);
+    }
     if (dataClassName == 'ReportSpec') {
       return deserialize<_i8pq152b.ReportSpec>(data['data']);
+    }
+    if (dataClassName == 'ReportStatus') {
+      return deserialize<_ie09c4o9.ReportStatus>(data['data']);
     }
     if (dataClassName == 'ResultFile') {
       return deserialize<_ihi5zekk.ResultFile>(data['data']);

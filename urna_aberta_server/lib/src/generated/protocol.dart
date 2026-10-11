@@ -25,6 +25,8 @@ import 'package:urna_aberta_server/src/generated/file_verification.dart'
     as _i5a4izj1;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
     as _i5vkvva1;
+import 'package:urna_aberta_server/src/generated/reports/report_request.dart'
+    as _iwe7yug1;
 import 'package:urna_aberta_server/src/generated/timeline_point.dart'
     as _ir3q3hqp;
 import 'bu_check.dart' as _ijbwnxcy;
@@ -51,7 +53,9 @@ import 'reports/report_place.dart' as _ivpf0ztf;
 import 'reports/report_place_kind.dart' as _ii4sj20c;
 import 'reports/report_quote.dart' as _incjw5yy;
 import 'reports/report_refused.dart' as _ic38joef;
+import 'reports/report_request.dart' as _ixixo8eu;
 import 'reports/report_spec.dart' as _i8pq152b;
+import 'reports/report_status.dart' as _ie09c4o9;
 import 'result_file.dart' as _ihi5zekk;
 import 'result_snapshot.dart' as _i4dv59av;
 import 'result_unavailable.dart' as _ip5wxoe5;
@@ -92,7 +96,9 @@ export 'reports/report_place.dart';
 export 'reports/report_place_kind.dart';
 export 'reports/report_quote.dart';
 export 'reports/report_refused.dart';
+export 'reports/report_request.dart';
 export 'reports/report_spec.dart';
+export 'reports/report_status.dart';
 export 'result_file.dart';
 export 'result_snapshot.dart';
 export 'result_unavailable.dart';
@@ -334,6 +340,149 @@ class Protocol extends _is.DatabaseSerializationManager {
           ],
           type: 'btree',
           isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'report_request',
+      dartName: 'ReportRequest',
+      schema: 'public',
+      module: 'urna_aberta',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'authUserId',
+          columnType: _isp.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue',
+        ),
+        _isp.ColumnDefinition(
+          name: 'spec',
+          columnType: _isp.ColumnType.json,
+          isNullable: false,
+          dartType: 'protocol:ReportSpec',
+        ),
+        _isp.ColumnDefinition(
+          name: 'status',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'protocol:ReportStatus',
+        ),
+        _isp.ColumnDefinition(
+          name: 'filesDone',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'filesTotal',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'errorReason',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'startedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'finishedAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'sha256',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'publicToken',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+      ],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'report_request_fk_0',
+          columns: ['authUserId'],
+          referenceTable: 'serverpod_auth_core_user',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.cascade,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'report_request_owner_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'authUserId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'createdAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'report_request_status_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'status',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'createdAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'report_request_public_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'publicToken',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
           isPrimary: false,
         ),
       ],
@@ -979,8 +1128,14 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _ic38joef.ReportRefused) {
       return _ic38joef.ReportRefused.fromJson(data) as T;
     }
+    if (t == _ixixo8eu.ReportRequest) {
+      return _ixixo8eu.ReportRequest.fromJson(data) as T;
+    }
     if (t == _i8pq152b.ReportSpec) {
       return _i8pq152b.ReportSpec.fromJson(data) as T;
+    }
+    if (t == _ie09c4o9.ReportStatus) {
+      return _ie09c4o9.ReportStatus.fromJson(data) as T;
     }
     if (t == _ihi5zekk.ResultFile) {
       return _ihi5zekk.ResultFile.fromJson(data) as T;
@@ -1118,8 +1273,15 @@ class Protocol extends _is.DatabaseSerializationManager {
       return (data != null ? _ic38joef.ReportRefused.fromJson(data) : null)
           as T;
     }
+    if (t == _is.getType<_ixixo8eu.ReportRequest?>()) {
+      return (data != null ? _ixixo8eu.ReportRequest.fromJson(data) : null)
+          as T;
+    }
     if (t == _is.getType<_i8pq152b.ReportSpec?>()) {
       return (data != null ? _i8pq152b.ReportSpec.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_ie09c4o9.ReportStatus?>()) {
+      return (data != null ? _ie09c4o9.ReportStatus.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_ihi5zekk.ResultFile?>()) {
       return (data != null ? _ihi5zekk.ResultFile.fromJson(data) : null) as T;
@@ -1288,6 +1450,12 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_iwe7yug1.ReportRequest>) {
+      return (data as List)
+              .map((e) => deserialize<_iwe7yug1.ReportRequest>(e))
+              .toList()
+          as T;
+    }
     if (t == List<_i22tx4kq.ElectionSummary>) {
       return (data as List)
               .map((e) => deserialize<_i22tx4kq.ElectionSummary>(e))
@@ -1347,7 +1515,9 @@ class Protocol extends _is.DatabaseSerializationManager {
       _ii4sj20c.ReportPlaceKind => 'ReportPlaceKind',
       _incjw5yy.ReportQuote => 'ReportQuote',
       _ic38joef.ReportRefused => 'ReportRefused',
+      _ixixo8eu.ReportRequest => 'ReportRequest',
       _i8pq152b.ReportSpec => 'ReportSpec',
+      _ie09c4o9.ReportStatus => 'ReportStatus',
       _ihi5zekk.ResultFile => 'ResultFile',
       _i4dv59av.ResultSnapshot => 'ResultSnapshot',
       _ip5wxoe5.ResultUnavailable => 'ResultUnavailable',
@@ -1426,8 +1596,12 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'ReportQuote';
       case _ic38joef.ReportRefused():
         return 'ReportRefused';
+      case _ixixo8eu.ReportRequest():
+        return 'ReportRequest';
       case _i8pq152b.ReportSpec():
         return 'ReportSpec';
+      case _ie09c4o9.ReportStatus():
+        return 'ReportStatus';
       case _ihi5zekk.ResultFile():
         return 'ResultFile';
       case _i4dv59av.ResultSnapshot():
@@ -1558,8 +1732,14 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'ReportRefused') {
       return deserialize<_ic38joef.ReportRefused>(data['data']);
     }
+    if (dataClassName == 'ReportRequest') {
+      return deserialize<_ixixo8eu.ReportRequest>(data['data']);
+    }
     if (dataClassName == 'ReportSpec') {
       return deserialize<_i8pq152b.ReportSpec>(data['data']);
+    }
+    if (dataClassName == 'ReportStatus') {
+      return deserialize<_ie09c4o9.ReportStatus>(data['data']);
     }
     if (dataClassName == 'ResultFile') {
       return deserialize<_ihi5zekk.ResultFile>(data['data']);
@@ -1658,6 +1838,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return _i3f5hnmb.DivergenceEvent.t;
       case _i1gec43k.VoterPlace:
         return _i1gec43k.VoterPlace.t;
+      case _ixixo8eu.ReportRequest:
+        return _ixixo8eu.ReportRequest.t;
       case _ihi5zekk.ResultFile:
         return _ihi5zekk.ResultFile.t;
       case _i4dv59av.ResultSnapshot:

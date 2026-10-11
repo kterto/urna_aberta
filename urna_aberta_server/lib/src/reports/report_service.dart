@@ -1,22 +1,326 @@
+import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 import 'package:serverpod/serverpod.dart' hide Scope;
+import 'package:serverpod_auth_idp_server/core.dart';
 
 import '../generated/protocol.dart';
+import '../tse/tse_client.dart';
 import 'report_builder.dart';
+import 'report_csv.dart';
 import 'report_plan.dart';
 
-/// Reports: quoting a spec, and (later) queuing and building it.
+/// Reports: quoting a spec, queuing it, building it in the background one
+/// at a time, and handing out its files.
 class ReportService {
   ReportService({
     required this.planner,
     required this.builder,
     required this.ratePerSecond,
-  });
+    Future<void> Function()? schedule,
+    DateTime Function()? now,
+  }) : _schedule = schedule ?? (() async {}),
+       _now = now ?? DateTime.now;
 
   final ReportPlanner planner;
   final ReportBuilder builder;
 
   /// The TSE client's rate, for the time estimate.
   final double ratePerSecond;
+
+  /// Asks for [drain] to run soon, outside the request (a FutureCall).
+  final Future<void> Function() _schedule;
+  final DateTime Function() _now;
+
+  /// Private storage, so a report is read only through its owner or its
+  /// public link while published.
+  static const storageId = 'private';
+
+  /// How often progress is saved and sent while a report is built.
+  static const progressEvery = Duration(seconds: 1);
+
+  static String channel(int id) => 'relatorio-$id';
+
+  static String filePath(int id, String format) =>
+      'relatorios/$id/relatorio.$format';
+
+  /// The report's formats, by extension.
+  static const formats = {'csv': 'text/csv; charset=utf-8'};
+
+  /// Queues [spec] for the viewer. Refused when it names anything TSE does
+  /// not list, reads more than [ReportPlanner.fileLimit] files, or the
+  /// viewer already has a report waiting or running.
+  Future<ReportRequest> request(Session session, ReportSpec spec) async {
+    final owner = session.authenticated!.authUserId;
+    final plan = await planner.plan(spec);
+    final pending = await ReportRequest.db.count(
+      session,
+      where: (t) =>
+          t.authUserId.equals(owner) &
+          t.status.inSet({ReportStatus.queued, ReportStatus.running}),
+    );
+    if (pending > 0) {
+      throw ReportRefused(
+        message: 'Você já tem um relatório na fila. Espere ele terminar.',
+        reason: 'busy',
+      );
+    }
+    final request = await ReportRequest.db.insertRow(
+      session,
+      ReportRequest(
+        authUserId: owner,
+        spec: spec,
+        status: ReportStatus.queued,
+        filesDone: 0,
+        filesTotal: plan.files,
+        createdAt: _now().toUtc(),
+      ),
+    );
+    await _schedule();
+    return request;
+  }
+
+  /// The viewer's reports, newest first.
+  Future<List<ReportRequest>> list(Session session) => ReportRequest.db.find(
+    session,
+    where: (t) => t.authUserId.equals(session.authenticated!.authUserId),
+    orderBy: (t) => t.createdAt.desc(),
+  );
+
+  /// The viewer's report [id]: its current state, then every change until
+  /// it is ready or failed.
+  Stream<ReportRequest> follow(Session session, int id) async* {
+    final updates = session.messages.createStream<ReportRequest>(channel(id));
+    // Read after subscribing, so no change falls between the two.
+    var current = await _owned(session, id);
+    yield current;
+    if (_finished(current)) return;
+    await for (final r in updates) {
+      if (r.filesDone < current.filesDone && r.status == current.status) {
+        continue;
+      }
+      current = r;
+      yield r;
+      if (_finished(r)) return;
+    }
+  }
+
+  /// One of the viewer's ready reports, in [format].
+  Future<ByteData> download(Session session, int id, String format) async {
+    final r = await _owned(session, id);
+    return _file(session, r, format);
+  }
+
+  /// Gives a ready report a public link, or takes it away.
+  Future<ReportRequest> publish(Session session, int id, bool public) async {
+    final r = await _owned(session, id);
+    if (r.status != ReportStatus.ready) {
+      throw ReportRefused(
+        message: 'Só um relatório pronto pode ser publicado.',
+        reason: 'invalidRequest',
+      );
+    }
+    if (public == (r.publicToken != null)) return r;
+    return ReportRequest.db.updateRow(
+      session,
+      r.copyWith(publicToken: public ? _token() : null),
+    );
+  }
+
+  /// Deletes the viewer's report and its files.
+  Future<void> delete(Session session, int id) async {
+    final r = await _owned(session, id);
+    if (r.status == ReportStatus.running) {
+      throw ReportRefused(
+        message: 'Espere o relatório terminar para apagá-lo.',
+        reason: 'busy',
+      );
+    }
+    for (final format in formats.keys) {
+      await session.storage.deleteFile(
+        storageId: storageId,
+        path: filePath(id, format),
+      );
+    }
+    await ReportRequest.db.deleteRow(session, r);
+  }
+
+  /// A published report, by its public token; null when there is none.
+  Future<ReportRequest?> published(Session session, String token) =>
+      ReportRequest.db.findFirstRow(
+        session,
+        where: (t) =>
+            t.publicToken.equals(token) & t.status.equals(ReportStatus.ready),
+      );
+
+  /// A published report's file, by its public token; null when there is
+  /// no such report or format.
+  Future<ByteData?> publishedFile(
+    Session session,
+    String token,
+    String format,
+  ) async {
+    if (!formats.containsKey(format)) return null;
+    final r = await published(session, token);
+    return r == null ? null : _file(session, r, format);
+  }
+
+  /// Builds every queued report, oldest first, one at a time on this
+  /// server. Called by the FutureCall [_schedule] starts.
+  Future<void> drain(Session session) => _running = _running.then(
+    (_) => _drainNow(session),
+    onError: (_) => _drainNow(session),
+  );
+
+  Future<void> _running = Future.value();
+
+  Future<void> _drainNow(Session session) async {
+    while (true) {
+      final next = await ReportRequest.db.findFirstRow(
+        session,
+        where: (t) => t.status.equals(ReportStatus.queued),
+        orderBy: (t) => t.createdAt,
+      );
+      if (next == null) return;
+      await _build(session, next);
+    }
+  }
+
+  /// After a restart: a report left running is queued again. Returns
+  /// whether any report is waiting.
+  Future<bool> recover(Session session) async {
+    final stuck = await ReportRequest.db.find(
+      session,
+      where: (t) => t.status.equals(ReportStatus.running),
+    );
+    for (final r in stuck) {
+      await ReportRequest.db.updateRow(
+        session,
+        r.copyWith(status: ReportStatus.queued, filesDone: 0),
+      );
+    }
+    return await ReportRequest.db.count(
+          session,
+          where: (t) => t.status.equals(ReportStatus.queued),
+        ) >
+        0;
+  }
+
+  Future<void> _build(Session session, ReportRequest request) async {
+    var r = await _save(
+      session,
+      request.copyWith(
+        status: ReportStatus.running,
+        startedAt: _now().toUtc(),
+        filesDone: 0,
+      ),
+    );
+    var lastSaved = _now();
+    // Progress is saved in order, and always before the outcome: a late
+    // progress write would otherwise put a finished report back to running.
+    var progressWrites = Future<void>.value();
+    try {
+      final plan = await planner.plan(r.spec);
+      r = await _save(session, r.copyWith(filesTotal: plan.files));
+      final tables = await builder.build(
+        session,
+        plan,
+        onProgress: (done, total) {
+          if (_now().difference(lastSaved) < progressEvery) return;
+          lastSaved = _now();
+          final snapshot = r = r.copyWith(filesDone: done);
+          // Sent as it happens; saved for whoever reconnects.
+          session.messages.postMessage(channel(r.id!), snapshot).ignore();
+          progressWrites = progressWrites.then(
+            (_) => ReportRequest.db.updateRow(session, snapshot),
+          );
+        },
+      );
+      await progressWrites;
+      final csv = reportCsv(tables);
+      await session.storage.storeFile(
+        storageId: storageId,
+        path: filePath(r.id!, 'csv'),
+        byteData: ByteData.sublistView(Uint8List.fromList(csv)),
+      );
+      r = await _save(
+        session,
+        r.copyWith(
+          status: ReportStatus.ready,
+          filesDone: plan.files,
+          finishedAt: _now().toUtc(),
+          sha256: sha256.convert(csv).toString(),
+        ),
+      );
+    } on Exception catch (e, st) {
+      await progressWrites.catchError((_) {});
+      final reason = switch (e) {
+        ReportRefused(:final reason) => reason,
+        ResultUnavailable() ||
+        SectionUnavailableException() ||
+        TseException() => 'tseUnavailable',
+        _ => 'internal',
+      };
+      if (reason == 'internal') {
+        session.log(
+          'Relatório ${r.id} falhou: $e',
+          level: LogLevel.error,
+          exception: e,
+          stackTrace: st,
+        );
+      }
+      await _save(
+        session,
+        r.copyWith(
+          status: ReportStatus.failed,
+          errorReason: reason,
+          finishedAt: _now().toUtc(),
+        ),
+      );
+    }
+  }
+
+  Future<ReportRequest> _save(Session session, ReportRequest r) async {
+    final saved = await ReportRequest.db.updateRow(session, r);
+    await session.messages.postMessage(channel(saved.id!), saved);
+    return saved;
+  }
+
+  Future<ByteData> _file(Session session, ReportRequest r, String format) {
+    if (r.status != ReportStatus.ready || !formats.containsKey(format)) {
+      throw ReportRefused(
+        message: 'Este relatório não tem o arquivo $format.',
+        reason: 'notFound',
+      );
+    }
+    return session.storage.retrieveFile(
+      storageId: storageId,
+      path: filePath(r.id!, format),
+    );
+  }
+
+  Future<ReportRequest> _owned(Session session, int id) async {
+    final r = await ReportRequest.db.findById(session, id);
+    if (r == null || r.authUserId != session.authenticated!.authUserId) {
+      throw ReportRefused(
+        message: 'Relatório não encontrado.',
+        reason: 'notFound',
+      );
+    }
+    return r;
+  }
+
+  static bool _finished(ReportRequest r) =>
+      r.status == ReportStatus.ready || r.status == ReportStatus.failed;
+
+  static final _random = Random.secure();
+
+  /// 128 random bits, URL-safe.
+  static String _token() => base64Url
+      .encode(List<int>.generate(16, (_) => _random.nextInt(256)))
+      .replaceAll('=', '');
 
   Future<ReportQuote> quote(Session session, ReportSpec spec) async {
     final plan = await planner.plan(spec);

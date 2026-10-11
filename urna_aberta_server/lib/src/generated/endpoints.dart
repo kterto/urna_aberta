@@ -470,6 +470,131 @@ class Endpoints extends _is.EndpointDispatch {
                         params['spec'],
                       ),
         ),
+        'pedir': _is.MethodConnector(
+          name: 'pedir',
+          params: {
+            'spec': _is.ParameterDescription(
+              name: 'spec',
+              type: _is.getType<_icv1nmb7.ReportSpec>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .pedir(
+                        session,
+                        params['spec'],
+                      ),
+        ),
+        'listar': _is.MethodConnector(
+          name: 'listar',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .listar(session),
+        ),
+        'baixar': _is.MethodConnector(
+          name: 'baixar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'formato': _is.ParameterDescription(
+              name: 'formato',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .baixar(
+                        session,
+                        params['id'],
+                        params['formato'],
+                      ),
+        ),
+        'publicar': _is.MethodConnector(
+          name: 'publicar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'publico': _is.ParameterDescription(
+              name: 'publico',
+              type: _is.getType<bool>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .publicar(
+                        session,
+                        params['id'],
+                        params['publico'],
+                      ),
+        ),
+        'apagar': _is.MethodConnector(
+          name: 'apagar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .apagar(
+                        session,
+                        params['id'],
+                      ),
+        ),
+        'acompanhar': _is.MethodStreamConnector(
+          name: 'acompanhar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          streamParams: {},
+          returnType: _is.MethodStreamReturnType.streamType,
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) => (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                  .acompanhar(
+                    session,
+                    params['id'],
+                  ),
+        ),
       },
     );
     connectors['resultados'] = _is.EndpointConnector(

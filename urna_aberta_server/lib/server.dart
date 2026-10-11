@@ -12,6 +12,7 @@ import 'src/live/live_poll_call.dart';
 import 'src/meu_local/meu_local_endpoint.dart';
 import 'src/replay/fixture_seeder.dart';
 import 'src/reports/relatorios_endpoint.dart';
+import 'src/reports/report_call.dart';
 import 'src/reports/report_builder.dart';
 import 'src/reports/report_plan.dart';
 import 'src/reports/report_service.dart';
@@ -24,6 +25,7 @@ import 'src/tse/token_bucket.dart';
 import 'src/tse/tse_client.dart';
 import 'src/tse/tse_urls.dart';
 import 'src/web/routes/app_config_route.dart';
+import 'src/web/routes/public_report_route.dart';
 import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
@@ -150,7 +152,7 @@ void run(List<String> args) async {
     client: tse,
     elections: () => live?.elections ?? archivedElections,
   );
-  RelatoriosEndpoint.service = ReportService(
+  final reports = RelatoriosEndpoint.service = ReportService(
     planner: ReportPlanner(
       elections: () => live?.elections ?? archivedElections,
       municipalities: results.municipalities,
@@ -158,12 +160,17 @@ void run(List<String> args) async {
     ),
     builder: ReportBuilder.fromServices(results, sectionService),
     ratePerSecond: 20,
+    schedule: () =>
+        pod.futureCalls.callWithDelay(Duration.zero).reportCall.drain(),
   );
+  ReportCall.service = reports;
+  pod.webServer.addRoute(PublicReportRoute(reports), '/r/**');
 
   // Start the server.
   await pod.start();
 
   await _seedReplayFixtures(pod);
+  await _resumeReports(pod, reports);
 
   if (live != null) {
     LivePollCall.ingestor = live;
@@ -234,6 +241,26 @@ Future<void> _seedReplayFixtures(Serverpod pod) async {
   } catch (e, st) {
     session.log(
       'Replay fixtures failed to load',
+      level: LogLevel.error,
+      exception: e,
+      stackTrace: st,
+    );
+  } finally {
+    await session.close();
+  }
+}
+
+/// Reports left running by a restart are queued again, and the queue is
+/// drained if anything waits.
+Future<void> _resumeReports(Serverpod pod, ReportService reports) async {
+  final session = await pod.createSession();
+  try {
+    if (await reports.recover(session)) {
+      await pod.futureCalls.callWithDelay(Duration.zero).reportCall.drain();
+    }
+  } catch (e, st) {
+    session.log(
+      'Reports not resumed: $e',
       level: LogLevel.error,
       exception: e,
       stackTrace: st,

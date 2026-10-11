@@ -3,5 +3,6 @@
 exception: ReportRefused
 fields:
   message: String
-  ### `invalidRequest`, `notPublished` or `tooLarge`.
+  ### `invalidRequest`, `notPublished`, `tooLarge` (over the file limit),
+  ### `busy` (the viewer already has a report in the queue) or `notFound`.
   reason: String

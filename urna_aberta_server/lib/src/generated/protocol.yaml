@@ -21,6 +21,12 @@ tally:
   - live:
 relatorios:
   - orcar:
+  - pedir:
+  - listar:
+  - acompanhar:
+  - baixar:
+  - publicar:
+  - apagar:
 resultados:
   - eleicoes:
   - municipios:

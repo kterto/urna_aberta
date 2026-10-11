@@ -11,7 +11,11 @@ import 'package:urna_aberta_server/src/verify/jws.dart';
 
 const _root = '../fixtures';
 
-Municipalities _ea12(Election e) {
+final _ea12Cache = <int, Municipalities>{};
+
+Municipalities _ea12(Election e) => _ea12Cache[e.day.$1] ??= _readEa12(e);
+
+Municipalities _readEa12(Election e) {
   if (e.day.$1 == 2024) {
     final jws = File(
       '$_root/2024/oficial/ele2024/619/config/mun-e000619-cm.jws',
@@ -266,11 +270,32 @@ void main() {
     });
   });
 
-  test('a plan over the limit is still planned, and says so', () async {
+  test('a spec over the limit is refused as soon as it passes it', () async {
+    await refused(spec([11, 13], [br], elections: [619]), 'tooLarge');
+    // Brazil by zone would list every zone of every UF first.
+    await refused(spec([1], [br], breakdown: ReportBreakdown.zona), 'tooLarge');
+  });
+
+  test('every table names its place', () async {
     final p = await planner.plan(
-      spec([11, 13], [br], elections: [619]),
+      spec(
+        [1],
+        [br, regiao('ne'), uf('zz'), secao('ac', 1066, 4, 77)],
+      ),
     );
-    expect(p.files, 5569 * 2);
-    expect(p.files, greaterThan(ReportPlanner.fileLimit));
+    expect(p.items.map((i) => i.placeName), [
+      'Brasil',
+      'Nordeste',
+      'Exterior',
+      'PORTO WALTER (AC), zona 4, seção 77',
+    ]);
+    expect(placeCode(p.items.last.place), 'ac01066z0004s0077');
+    final city = await planner.plan(
+      spec([1], [municipio('ac', 1066)], breakdown: ReportBreakdown.zona),
+    );
+    expect(
+      city.items.single.breakdown.single.placeName,
+      'PORTO WALTER (AC), zona 4',
+    );
   });
 }

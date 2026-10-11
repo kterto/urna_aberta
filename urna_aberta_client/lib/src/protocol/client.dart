@@ -11,6 +11,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _ida;
+import 'dart:typed_data' as _idt;
 import 'package:http/http.dart' as _i85jenna;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _iacc;
@@ -35,6 +36,8 @@ import 'package:urna_aberta_client/src/protocol/office_report.dart'
 import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
 import 'package:urna_aberta_client/src/protocol/reports/report_quote.dart'
     as _i9larcy2;
+import 'package:urna_aberta_client/src/protocol/reports/report_request.dart'
+    as _i4u38mzp;
 import 'package:urna_aberta_client/src/protocol/reports/report_spec.dart'
     as _ipm39ypz;
 import 'package:urna_aberta_client/src/protocol/section_report.dart'
@@ -385,6 +388,66 @@ class EndpointRelatorios extends _isc.EndpointRef {
         'orcar',
         {'spec': spec},
       );
+
+  /// Queues [spec]; the report is built in the background.
+  _ida.Future<_i4u38mzp.ReportRequest> pedir(_ipm39ypz.ReportSpec spec) =>
+      caller.callServerEndpoint<_i4u38mzp.ReportRequest>(
+        'relatorios',
+        'pedir',
+        {'spec': spec},
+      );
+
+  /// The viewer's reports, newest first.
+  _ida.Future<List<_i4u38mzp.ReportRequest>> listar() =>
+      caller.callServerEndpoint<List<_i4u38mzp.ReportRequest>>(
+        'relatorios',
+        'listar',
+        {},
+      );
+
+  /// One report's state now, then each change until it is ready or failed.
+  _ida.Stream<_i4u38mzp.ReportRequest> acompanhar(int id) =>
+      caller.callStreamingServerEndpoint<
+        _ida.Stream<_i4u38mzp.ReportRequest>,
+        _i4u38mzp.ReportRequest
+      >(
+        'relatorios',
+        'acompanhar',
+        {'id': id},
+        {},
+      );
+
+  /// A ready report's file: `csv`.
+  _ida.Future<_idt.ByteData> baixar(
+    int id,
+    String formato,
+  ) => caller.callServerEndpoint<_idt.ByteData>(
+    'relatorios',
+    'baixar',
+    {
+      'id': id,
+      'formato': formato,
+    },
+  );
+
+  /// Gives a ready report a public link (`/r/<publicToken>`), or removes it.
+  _ida.Future<_i4u38mzp.ReportRequest> publicar(
+    int id,
+    bool publico,
+  ) => caller.callServerEndpoint<_i4u38mzp.ReportRequest>(
+    'relatorios',
+    'publicar',
+    {
+      'id': id,
+      'publico': publico,
+    },
+  );
+
+  _ida.Future<void> apagar(int id) => caller.callServerEndpoint<void>(
+    'relatorios',
+    'apagar',
+    {'id': id},
+  );
 }
 
 /// Resultados: the published result of any office, in any scope, for every

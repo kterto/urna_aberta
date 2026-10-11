@@ -73,10 +73,10 @@ The CSV is the same tables in long format: `eleicao, cargo, local, nivel, candid
   - It is pure Dart, so it can be tested on fixtures.
   - It works from the spec to a list of files, then to stored or fetched files, then to aggregates, and then to the PDF (`pdf` package) and the CSV.
   - It reuses `ResultsService` (EA20 reading, `allocateSeats`) and `SectionService` (BU, signatures).
-- **Reuse**: a spec identical to a finished report's, where every file was already final, returns that report instead of building it again.
+- **Reuse**: not built. Each report reads stored files from the database, so building one again costs no TSE requests once its files are final.
 - **Limits**:
   - One queued report per account.
-  - At most 3,000 TSE files per report. That covers every city of MG for two offices, and roughly 5 zones' worth of sections. Larger specs are refused at the quote, with the number.
+  - At most 3,000 TSE files per report. That covers every city of MG for two offices, and roughly 5 zones' worth of sections. Planning stops as soon as a spec passes the limit, so Brazil broken down by zone is refused without listing every section first. The quote and the request are refused with `tooLarge`.
 - **Cache**: the Câmara total goes into `session.caches.local`, keyed by the election and the newest stored file, to fix its 25 s cold call.
 
 ## App

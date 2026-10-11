@@ -38,7 +38,8 @@ abstract class ReportRefused
 
   String message;
 
-  /// `invalidRequest`, `notPublished` or `tooLarge`.
+  /// `invalidRequest`, `notPublished`, `tooLarge` (over the file limit),
+  /// `busy` (the viewer already has a report in the queue) or `notFound`.
   String reason;
 
   /// Returns a shallow copy of this [ReportRefused]

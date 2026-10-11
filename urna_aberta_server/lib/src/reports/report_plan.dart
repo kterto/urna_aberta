@@ -13,6 +13,22 @@ const regions = <String, List<String>>{
   's': ['pr', 'rs', 'sc'],
 };
 
+/// A place as one code: `br`, a region (`n`), a UF (`ac`), a city
+/// (`ac01066`), a zone (`ac01066z0004`) or a section (`ac01066z0004s0077`).
+String placeCode(ReportPlace p) {
+  String pad(int v, int w) => v.toString().padLeft(w, '0');
+  final city = p.municipio == null ? '' : '${p.uf}${pad(p.municipio!, 5)}';
+  return switch (p.kind) {
+    ReportPlaceKind.br => 'br',
+    ReportPlaceKind.regiao => p.regiao!,
+    ReportPlaceKind.uf => p.uf!.toLowerCase(),
+    ReportPlaceKind.municipio => city.toLowerCase(),
+    ReportPlaceKind.zona => '${city}z${pad(p.zona!, 4)}'.toLowerCase(),
+    ReportPlaceKind.secao =>
+      '${city}z${pad(p.zona!, 4)}s${pad(p.secao!, 4)}'.toLowerCase(),
+  };
+}
+
 /// One EA20 result file a report reads.
 typedef ResultNeed = ({int election, Office office, Scope scope});
 
@@ -30,6 +46,7 @@ class ReportItem {
     required this.place,
     required this.results,
     required this.sections,
+    this.placeName = '',
     this.reference,
     this.sectionsWithoutFiles = 0,
     this.breakdown = const [],
@@ -38,6 +55,10 @@ class ReportItem {
   final Election election;
   final Office office;
   final ReportPlace place;
+
+  /// The place as people name it: `Brasil`, `Norte`, `AC`,
+  /// `PORTO WALTER (AC)`, `PORTO WALTER (AC), zona 4`…
+  final String placeName;
   final List<ResultNeed> results;
   final List<SectionNeed> sections;
 
@@ -124,24 +145,45 @@ class ReportPlanner {
       }
     }
     final items = <ReportItem>[];
+    final results = <ResultNeed>{};
+    final sections = <SectionNeed>{};
+    // Stops planning as soon as the files pass the limit: a spec like
+    // Brazil by zone would otherwise list every section first.
+    ReportItem counted(ReportItem i) {
+      results.addAll(i.results);
+      if (i.reference case final r?) results.add(r);
+      sections.addAll(i.sections);
+      final files = results.length + 3 * sections.length;
+      if (files > fileLimit) {
+        throw ReportRefused(
+          message:
+              'O relatório leria mais de $fileLimit arquivos do TSE. '
+              'Escolha menos locais ou um detalhamento menor.',
+          reason: 'tooLarge',
+        );
+      }
+      return i;
+    }
+
     for (final place in spec.places) {
       _checkShape(place);
       for (final e in elections) {
         for (final o in offices) {
           if (!e.offices.contains(o)) continue;
-          final item = await _item(e, o, place);
+          final item = counted(await _item(e, o, place));
           items.add(
             ReportItem(
               election: e,
               office: o,
               place: place,
+              placeName: item.placeName,
               results: item.results,
               sections: item.sections,
               reference: item.reference,
               sectionsWithoutFiles: item.sectionsWithoutFiles,
               breakdown: [
                 for (final sub in await _subPlaces(e, o, place, spec.breakdown))
-                  await _item(e, o, sub),
+                  counted(await _item(e, o, sub)),
               ],
             ),
           );
@@ -184,10 +226,12 @@ class ReportPlanner {
   /// The files giving [place]'s total for one office of one election.
   Future<ReportItem> _item(Election e, Office o, ReportPlace place) async {
     final uf = place.uf?.toLowerCase();
+    final name = await _placeName(e, place);
     ReportItem files(List<Scope> scopes) => ReportItem(
       election: e,
       office: o,
       place: place,
+      placeName: name,
       results: [
         for (final s in scopes) (election: e.code, office: o, scope: s),
       ],
@@ -237,6 +281,7 @@ class ReportPlanner {
           election: e,
           office: o,
           place: place,
+          placeName: name,
           results: const [],
           sections: sections,
           reference: (
@@ -313,6 +358,29 @@ class ReportPlanner {
       );
     }
     return scope;
+  }
+
+  static const _regionNames = {
+    'n': 'Norte',
+    'ne': 'Nordeste',
+    'co': 'Centro-Oeste',
+    'se': 'Sudeste',
+    's': 'Sul',
+  };
+
+  Future<String> _placeName(Election e, ReportPlace p) async {
+    final uf = p.uf?.toUpperCase();
+    final city = p.municipio == null
+        ? null
+        : '${(await _municipalities(e)).byCode(uf!, p.municipio!)?.name ?? p.municipio} ($uf)';
+    return switch (p.kind) {
+      ReportPlaceKind.br => 'Brasil',
+      ReportPlaceKind.regiao => _regionNames[p.regiao]!,
+      ReportPlaceKind.uf => uf == 'ZZ' ? 'Exterior' : uf!,
+      ReportPlaceKind.municipio => city!,
+      ReportPlaceKind.zona => '$city, zona ${p.zona}',
+      ReportPlaceKind.secao => '$city, zona ${p.zona}, seção ${p.secao}',
+    };
   }
 
   /// The scope whose file covers the whole race a city's sections vote in.
