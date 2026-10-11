@@ -33,6 +33,32 @@ void main() {
     expect(c.reports.single.status, ReportStatus.ready);
   });
 
+  test('a dropped stream is followed again while the report runs', () async {
+    c = MeusRelatoriosController(
+      source,
+      open: (u) async => opened.add(u),
+      followAgainAfter: Duration.zero,
+    );
+    source.reports = [
+      sampleRequest(id: 7, status: ReportStatus.running, filesDone: 3),
+    ];
+    await c.load();
+    // The server restarted: the stream ends, the report is queued again.
+    await source.streams.remove(7)!.close();
+    await pumpEventQueue();
+    source.streams[7]!.add(
+      sampleRequest(id: 7, status: ReportStatus.running, filesDone: 40),
+    );
+    await pumpEventQueue();
+    expect(c.reports.single.filesDone, 40);
+
+    source.streams.remove(7)!.addError(StateError('connection lost'));
+    await pumpEventQueue();
+    source.streams[7]!.add(sampleRequest(id: 7));
+    await pumpEventQueue();
+    expect(c.reports.single.status, ReportStatus.ready);
+  });
+
   test('a finished report is not followed', () async {
     source.reports = [sampleRequest()];
     await c.load();

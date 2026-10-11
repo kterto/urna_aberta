@@ -8,12 +8,19 @@ import 'relatorios_source.dart';
 /// "Meus relatórios": the viewer's reports, each unfinished one followed
 /// live until it is ready or failed.
 class MeusRelatoriosController extends ChangeNotifier {
-  MeusRelatoriosController(this._source, {required this.open});
+  MeusRelatoriosController(
+    this._source, {
+    required this.open,
+    this.followAgainAfter = const Duration(seconds: 5),
+  });
 
   final RelatoriosSource _source;
 
   /// Opens a link (a download, or a report's public page).
   final Future<void> Function(Uri) open;
+
+  /// Waits before following again a report whose stream dropped.
+  final Duration followAgainAfter;
 
   List<ReportRequest> _reports = const [];
   bool _loading = false;
@@ -52,11 +59,19 @@ class MeusRelatoriosController extends ChangeNotifier {
         .acompanhar(r.id!)
         .listen(
           _replace,
-          // A dropped stream leaves the last state; reopening the list
-          // follows it again.
-          onError: (Object _) => _following.remove(r.id),
-          onDone: () => _following.remove(r.id),
+          onError: (Object _) => _followAgain(r.id!),
+          onDone: () => _followAgain(r.id!),
         );
+  }
+
+  /// The stream drops when the connection or the server restarts, while
+  /// the report goes on being built.
+  void _followAgain(int id) {
+    _following.remove(id);
+    Timer(followAgainAfter, () {
+      final r = _reports.where((x) => x.id == id).firstOrNull;
+      if (!_disposed && r != null && _unfinished(r)) _follow(r);
+    });
   }
 
   void _replace(ReportRequest r) {
