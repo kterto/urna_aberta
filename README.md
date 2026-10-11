@@ -3,6 +3,8 @@
 **Acompanhe e confira a divulgação dos resultados das eleições brasileiras a partir dos arquivos oficiais do TSE.**
 Follow and verify the publication of Brazilian election results, straight from TSE's official files.
 
+**Live: [urnaberta.serverpod.space](https://urnaberta.serverpod.space/)** (hosted on Serverpod Cloud).
+
 Urna Aberta reads TSE's own signed result files and lets anyone follow an election count live, or look up the result of any Brazilian election, every office, in every state and municipality: President, Governor, Senator, federal, state and district deputies, and in municipal years Mayor and city councillors. Where a number can be recomputed, it recomputes it and says whether it matches TSE: the sum of the states against the national file, the seat allocation of every proportional race, the urna's own signature on the files of your polling section.
 
 It is an independent cross-check, not an official source. It reads only files TSE publishes, never estimates a number, and says plainly what it proves and what it does not. The night of October 4, 2026, when TSE's national display stopped for about 50 minutes while the states kept publishing, is kept as a case study you can replay.
@@ -66,6 +68,10 @@ serverpod start
 `serverpod start` runs the server with its embedded PostgreSQL, applies migrations, launches the Flutter app, and hot-reloads both as you edit. At startup the server loads any 1st-round files from `fixtures/` it has not stored yet, for the replay.
 
 The design-system gallery is not part of the app; run it with `flutter run -t lib/showcase/main.dart` from `urna_aberta_flutter`.
+
+### Deploying
+
+The server, its database and the web build run on Serverpod Cloud (project `urnaberta`). From `urna_aberta_server`, `scloud deploy` regenerates code, builds the Flutter web app into `web/app`, and copies the archived 1st-round files into `web/archive` (Serverpod Cloud uploads only the server package and keeps only `config/`, `web/` and `migrations/`; no route serves `web/archive`). The site root redirects to the app at `/app/`.
 
 ## Tests
 

@@ -1,12 +1,8 @@
-import 'package:urna_aberta_server/src/cache_busting.dart';
-import 'package:urna_aberta_server/src/web/widgets/built_with_serverpod_page.dart';
 import 'package:serverpod/serverpod.dart';
 
+/// The site root opens the Flutter web app.
 class RootRoute extends WidgetRoute {
-  RootRoute() : super(cacheBustingConfig: cacheBustingConfig);
-
   @override
-  Future<TemplateWidget> build(Session session, Request request) async {
-    return BuiltWithServerpodPageWidget();
-  }
+  Future<WebWidget> build(Session session, Request request) async =>
+      RedirectWidget(url: '/app/');
 }

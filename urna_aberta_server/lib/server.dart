@@ -48,8 +48,7 @@ void run(List<String> args) async {
     ],
   );
 
-  // Setup a default page at the web root.
-  // These are used by the default page.
+  // The site root opens the app.
   pod.webServer.addRoute(RootRoute(), '/');
   pod.webServer.addRoute(RootRoute(), '/index.html');
 
@@ -124,7 +123,7 @@ void run(List<String> args) async {
       client: tse,
       urls: urls,
       pleito: 3220,
-      archive: Directory('../fixtures/2026-1t'),
+      archive: _archive,
     ).call,
   );
 
@@ -165,8 +164,21 @@ void run(List<String> args) async {
   }
 }
 
+/// The archived 1st-round files: the repository's `fixtures/` in development,
+/// a copy in `web/archive/` on Serverpod Cloud, which uploads only this
+/// package and keeps only `config/`, `web/` and `migrations/` at runtime.
+/// No route serves `web/archive/`.
+final Directory _archive =
+    [
+      Directory('../fixtures/2026-1t'),
+      Directory('web/archive/2026-1t'),
+    ].firstWhere(
+      (d) => d.existsSync(),
+      orElse: () => Directory('web/archive/2026-1t'),
+    );
+
 List<Election> _archivedElections() {
-  final f = File('../fixtures/2026-1t/oficial/comum/config/ele-c.json');
+  final f = File('${_archive.path}/oficial/comum/config/ele-c.json');
   return f.existsSync() ? parseElections(f.readAsBytesSync()) : const [];
 }
 
@@ -176,7 +188,7 @@ LiveIngestor? _liveIngestor(TseClient tse, TseUrls urls) {
   if (Platform.environment['URNA_LIVE'] == 'off') return null;
   final live = LiveIngestor(client: tse, urls: urls);
   // Known elections until the first EA11 refresh succeeds.
-  final archived = File('../fixtures/2026-1t/oficial/comum/config/ele-c.json');
+  final archived = File('${_archive.path}/oficial/comum/config/ele-c.json');
   if (archived.existsSync()) {
     live.elections = parseElections(archived.readAsBytesSync());
   }
@@ -185,7 +197,7 @@ LiveIngestor? _liveIngestor(TseClient tse, TseUrls urls) {
 
 /// Stores the archived 1st-round files so the replay works offline.
 Future<void> _seedReplayFixtures(Serverpod pod) async {
-  final root = Directory('../fixtures/2026-1t');
+  final root = _archive;
   final session = await pod.createSession();
   try {
     if (!root.existsSync()) {

@@ -39,6 +39,16 @@ serverpod:
         cd ../urna_aberta_flutter
         set -- web --base-href /app/ --output ../urna_aberta_server/web/app
         flutter build "$@" || { flutter clean && flutter build "$@"; }
+    # Copy the archived TSE files into the server package for deploys:
+    # Serverpod Cloud uploads only this package and keeps only config/, web/
+    # and migrations/. No route serves web/archive/. Needs `git lfs pull`.
+    copy_archive:
+      posix: |
+        rm -rf web/archive && mkdir -p web/archive
+        cp -R ../fixtures/2026-1t web/archive/
+        if grep -rlq '^version https://git-lfs' web/archive; then
+          echo 'fixtures are Git LFS pointers: run git lfs pull' >&2; exit 1
+        fi
 
   # Companion Flutter apps that `serverpod start` can launch (Ctrl+R), keyed
   # by a display alias. The default device is the web server, opening the
