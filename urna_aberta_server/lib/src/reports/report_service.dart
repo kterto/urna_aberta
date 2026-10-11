@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate';
 import 'dart:math';
@@ -279,23 +280,58 @@ class ReportService {
         orderBy: (t) => t.createdAt,
       );
       if (next == null) return;
-      await _build(session, next);
+      final claimed = await _claim(session, next);
+      if (claimed != null) await _build(session, claimed);
     }
   }
 
-  /// After a restart: a report left running is queued again. Returns
-  /// whether any report is waiting.
-  Future<bool> recover(Session session) async {
-    final stuck = await ReportRequest.db.find(
+  /// Takes [r] off the queue for this server; null when another server
+  /// took it first.
+  Future<ReportRequest?> _claim(Session session, ReportRequest r) async {
+    final now = _now().toUtc();
+    final claimed = await ReportRequest.db.updateWhere(
       session,
-      where: (t) => t.status.equals(ReportStatus.running),
+      columnValues: (t) => [
+        t.status(ReportStatus.running),
+        t.startedAt(now),
+        t.aliveAt(now),
+        t.filesDone(0),
+      ],
+      where: (t) => t.id.equals(r.id) & t.status.equals(ReportStatus.queued),
     );
-    for (final r in stuck) {
-      await ReportRequest.db.updateRow(
-        session,
-        r.copyWith(status: ReportStatus.queued, filesDone: 0),
-      );
-    }
+    if (claimed.isEmpty) return null;
+    await session.messages.postMessage(channel(r.id!), claimed.single);
+    return claimed.single;
+  }
+
+  /// How often the server building a report says it still is.
+  static const aliveEvery = Duration(seconds: 15);
+
+  /// A running report not heard from for this long lost its server (a
+  /// restart, a deploy) and is queued again.
+  static const staleAfter = Duration(minutes: 2);
+
+  /// Queues again every report whose server went quiet, and asks for the
+  /// queue to be drained if anything waits. Run every minute.
+  Future<void> watch(Session session) async {
+    if (await recover(session)) await _schedule();
+  }
+
+  /// Queues again every report whose server went quiet. Returns whether
+  /// any report is waiting.
+  Future<bool> recover(Session session) async {
+    final quiet = _now().toUtc().subtract(staleAfter);
+    await ReportRequest.db.updateWhere(
+      session,
+      columnValues: (t) => [
+        t.status(ReportStatus.queued),
+        t.filesDone(0),
+        t.aliveAt(null),
+      ],
+      where: (t) =>
+          t.status.equals(ReportStatus.running) &
+          (t.aliveAt.equals(null) | (t.aliveAt < quiet)),
+    );
     return await ReportRequest.db.count(
           session,
           where: (t) => t.status.equals(ReportStatus.queued),
@@ -303,19 +339,17 @@ class ReportService {
         0;
   }
 
-  Future<void> _build(Session session, ReportRequest request) async {
-    var r = await _save(
-      session,
-      request.copyWith(
-        status: ReportStatus.running,
-        startedAt: _now().toUtc(),
-        filesDone: 0,
-      ),
-    );
+  Future<void> _build(Session session, ReportRequest claimed) async {
+    var r = claimed;
     var lastSaved = _now();
     // Progress is saved in order, and always before the outcome: a late
     // progress write would otherwise put a finished report back to running.
+    // A failed write only delays the count; the next one catches up.
     var progressWrites = Future<void>.value();
+    void saveProgress(int done) => progressWrites = progressWrites
+        .then((_) => _progress(session, r.id!, done))
+        .catchError((_) {});
+    final alive = Timer.periodic(aliveEvery, (_) => saveProgress(r.filesDone));
     try {
       final plan = await planner.plan(r.spec);
       r = await _save(session, r.copyWith(filesTotal: plan.files));
@@ -328,9 +362,7 @@ class ReportService {
           final snapshot = r = r.copyWith(filesDone: done);
           // Sent as it happens; saved for whoever reconnects.
           session.messages.postMessage(channel(r.id!), snapshot).ignore();
-          progressWrites = progressWrites.then(
-            (_) => ReportRequest.db.updateRow(session, snapshot),
-          );
+          saveProgress(done);
         },
       );
       await progressWrites;
@@ -355,7 +387,7 @@ class ReportService {
         ),
       );
     } on Exception catch (e, st) {
-      await progressWrites.catchError((_) {});
+      await progressWrites;
       final reason = switch (e) {
         ReportRefused(:final reason) => reason,
         ResultUnavailable() ||
@@ -379,6 +411,8 @@ class ReportService {
           finishedAt: _now().toUtc(),
         ),
       );
+    } finally {
+      alive.cancel();
     }
   }
 
@@ -401,6 +435,16 @@ class ReportService {
     );
     return (csv: csv, dataSha256: dataSha256, pdf: pdf);
   });
+
+  /// Saves how far the report got, and that its server is still on it.
+  /// Only while it is running here: a report queued again is left alone.
+  Future<void> _progress(Session session, int id, int done) =>
+      ReportRequest.db.updateWhere(
+        session,
+        columnValues: (t) => [t.filesDone(done), t.aliveAt(_now().toUtc())],
+        where: (t) => t.id.equals(id) & t.status.equals(ReportStatus.running),
+        noReturn: true,
+      );
 
   Future<ReportRequest> _save(Session session, ReportRequest r) async {
     final saved = await ReportRequest.db.updateRow(session, r);

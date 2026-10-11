@@ -1544,4 +1544,17 @@ class _ReportCallFutureCall {
       await _localUniqueSession.close();
     }
   }
+
+  Future<void> watch(_ist.TestSessionBuilder sessionBuilder) async {
+    var _localUniqueSession =
+        (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild();
+    try {
+      await _iplz5ub8.ReportCallWatchFutureCall().invoke(
+        _localUniqueSession,
+        null,
+      );
+    } finally {
+      await _localUniqueSession.close();
+    }
+  }
 }

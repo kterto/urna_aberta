@@ -419,6 +419,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'DateTime?',
         ),
         _isp.ColumnDefinition(
+          name: 'aliveAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _isp.ColumnDefinition(
           name: 'sha256',
           columnType: _isp.ColumnType.text,
           isNullable: true,

@@ -17,6 +17,10 @@ fields:
   createdAt: DateTime
   startedAt: DateTime?
   finishedAt: DateTime?
+  ### While running: when the server building it last said it still was.
+  ### Left untouched for [ReportService.staleAfter], its server is gone and
+  ### the report is queued again.
+  aliveAt: DateTime?
   ### SHA-256 of the CSV (the report's data), printed on the PDF.
   sha256: String?
   ### Set while the owner publishes it: the report is then readable by

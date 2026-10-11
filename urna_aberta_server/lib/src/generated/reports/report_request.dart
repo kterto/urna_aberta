@@ -36,6 +36,7 @@ abstract class ReportRequest
     required this.createdAt,
     this.startedAt,
     this.finishedAt,
+    this.aliveAt,
     this.sha256,
     this.publicToken,
   });
@@ -53,6 +54,7 @@ abstract class ReportRequest
     required DateTime createdAt,
     DateTime? startedAt,
     DateTime? finishedAt,
+    DateTime? aliveAt,
     String? sha256,
     String? publicToken,
   }) = _ReportRequestImpl;
@@ -91,6 +93,9 @@ abstract class ReportRequest
       finishedAt: jsonSerialization['finishedAt'] == null
           ? null
           : _is.DateTimeJsonExtension.fromJson(jsonSerialization['finishedAt']),
+      aliveAt: jsonSerialization['aliveAt'] == null
+          ? null
+          : _is.DateTimeJsonExtension.fromJson(jsonSerialization['aliveAt']),
       sha256: jsonSerialization['sha256'] as String?,
       publicToken: jsonSerialization['publicToken'] as String?,
     );
@@ -128,6 +133,11 @@ abstract class ReportRequest
 
   DateTime? finishedAt;
 
+  /// While running: when the server building it last said it still was.
+  /// Left untouched for [ReportService.staleAfter], its server is gone and
+  /// the report is queued again.
+  DateTime? aliveAt;
+
   /// SHA-256 of the CSV (the report's data), printed on the PDF.
   String? sha256;
 
@@ -154,6 +164,7 @@ abstract class ReportRequest
     DateTime? createdAt,
     DateTime? startedAt,
     DateTime? finishedAt,
+    DateTime? aliveAt,
     String? sha256,
     String? publicToken,
   });
@@ -173,6 +184,7 @@ abstract class ReportRequest
       'createdAt': createdAt.toJson(),
       if (startedAt != null) 'startedAt': startedAt?.toJson(),
       if (finishedAt != null) 'finishedAt': finishedAt?.toJson(),
+      if (aliveAt != null) 'aliveAt': aliveAt?.toJson(),
       if (sha256 != null) 'sha256': sha256,
       if (publicToken != null) 'publicToken': publicToken,
     };
@@ -194,6 +206,7 @@ abstract class ReportRequest
       'createdAt': createdAt.toJson(),
       if (startedAt != null) 'startedAt': startedAt?.toJson(),
       if (finishedAt != null) 'finishedAt': finishedAt?.toJson(),
+      if (aliveAt != null) 'aliveAt': aliveAt?.toJson(),
       if (sha256 != null) 'sha256': sha256,
       if (publicToken != null) 'publicToken': publicToken,
     };
@@ -243,6 +256,7 @@ class _ReportRequestImpl extends ReportRequest {
     required DateTime createdAt,
     DateTime? startedAt,
     DateTime? finishedAt,
+    DateTime? aliveAt,
     String? sha256,
     String? publicToken,
   }) : super._(
@@ -258,6 +272,7 @@ class _ReportRequestImpl extends ReportRequest {
          createdAt: createdAt,
          startedAt: startedAt,
          finishedAt: finishedAt,
+         aliveAt: aliveAt,
          sha256: sha256,
          publicToken: publicToken,
        );
@@ -279,6 +294,7 @@ class _ReportRequestImpl extends ReportRequest {
     DateTime? createdAt,
     Object? startedAt = _Undefined,
     Object? finishedAt = _Undefined,
+    Object? aliveAt = _Undefined,
     Object? sha256 = _Undefined,
     Object? publicToken = _Undefined,
   }) {
@@ -299,6 +315,7 @@ class _ReportRequestImpl extends ReportRequest {
       createdAt: createdAt ?? this.createdAt,
       startedAt: startedAt is DateTime? ? startedAt : this.startedAt,
       finishedAt: finishedAt is DateTime? ? finishedAt : this.finishedAt,
+      aliveAt: aliveAt is DateTime? ? aliveAt : this.aliveAt,
       sha256: sha256 is String? ? sha256 : this.sha256,
       publicToken: publicToken is String? ? publicToken : this.publicToken,
     );
@@ -368,6 +385,12 @@ class ReportRequestUpdateTable extends _is.UpdateTable<ReportRequestTable> {
         value,
       );
 
+  _is.ColumnValue<DateTime, DateTime> aliveAt(DateTime? value) =>
+      _is.ColumnValue(
+        table.aliveAt,
+        value,
+      );
+
   _is.ColumnValue<String, String> sha256(String? value) => _is.ColumnValue(
     table.sha256,
     value,
@@ -424,6 +447,10 @@ class ReportRequestTable extends _is.Table<int?> {
       'finishedAt',
       this,
     );
+    aliveAt = _is.ColumnDateTime(
+      'aliveAt',
+      this,
+    );
     sha256 = _is.ColumnString(
       'sha256',
       this,
@@ -461,6 +488,11 @@ class ReportRequestTable extends _is.Table<int?> {
 
   late final _is.ColumnDateTime finishedAt;
 
+  /// While running: when the server building it last said it still was.
+  /// Left untouched for [ReportService.staleAfter], its server is gone and
+  /// the report is queued again.
+  late final _is.ColumnDateTime aliveAt;
+
   /// SHA-256 of the CSV (the report's data), printed on the PDF.
   late final _is.ColumnString sha256;
 
@@ -494,6 +526,7 @@ class ReportRequestTable extends _is.Table<int?> {
     createdAt,
     startedAt,
     finishedAt,
+    aliveAt,
     sha256,
     publicToken,
   ];

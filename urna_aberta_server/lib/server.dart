@@ -184,7 +184,7 @@ void run(List<String> args) async {
   await pod.start();
 
   await _seedReplayFixtures(pod, replay);
-  await _resumeReports(pod, reports);
+  await _watchReports(pod);
 
   if (live != null) {
     LivePollCall.ingestor = live;
@@ -294,17 +294,21 @@ Future<void> _seedReplayFixtures(Serverpod pod, ReplayIndicator replay) async {
   }
 }
 
-/// Reports left running by a restart are queued again, and the queue is
-/// drained if anything waits.
-Future<void> _resumeReports(Serverpod pod, ReportService reports) async {
+/// Every minute, reports whose server went quiet (a restart, a deploy)
+/// are queued again, and the queue is drained if anything waits.
+Future<void> _watchReports(Serverpod pod) async {
   final session = await pod.createSession();
   try {
-    if (await reports.recover(session)) {
-      await pod.futureCalls.callWithDelay(Duration.zero).reportCall.drain();
-    }
+    await pod.futureCalls.cancel(ReportCall.watchId);
+    await pod.futureCalls
+        .callRecurring(identifier: ReportCall.watchId)
+        .every(ReportCall.watchEvery, start: DateTime.now().toUtc())
+        .reportCall
+        .watch();
+    session.log('Report watch scheduled.');
   } catch (e, st) {
     session.log(
-      'Reports not resumed: $e',
+      'Reports not watched: $e',
       level: LogLevel.error,
       exception: e,
       stackTrace: st,

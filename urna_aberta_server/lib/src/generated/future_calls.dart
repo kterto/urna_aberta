@@ -61,6 +61,7 @@ class FutureCalls extends _is.FutureCallDispatch<_FutureCallRef> {
     var registeredFutureCalls = <String, _is.InvokableFutureCall>{
       'LivePollCallPollFutureCall': LivePollCallPollFutureCall(),
       'ReportCallDrainFutureCall': ReportCallDrainFutureCall(),
+      'ReportCallWatchFutureCall': ReportCallWatchFutureCall(),
     };
     _futureCallManager = futureCallManager;
     _serverId = serverId;
@@ -212,6 +213,13 @@ class _ReportCallFutureCallDispatcher {
       null,
     );
   }
+
+  Future<void> watch() {
+    return _invokeFutureCall(
+      'ReportCallWatchFutureCall',
+      null,
+    );
+  }
 }
 
 class LivePollCallPollFutureCall extends _is.FutureCall
@@ -233,5 +241,18 @@ class ReportCallDrainFutureCall extends _is.FutureCall
     _is.SerializableModel? object,
   ) async {
     await _iphalun1.ReportCall().drain(session);
+  }
+}
+
+/// Queues again the reports whose server went quiet (scheduled in
+/// `server.dart`).
+class ReportCallWatchFutureCall extends _is.FutureCall
+    implements _is.InvokableFutureCall {
+  @override
+  _ida.Future<void> invoke(
+    _is.Session session,
+    _is.SerializableModel? object,
+  ) async {
+    await _iphalun1.ReportCall().watch(session);
   }
 }

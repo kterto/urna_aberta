@@ -727,17 +727,38 @@ void main() {
         );
       });
 
-      test('after a restart, a report left running is queued again', () async {
-        final r = await relatorios.pedir(ana, _spec([1], ac));
-        final session = sessionBuilder.build();
-        await ReportRequest.db.updateRow(
-          session,
-          r.copyWith(status: ReportStatus.running, filesDone: 1),
-        );
-        expect(await RelatoriosEndpoint.service.recover(session), isTrue);
-        final again = (await relatorios.listar(ana)).single;
-        expect([again.status, again.filesDone], [ReportStatus.queued, 0]);
-      });
+      test(
+        'a report whose server went quiet is queued again; '
+        'one still being built is left alone',
+        () async {
+          final quiet = await relatorios.pedir(ana, _spec([1], ac));
+          final alive = await relatorios.pedir(bia, _spec([1], ac));
+          final session = sessionBuilder.build();
+          await ReportRequest.db.updateRow(
+            session,
+            quiet.copyWith(
+              status: ReportStatus.running,
+              filesDone: 1,
+              aliveAt: now.subtract(
+                ReportService.staleAfter + const Duration(seconds: 1),
+              ),
+            ),
+          );
+          await ReportRequest.db.updateRow(
+            session,
+            alive.copyWith(
+              status: ReportStatus.running,
+              filesDone: 1,
+              aliveAt: now.subtract(const Duration(seconds: 20)),
+            ),
+          );
+          expect(await RelatoriosEndpoint.service.recover(session), isTrue);
+          final q = (await relatorios.listar(ana)).single;
+          expect([q.status, q.filesDone], [ReportStatus.queued, 0]);
+          final a = (await relatorios.listar(bia)).single;
+          expect([a.status, a.filesDone], [ReportStatus.running, 1]);
+        },
+      );
 
       test('deleting the account deletes its reports', () async {
         await relatorios.pedir(ana, _spec([1], ac));
