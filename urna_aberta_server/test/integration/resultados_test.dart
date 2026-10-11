@@ -44,8 +44,8 @@ class _NoWait extends TokenBucket {
 
 /// The archived SP Deputado Federal file, rewritten as if only [st] of its
 /// sections were totalized (the signature no longer verifies; this tests
-/// freshness, not signatures).
-List<int> partialSpDeputados(int st) {
+/// freshness, not signatures), and electing [seats] if given.
+List<int> partialSpDeputados(int st, {int? seats}) {
   final jws = File(
     '../fixtures/2026-1t/oficial/ele2026/6259/dados/sp/sp-c0006-e006259-u.jws',
   ).readAsStringSync().trim().split('.');
@@ -55,6 +55,9 @@ List<int> partialSpDeputados(int st) {
           )
           as Map<String, dynamic>;
   (json['s'] as Map<String, dynamic>)['st'] = '$st';
+  if (seats != null) {
+    ((json['carg'] as List).single as Map<String, dynamic>)['nv'] = '$seats';
+  }
   final payload = base64Url.encode(utf8.encode(jsonEncode(json)));
   return utf8.encode('${jws[0]}.${payload.replaceAll('=', '')}.${jws[2]}');
 }
@@ -294,6 +297,36 @@ void main() {
           c.lists.first.tseSeats,
           greaterThanOrEqualTo(c.lists[1].tseSeats!),
         );
+      },
+    );
+
+    test(
+      'the Câmara is cached until a newer file is stored, and only 30 s '
+      'while the count is on',
+      () async {
+        tse.overrides['sp-c0006-e006259-u.jws'] = partialSpDeputados(
+          50,
+          seats: 71,
+        );
+        final partial = await endpoints.resultados.camara(sessionBuilder, 6259);
+        expect(partial.seats, 514);
+        expect(partial.differingStates, ['sp']);
+
+        tse.overrides.clear();
+        clock = clock.add(const Duration(seconds: 10));
+        final cached = await endpoints.resultados.camara(sessionBuilder, 6259);
+        expect(cached.seats, 514, reason: 'within 30 s nothing is re-read');
+
+        clock = clock.add(const Duration(seconds: 21));
+        final done = await endpoints.resultados.camara(sessionBuilder, 6259);
+        expect(done.seats, 513);
+        expect(done.differingStates, isEmpty);
+
+        final requests = tse.requested.length;
+        clock = clock.add(const Duration(hours: 1));
+        final again = await endpoints.resultados.camara(sessionBuilder, 6259);
+        expect(again.seats, 513);
+        expect(tse.requested.length, requests);
       },
     );
   });

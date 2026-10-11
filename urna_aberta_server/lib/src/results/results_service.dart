@@ -29,6 +29,8 @@ class ResultsService {
   final List<Election> Function() _elections;
   final DateTime Function() _now;
   final _municipalities = <int, Municipalities>{};
+  final _chambers =
+      <int, ({String key, DateTime? until, ChamberReport report})>{};
 
   /// Newest first.
   List<ElectionSummary> elections() => [
@@ -105,7 +107,14 @@ class ResultsService {
       throw _invalid('A eleição $electionCode não elege deputados federais.');
     }
     _assertClosed(election);
+    final cached = _chambers[election.code];
+    if (cached != null &&
+        cached.key == await _chamberKey(session, election.code) &&
+        (cached.until == null || _now().isBefore(cached.until!))) {
+      return cached.report;
+    }
     final urls = TseUrls.oficial(year: election.day.$1);
+    var complete = true;
     final byKey = <String, _ChamberList>{};
     final differing = <String>[];
     var seats = 0, states = 0;
@@ -113,6 +122,7 @@ class ResultsService {
       if (o != office) continue;
       final uri = urls.resultJws(election.code, scope, office);
       final (r, _) = await _load(session, election, office, scope, uri);
+      complete &= _complete(r);
       final ours = allocateSeats(r);
       if (!SeatComparison.of(r, ours).matches) differing.add(scope.code);
       seats += r.seats;
@@ -134,7 +144,7 @@ class ResultsService {
         final bySeats = b.value.tseSeats.compareTo(a.value.tseSeats);
         return bySeats != 0 ? bySeats : b.value.votes.compareTo(a.value.votes);
       });
-    return ChamberReport(
+    final report = ChamberReport(
       electionCode: election.code,
       seats: seats,
       states: states,
@@ -154,6 +164,27 @@ class ResultsService {
           ),
       ],
     );
+    // A new version of any state's file is a new key; while the count is
+    // on, the sum is also re-read as often as the files.
+    _chambers[election.code] = (
+      key: await _chamberKey(session, election.code),
+      until: complete ? null : _now().add(refreshAfter),
+      report: report,
+    );
+    return report;
+  }
+
+  /// Changes when a file is stored or read again; reads no `jws`.
+  Future<String> _chamberKey(Session session, int electionCode) async {
+    final row = (await session.db.unsafeQuery(
+      'SELECT max("id"), max("fetchedAt") FROM "result_file" '
+      'WHERE "electionCode" = @e AND "officeCode" = @o',
+      parameters: QueryParameters.named({
+        'e': electionCode,
+        'o': Office.deputadoFederal.code,
+      }),
+    )).first;
+    return 'camara:$electionCode:${row[0]}:${row[1]}';
   }
 
   /// How long an incomplete file is trusted before TSE is asked again

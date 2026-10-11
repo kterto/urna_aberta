@@ -77,7 +77,7 @@ The CSV is the same tables in long format: `eleicao, cargo, local, nivel, candid
 - **Limits**:
   - One queued report per account.
   - At most 3,000 TSE files per report. That covers every city of MG for two offices, and roughly 5 zones' worth of sections. Planning stops as soon as a spec passes the limit, so Brazil broken down by zone is refused without listing every section first. The quote and the request are refused with `tooLarge`.
-- **Cache**: the Câmara total goes into `session.caches.local`, keyed by the election and the newest stored file, to fix its 25 s cold call.
+- **Cache** (done): `ResultsService` keeps the Câmara total per election, keyed by the newest stored Deputado Federal file, and for only 30 s while any state is still counting. Not `session.caches.local`, whose lifetimes run on the wall clock rather than the service's clock. Measured 11/10/2026 with every file stored: 139 ms cold, 1–2 ms cached. The 25 s seen before was the first read of the 27 files from TSE, which a cache cannot avoid.
 
 ## App
 
