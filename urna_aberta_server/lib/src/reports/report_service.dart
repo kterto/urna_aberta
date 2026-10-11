@@ -93,7 +93,13 @@ class ReportService {
         createdAt: _now().toUtc(),
       ),
     );
-    await _schedule();
+    try {
+      await _schedule();
+    } catch (_) {
+      // Nothing would ever run it, and it would hold the viewer's one slot.
+      await ReportRequest.db.deleteRow(session, request);
+      rethrow;
+    }
     return request;
   }
 

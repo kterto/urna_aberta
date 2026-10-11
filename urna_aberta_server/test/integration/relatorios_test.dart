@@ -57,6 +57,7 @@ void main() {
     late TestSessionBuilder bia;
     late ArchiveTse http;
     late int scheduled;
+    late bool scheduleFails;
 
     Future<TestSessionBuilder> signedIn() async {
       final user = await AuthUser.db.insertRow(
@@ -74,6 +75,7 @@ void main() {
     setUp(() async {
       http = ArchiveTse();
       scheduled = 0;
+      scheduleFails = false;
       final tse = TseClient(http: http, bucket: _NoWait());
       final results = ResultadosEndpoint.service = ResultsService(
         client: tse,
@@ -95,7 +97,12 @@ void main() {
         ),
         builder: ReportBuilder.fromServices(results, (_, _) => sections),
         ratePerSecond: 20,
-        schedule: () async => scheduled++,
+        schedule: () async {
+          if (scheduleFails) {
+            throw StateError('FutureCalls is not initialized.');
+          }
+          scheduled++;
+        },
         now: () => now,
       );
       ana = await signedIn();
@@ -253,6 +260,23 @@ void main() {
           isA<ReportRequest>().having((r) => r.id, 'id', r.id),
         ]);
       });
+
+      test(
+        'if the queue cannot be woken, the request is dropped, so the viewer '
+        'can ask again',
+        () async {
+          scheduleFails = true;
+          await expectLater(
+            relatorios.pedir(ana, _spec([1, 3], ac)),
+            throwsA(isA<StateError>()),
+          );
+          expect(await relatorios.listar(ana), isEmpty);
+
+          scheduleFails = false;
+          final r = await relatorios.pedir(ana, _spec([1, 3], ac));
+          expect(r.status, ReportStatus.queued);
+        },
+      );
 
       test('the queue builds the report and stores its CSV', () async {
         final r = await relatorios.pedir(ana, _spec([1, 3], ac));

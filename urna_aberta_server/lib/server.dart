@@ -45,6 +45,7 @@ void run(List<String> args) async {
   // replay files.
   final pod = Serverpod(
     args,
+    configOverride: _scheduleFutureCalls,
     healthConfig: HealthConfig(
       additionalReadinessIndicators: [TseIndicator(tse)],
       additionalStartupIndicators: [replay],
@@ -207,6 +208,32 @@ void run(List<String> args) async {
       await session.close();
     }
   }
+}
+
+/// Live polling and the report queue are FutureCalls, so scheduling them
+/// must stay on. Serverpod 4.0.3 added `futureCall.enabled` (off stops
+/// every schedule call), and on Serverpod Cloud it came up off once this
+/// project moved from 4.0.0 to 4.0.4. Running them is still up to
+/// `futureCallExecutionEnabled`.
+ServerpodConfig _scheduleFutureCalls(ServerpodConfig config) {
+  final f = config.futureCall;
+  if (f.enabled) return config;
+  stdout.writeln(
+    'futureCall.enabled was off '
+    '(SERVERPOD_FUTURE_CALL_ENABLED='
+    '${Platform.environment['SERVERPOD_FUTURE_CALL_ENABLED']}, '
+    'executionEnabled=${config.futureCallExecutionEnabled}); '
+    'turning scheduling on.',
+  );
+  return config.copyWith(
+    futureCall: FutureCallConfig(
+      concurrencyLimit: f.concurrencyLimit,
+      scanInterval: f.scanInterval,
+      checkBrokenCalls: f.checkBrokenCalls,
+      deleteBrokenCalls: f.deleteBrokenCalls,
+      enabled: true,
+    ),
+  );
 }
 
 /// The archived 1st-round files: the repository's `fixtures/` in development,
