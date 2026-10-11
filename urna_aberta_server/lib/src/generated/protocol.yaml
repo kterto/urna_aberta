@@ -9,8 +9,10 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
-greeting:
-  - hello:
+meuLocal:
+  - ler:
+  - salvar:
+  - apagar:
 tally:
   - night:
   - frame:

@@ -27,9 +27,9 @@ import 'package:urna_aberta_server/src/generated/file_verification.dart'
     as _i5a4izj1;
 import 'package:urna_aberta_server/src/generated/future_calls.dart'
     as _iplz5ub8;
-import 'package:urna_aberta_server/src/generated/greetings/greeting.dart'
-    as _i13zhb17;
 import 'package:urna_aberta_server/src/generated/live_status.dart' as _ikfybxr9;
+import 'package:urna_aberta_server/src/generated/meu_local/voter_place.dart'
+    as _ig8nusz4;
 import 'package:urna_aberta_server/src/generated/municipio_ref.dart'
     as _i5vkvva1;
 import 'package:urna_aberta_server/src/generated/office_report.dart'
@@ -175,7 +175,7 @@ class TestEndpoints {
 
   late final _JwtRefreshEndpoint jwtRefresh;
 
-  late final _GreetingEndpoint greeting;
+  late final _MeuLocalEndpoint meuLocal;
 
   late final _TallyEndpoint tally;
 
@@ -201,7 +201,7 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
-    greeting = _GreetingEndpoint(
+    meuLocal = _MeuLocalEndpoint(
       endpoints,
       serializationManager,
     );
@@ -546,8 +546,8 @@ class _JwtRefreshEndpoint {
   }
 }
 
-class _GreetingEndpoint {
-  _GreetingEndpoint(
+class _MeuLocalEndpoint {
+  _MeuLocalEndpoint(
     this._endpointDispatch,
     this._serializationManager,
   );
@@ -556,22 +556,21 @@ class _GreetingEndpoint {
 
   final _is.SerializationManager _serializationManager;
 
-  _ida.Future<_i13zhb17.Greeting> hello(
+  _ida.Future<_ig8nusz4.VoterPlace?> ler(
     _ist.TestSessionBuilder sessionBuilder,
-    String name,
   ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
-            endpoint: 'greeting',
-            method: 'hello',
+            endpoint: 'meuLocal',
+            method: 'ler',
           );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'greeting',
-          methodName: 'hello',
-          parameters: _ist.testObjectToJson({'name': name}),
+          endpointPath: 'meuLocal',
+          methodName: 'ler',
+          parameters: _ist.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -579,7 +578,74 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _ida.Future<_i13zhb17.Greeting>);
+                as _ida.Future<_ig8nusz4.VoterPlace?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_ig8nusz4.VoterPlace> salvar(
+    _ist.TestSessionBuilder sessionBuilder,
+    String uf,
+    int municipio,
+    int? zona,
+    int? secao,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'meuLocal',
+            method: 'salvar',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'meuLocal',
+          methodName: 'salvar',
+          parameters: _ist.testObjectToJson({
+            'uf': uf,
+            'municipio': municipio,
+            'zona': zona,
+            'secao': secao,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ig8nusz4.VoterPlace>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<void> apagar(_ist.TestSessionBuilder sessionBuilder) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'meuLocal',
+            method: 'apagar',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'meuLocal',
+          methodName: 'apagar',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<void>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

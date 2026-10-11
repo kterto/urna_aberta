@@ -1358,4 +1358,69 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get apuracaoAllOffices => 'Ver todos os cargos em apuração';
+
+  @override
+  String get contaSignIn => 'Entrar';
+
+  @override
+  String get contaTitle => 'Meu local';
+
+  @override
+  String get contaLede =>
+      'Entre com seu e-mail para guardar o seu local de votação. A Urna Aberta passa a abrir Minha seção na sua seção e os Resultados no seu estado e município.';
+
+  @override
+  String get contaPrivacy =>
+      'Guardamos só o local que você escolher (estado, município e, se quiser, zona e seção), ligado ao seu e-mail. Nada mais sobre você. Você pode apagá-lo quando quiser.';
+
+  @override
+  String get contaPlacePlate => 'Seu local de votação';
+
+  @override
+  String contaPlaceMunicipio(String municipio, String uf) {
+    return '$municipio ($uf)';
+  }
+
+  @override
+  String contaPlaceSecao(String zona, String secao) {
+    return 'Zona $zona · Seção $secao';
+  }
+
+  @override
+  String contaPlaceZona(String zona) {
+    return 'Zona $zona';
+  }
+
+  @override
+  String get contaNoPlace =>
+      'Você ainda não salvou um local. Escolha sua seção em Minha seção e toque em Salvar como meu local.';
+
+  @override
+  String get contaChoose => 'Escolher em Minha seção';
+
+  @override
+  String get contaDelete => 'Apagar meu local';
+
+  @override
+  String get contaDeleted => 'Local apagado.';
+
+  @override
+  String get contaSignOut => 'Sair';
+
+  @override
+  String get contaLoadError =>
+      'Não foi possível carregar o seu local. Tente de novo mais tarde.';
+
+  @override
+  String get secaoSaveAsMine => 'Salvar como meu local';
+
+  @override
+  String get secaoIsMine => 'Este é o seu local';
+
+  @override
+  String get secaoSaved =>
+      'Local salvo. Minha seção e Resultados vão abrir nele.';
+
+  @override
+  String get secaoSaveFailed => 'Não foi possível salvar este local.';
 }

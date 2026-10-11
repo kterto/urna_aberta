@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
 
+import '../conta/conta_controller.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/typography.dart';
@@ -26,18 +27,22 @@ class ResultadosScreen extends StatefulWidget {
 
 class _ResultadosScreenState extends State<ResultadosScreen> {
   ResultadosController? _c;
+  (String, int)? _home;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_c == null) {
-      _c = ResultadosController(
-        ResultadosScope.of(context),
-        now: widget.now,
-        autoRefresh: widget.autoRefresh,
-      );
-      _c!.start();
-    }
+    final place = ContaScope.maybeOf(context)?.place;
+    final home = place == null ? null : (place.uf, place.municipio);
+    final first = _c == null;
+    final c = _c ??= ResultadosController(
+      ResultadosScope.of(context),
+      now: widget.now,
+      autoRefresh: widget.autoRefresh,
+    );
+    if (home != null && home != _home) c.useHome(home.$1, home.$2);
+    _home = home;
+    if (first) c.start();
   }
 
   @override

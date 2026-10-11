@@ -201,6 +201,21 @@ class SecaoController extends ChangeNotifier {
     );
   }
 
+  /// Opens the viewer's saved place as far as TSE still lists it, and
+  /// consults the section when the place has one. A choice made while it
+  /// loads wins.
+  Future<void> openAt(String uf, int municipio, int? zona, int? secao) async {
+    await selectUf(uf);
+    final m = _municipios.where((m) => m.codigo == municipio).firstOrNull;
+    if (_uf != uf || m == null) return;
+    await selectMunicipio(m);
+    if (_municipio != m || zona == null || !_zonas.contains(zona)) return;
+    await selectZona(zona);
+    if (_zona != zona || secao == null || !_secoes.contains(secao)) return;
+    selectSecao(secao);
+    await consultar();
+  }
+
   void _clearFromMunicipio() {
     _municipio = null;
     _clearFromZona();

@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
+import 'package:urna_aberta_flutter/conta/conta_controller.dart';
 import 'package:urna_aberta_flutter/screens/secao_screen.dart';
 import 'package:urna_aberta_flutter/secao/secao_controller.dart';
 
+import '../conta/fake_conta_source.dart';
 import '../secao/fake_secao_source.dart';
 import '../support/test_app.dart';
 
@@ -14,6 +16,7 @@ Future<void> pumpScreen(
   FakeSecaoSource source, {
   Locale locale = const Locale('pt'),
   Size size = const Size(1300, 2600),
+  ContaController? conta,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -21,6 +24,7 @@ Future<void> pumpScreen(
   await tester.pumpWidget(
     testApp(
       locale: locale,
+      conta: conta,
       home: SecaoScope(
         source: source,
         child: const Scaffold(body: SecaoScreen()),
@@ -296,6 +300,46 @@ void main() {
       await lookUp77InEnglish(tester);
       expect(find.text('Ballot box report: file vs paper'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('meu local', () {
+    Future<ContaController> conta(FakeContaSource source) async =>
+        ContaController(source)..start();
+
+    testWidgets('the saved section opens and is read', (tester) async {
+      final c = await conta(
+        FakeContaSource(signedIn: true, place: portoWalter()),
+      );
+      await pumpScreen(tester, FakeSecaoSource(), conta: c);
+      expect(find.text('22 · FLAVIO BOLSONARO'), findsOneWidget);
+      expect(find.text('Este é o seu local'), findsOneWidget);
+    });
+
+    testWidgets('save the section looked up', (tester) async {
+      final source = FakeContaSource(signedIn: true);
+      await pumpScreen(tester, FakeSecaoSource(), conta: await conta(source));
+      await lookUp77(tester);
+      await tester.tap(find.text('Salvar como meu local'));
+      await tester.pumpAndSettle();
+      expect(source.saved, [('ac', 1066, 4, 77)]);
+      expect(find.text('Este é o seu local'), findsOneWidget);
+    });
+
+    testWidgets('signed out, saving asks to sign in first', (tester) async {
+      final source = FakeContaSource();
+      await pumpScreen(tester, FakeSecaoSource(), conta: await conta(source));
+      await lookUp77(tester);
+      await tester.tap(find.text('Salvar como meu local'));
+      await tester.pumpAndSettle();
+      expect(find.text('[entrar]'), findsOneWidget);
+      expect(source.saved, isEmpty);
+    });
+
+    testWidgets('without an account there is no save button', (tester) async {
+      await pumpScreen(tester, FakeSecaoSource());
+      await lookUp77(tester);
+      expect(find.text('Salvar como meu local'), findsNothing);
     });
   });
 }

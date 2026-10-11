@@ -108,6 +108,11 @@ class ResultadosController extends ChangeNotifier {
   ResultadosLoad? _loading;
   String _query = '';
   int _generation = 0;
+  String? _homeUf;
+  int? _homeMunicipio;
+
+  /// The viewer picked a UF or municipality: the home no longer applies.
+  bool _ufChosen = false;
 
   List<ElectionSummary> get elections => _elections;
   ElectionSummary? get election => _election;
@@ -286,6 +291,7 @@ class ResultadosController extends ChangeNotifier {
   }
 
   Future<void> selectUf(String uf) async {
+    _ufChosen = true;
     _uf = uf;
     _municipio = null;
     _municipios = const [];
@@ -293,7 +299,31 @@ class ResultadosController extends ChangeNotifier {
   }
 
   Future<void> selectMunicipio(MunicipioRef m) async {
+    _ufChosen = true;
     _municipio = m;
+    await _refresh();
+  }
+
+  /// The viewer's saved place: the opening UF, and the municipality chosen
+  /// when a municipal election covers it. Never overrides a viewer's choice.
+  Future<void> useHome(String? uf, int? municipio) async {
+    _homeUf = uf;
+    _homeMunicipio = municipio;
+    if (_election == null || uf == null || _ufChosen) return;
+    if (_uf == 'br') return;
+    final options = municipal ? ufs : scopes;
+    if (_uf == uf) {
+      if (!municipal || _municipio != null) return;
+      final m = _municipios.where((m) => m.codigo == municipio).firstOrNull;
+      if (_municipios.isNotEmpty && m == null) return;
+      _municipio = m;
+      await _refresh();
+      return;
+    }
+    if (!options.contains(uf)) return;
+    _uf = uf;
+    _municipio = null;
+    _municipios = const [];
     await _refresh();
   }
 
@@ -308,7 +338,12 @@ class ResultadosController extends ChangeNotifier {
     if (_office == Cargo.presidente && from != Cargo.presidente) _uf = 'br';
     final options = municipal ? ufs : scopes;
     if (_uf == null || !options.contains(_uf)) {
-      _uf = options.contains(openingUf) ? openingUf : options.firstOrNull;
+      final home = _ufChosen ? null : _homeUf;
+      _uf = options.contains(home)
+          ? home
+          : options.contains(openingUf)
+          ? openingUf
+          : options.firstOrNull;
       _municipio = null;
       _municipios = const [];
     }
@@ -341,6 +376,11 @@ class ResultadosController extends ChangeNotifier {
                     m,
               ];
         _municipios = covered..sort((a, b) => a.nome.compareTo(b.nome));
+        if (_municipio == null && _uf == _homeUf) {
+          _municipio = _municipios
+              .where((m) => m.codigo == _homeMunicipio)
+              .firstOrNull;
+        }
       }
       final s = scope;
       if (s == null) {

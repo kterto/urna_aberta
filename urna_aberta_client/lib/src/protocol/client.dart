@@ -25,9 +25,9 @@ import 'package:urna_aberta_client/src/protocol/election_summary.dart'
     as _i35jelvf;
 import 'package:urna_aberta_client/src/protocol/file_verification.dart'
     as _i4bcni6a;
-import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
-    as _i0ezu2ai;
 import 'package:urna_aberta_client/src/protocol/live_status.dart' as _iz8cte89;
+import 'package:urna_aberta_client/src/protocol/meu_local/voter_place.dart'
+    as _in6h62uh;
 import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
     as _iawxlp65;
 import 'package:urna_aberta_client/src/protocol/office_report.dart'
@@ -265,22 +265,46 @@ class EndpointJwtRefresh extends _iacc.EndpointRefreshJwtTokens {
       );
 }
 
-/// This is an example endpoint that returns a greeting message through
-/// its [hello] method.
+/// Meu local: the signed-in viewer's own polling place, so Minha seção and
+/// Resultados open on it. Only what the viewer typed is kept, and they can
+/// delete it.
 /// {@category Endpoint}
-class EndpointGreeting extends _isc.EndpointRef {
-  EndpointGreeting(_isc.EndpointCaller caller) : super(caller);
+class EndpointMeuLocal extends _isc.EndpointRef {
+  EndpointMeuLocal(_isc.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'greeting';
+  String get name => 'meuLocal';
 
-  /// Returns a personalized greeting message: "Hello {name}".
-  _ida.Future<_i0ezu2ai.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i0ezu2ai.Greeting>(
-        'greeting',
-        'hello',
-        {'name': name},
+  _ida.Future<_in6h62uh.VoterPlace?> ler() =>
+      caller.callServerEndpoint<_in6h62uh.VoterPlace?>(
+        'meuLocal',
+        'ler',
+        {},
       );
+
+  /// Saves a municipality, optionally down to zone and section, once TSE's
+  /// section config lists it.
+  _ida.Future<_in6h62uh.VoterPlace> salvar(
+    String uf,
+    int municipio,
+    int? zona,
+    int? secao,
+  ) => caller.callServerEndpoint<_in6h62uh.VoterPlace>(
+    'meuLocal',
+    'salvar',
+    {
+      'uf': uf,
+      'municipio': municipio,
+      'zona': zona,
+      'secao': secao,
+    },
+  );
+
+  _ida.Future<void> apagar() => caller.callServerEndpoint<void>(
+    'meuLocal',
+    'apagar',
+    {},
+  );
 }
 
 /// National file vs independent sum of states, on the replay clock.
@@ -516,7 +540,7 @@ class Client extends _isc.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
-    greeting = EndpointGreeting(this);
+    meuLocal = EndpointMeuLocal(this);
     tally = EndpointTally(this);
     resultados = EndpointResultados(this);
     secao = EndpointSecao(this);
@@ -528,7 +552,7 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointJwtRefresh jwtRefresh;
 
-  late final EndpointGreeting greeting;
+  late final EndpointMeuLocal meuLocal;
 
   late final EndpointTally tally;
 
@@ -544,7 +568,7 @@ class Client extends _isc.ServerpodClientShared {
   Map<String, _isc.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
-    'greeting': greeting,
+    'meuLocal': meuLocal,
     'tally': tally,
     'resultados': resultados,
     'secao': secao,

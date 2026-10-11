@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../conta/conta_button.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../l10n/l10n.dart';
@@ -280,6 +281,8 @@ class _Masthead extends StatelessWidget {
                       onTap: () => onSelect(i),
                     ),
                   const SizedBox(width: Space.x4),
+                  const ContaButton(onShell: true),
+                  const SizedBox(width: Space.x2),
                   ValueListenableBuilder<ThemeMode>(
                     valueListenable: themeModeNotifier,
                     builder: (context, mode, _) => _MastSegmented<ThemeMode>(

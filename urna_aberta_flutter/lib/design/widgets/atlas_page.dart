@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/language_menu.dart';
+import '../../conta/conta_button.dart';
 import '../platform.dart';
 import '../tokens.dart';
 
@@ -34,7 +35,7 @@ class AtlasPage extends StatelessWidget {
     final wide = isWideLayout(context);
     final gutter = wide ? Space.x6 : Space.x4;
     // The web masthead has its own language switch.
-    final barActions = [...actions, const LanguageMenu()];
+    final barActions = [...actions, const ContaButton(), const LanguageMenu()];
 
     Widget content(List<Widget> extra) => SliverPadding(
       padding: EdgeInsets.fromLTRB(gutter, 0, gutter, Space.x8),

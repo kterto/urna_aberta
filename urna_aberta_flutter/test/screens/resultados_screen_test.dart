@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
+import 'package:urna_aberta_flutter/conta/conta_controller.dart';
 import 'package:urna_aberta_flutter/design/widgets/atlas_components.dart';
 import 'package:urna_aberta_flutter/resultados/resultados_controller.dart';
 import 'package:urna_aberta_flutter/screens/resultados_screen.dart';
 
+import '../conta/fake_conta_source.dart';
 import '../resultados/fake_resultados_source.dart';
 import '../support/test_app.dart';
 
@@ -15,6 +17,7 @@ Future<void> pumpScreen(
   FakeResultadosSource source, {
   Locale locale = const Locale('pt'),
   Size size = const Size(1300, 3000),
+  ContaController? conta,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -22,6 +25,7 @@ Future<void> pumpScreen(
   await tester.pumpWidget(
     testApp(
       locale: locale,
+      conta: conta,
       home: ResultadosScope(
         source: source,
         child: Scaffold(
@@ -174,5 +178,15 @@ void main() {
     expect(find.text("Our count matches TSE's"), findsOneWidget);
     expect(find.text('2026 · round 1'), findsWidgets);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('opens on the saved place\'s state', (tester) async {
+    final conta = ContaController(
+      FakeContaSource(signedIn: true, place: portoWalter()),
+    );
+    await conta.start();
+    final source = FakeResultadosSource();
+    await pumpScreen(tester, source, conta: conta);
+    expect(source.reportCalls, [(6259, 6, 'ac')]);
   });
 }

@@ -1359,4 +1359,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apuracaoAllOffices => 'See every office being counted';
+
+  @override
+  String get contaSignIn => 'Sign in';
+
+  @override
+  String get contaTitle => 'My place';
+
+  @override
+  String get contaLede =>
+      'Sign in with your email to keep your polling place. Urna Aberta then opens My section on your section and Results on your state and municipality.';
+
+  @override
+  String get contaPrivacy =>
+      'We keep only the place you choose (state, municipality and, if you like, zone and section), tied to your email. Nothing else about you. You can delete it whenever you want.';
+
+  @override
+  String get contaPlacePlate => 'Your polling place';
+
+  @override
+  String contaPlaceMunicipio(String municipio, String uf) {
+    return '$municipio ($uf)';
+  }
+
+  @override
+  String contaPlaceSecao(String zona, String secao) {
+    return 'Zone $zona · Section $secao';
+  }
+
+  @override
+  String contaPlaceZona(String zona) {
+    return 'Zone $zona';
+  }
+
+  @override
+  String get contaNoPlace =>
+      'You have not saved a place yet. Pick your section in My section and tap Save as my place.';
+
+  @override
+  String get contaChoose => 'Choose in My section';
+
+  @override
+  String get contaDelete => 'Delete my place';
+
+  @override
+  String get contaDeleted => 'Place deleted.';
+
+  @override
+  String get contaSignOut => 'Sign out';
+
+  @override
+  String get contaLoadError =>
+      'Your place could not be loaded. Try again later.';
+
+  @override
+  String get secaoSaveAsMine => 'Save as my place';
+
+  @override
+  String get secaoIsMine => 'This is your place';
+
+  @override
+  String get secaoSaved =>
+      'Place saved. My section and Results will open on it.';
+
+  @override
+  String get secaoSaveFailed => 'This place could not be saved.';
 }

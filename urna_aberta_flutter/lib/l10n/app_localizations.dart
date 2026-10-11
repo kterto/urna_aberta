@@ -2256,6 +2256,114 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Ver todos os cargos em apuração'**
   String get apuracaoAllOffices;
+
+  /// No description provided for @contaSignIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar'**
+  String get contaSignIn;
+
+  /// No description provided for @contaTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Meu local'**
+  String get contaTitle;
+
+  /// No description provided for @contaLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre com seu e-mail para guardar o seu local de votação. A Urna Aberta passa a abrir Minha seção na sua seção e os Resultados no seu estado e município.'**
+  String get contaLede;
+
+  /// No description provided for @contaPrivacy.
+  ///
+  /// In pt, this message translates to:
+  /// **'Guardamos só o local que você escolher (estado, município e, se quiser, zona e seção), ligado ao seu e-mail. Nada mais sobre você. Você pode apagá-lo quando quiser.'**
+  String get contaPrivacy;
+
+  /// No description provided for @contaPlacePlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu local de votação'**
+  String get contaPlacePlate;
+
+  /// No description provided for @contaPlaceMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'{municipio} ({uf})'**
+  String contaPlaceMunicipio(String municipio, String uf);
+
+  /// No description provided for @contaPlaceSecao.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zona {zona} · Seção {secao}'**
+  String contaPlaceSecao(String zona, String secao);
+
+  /// No description provided for @contaPlaceZona.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zona {zona}'**
+  String contaPlaceZona(String zona);
+
+  /// No description provided for @contaNoPlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não salvou um local. Escolha sua seção em Minha seção e toque em Salvar como meu local.'**
+  String get contaNoPlace;
+
+  /// No description provided for @contaChoose.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolher em Minha seção'**
+  String get contaChoose;
+
+  /// No description provided for @contaDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Apagar meu local'**
+  String get contaDelete;
+
+  /// No description provided for @contaDeleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Local apagado.'**
+  String get contaDeleted;
+
+  /// No description provided for @contaSignOut.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sair'**
+  String get contaSignOut;
+
+  /// No description provided for @contaLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar o seu local. Tente de novo mais tarde.'**
+  String get contaLoadError;
+
+  /// No description provided for @secaoSaveAsMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar como meu local'**
+  String get secaoSaveAsMine;
+
+  /// No description provided for @secaoIsMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este é o seu local'**
+  String get secaoIsMine;
+
+  /// No description provided for @secaoSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Local salvo. Minha seção e Resultados vão abrir nele.'**
+  String get secaoSaved;
+
+  /// No description provided for @secaoSaveFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível salvar este local.'**
+  String get secaoSaveFailed;
 }
 
 class _AppLocalizationsDelegate

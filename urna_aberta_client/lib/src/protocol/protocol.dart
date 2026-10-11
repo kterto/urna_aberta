@@ -38,9 +38,9 @@ import 'divergence_event.dart' as _i3f5hnmb;
 import 'election_summary.dart' as _ipxcqqyf;
 import 'file_not_stored.dart' as _i0m7v5qb;
 import 'file_verification.dart' as _ikk6q8b9;
-import 'greetings/greeting.dart' as _izw8z7ou;
 import 'list_report.dart' as _i49o1wen;
 import 'live_status.dart' as _i5q61ine;
+import 'meu_local/voter_place.dart' as _i1gec43k;
 import 'municipio_ref.dart' as _i663s1cn;
 import 'office_report.dart' as _ie6yu1i3;
 import 'replay_night.dart' as _i1vi4thm;
@@ -73,9 +73,9 @@ export 'divergence_event.dart';
 export 'election_summary.dart';
 export 'file_not_stored.dart';
 export 'file_verification.dart';
-export 'greetings/greeting.dart';
 export 'list_report.dart';
 export 'live_status.dart';
+export 'meu_local/voter_place.dart';
 export 'municipio_ref.dart';
 export 'office_report.dart';
 export 'replay_night.dart';
@@ -168,14 +168,14 @@ class Protocol extends _isc.SerializationManager {
     if (t == _ikk6q8b9.FileVerification) {
       return _ikk6q8b9.FileVerification.fromJson(data) as T;
     }
-    if (t == _izw8z7ou.Greeting) {
-      return _izw8z7ou.Greeting.fromJson(data) as T;
-    }
     if (t == _i49o1wen.ListReport) {
       return _i49o1wen.ListReport.fromJson(data) as T;
     }
     if (t == _i5q61ine.LiveStatus) {
       return _i5q61ine.LiveStatus.fromJson(data) as T;
+    }
+    if (t == _i1gec43k.VoterPlace) {
+      return _i1gec43k.VoterPlace.fromJson(data) as T;
     }
     if (t == _i663s1cn.MunicipioRef) {
       return _i663s1cn.MunicipioRef.fromJson(data) as T;
@@ -283,14 +283,14 @@ class Protocol extends _isc.SerializationManager {
       return (data != null ? _ikk6q8b9.FileVerification.fromJson(data) : null)
           as T;
     }
-    if (t == _isc.getType<_izw8z7ou.Greeting?>()) {
-      return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
-    }
     if (t == _isc.getType<_i49o1wen.ListReport?>()) {
       return (data != null ? _i49o1wen.ListReport.fromJson(data) : null) as T;
     }
     if (t == _isc.getType<_i5q61ine.LiveStatus?>()) {
       return (data != null ? _i5q61ine.LiveStatus.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_i1gec43k.VoterPlace?>()) {
+      return (data != null ? _i1gec43k.VoterPlace.fromJson(data) : null) as T;
     }
     if (t == _isc.getType<_i663s1cn.MunicipioRef?>()) {
       return (data != null ? _i663s1cn.MunicipioRef.fromJson(data) : null) as T;
@@ -512,9 +512,9 @@ class Protocol extends _isc.SerializationManager {
       _ipxcqqyf.ElectionSummary => 'ElectionSummary',
       _i0m7v5qb.FileNotStoredException => 'FileNotStoredException',
       _ikk6q8b9.FileVerification => 'FileVerification',
-      _izw8z7ou.Greeting => 'Greeting',
       _i49o1wen.ListReport => 'ListReport',
       _i5q61ine.LiveStatus => 'LiveStatus',
+      _i1gec43k.VoterPlace => 'VoterPlace',
       _i663s1cn.MunicipioRef => 'MunicipioRef',
       _ie6yu1i3.OfficeReport => 'OfficeReport',
       _i1vi4thm.ReplayNight => 'ReplayNight',
@@ -573,12 +573,12 @@ class Protocol extends _isc.SerializationManager {
         return 'FileNotStoredException';
       case _ikk6q8b9.FileVerification():
         return 'FileVerification';
-      case _izw8z7ou.Greeting():
-        return 'Greeting';
       case _i49o1wen.ListReport():
         return 'ListReport';
       case _i5q61ine.LiveStatus():
         return 'LiveStatus';
+      case _i1gec43k.VoterPlace():
+        return 'VoterPlace';
       case _i663s1cn.MunicipioRef():
         return 'MunicipioRef';
       case _ie6yu1i3.OfficeReport():
@@ -677,14 +677,14 @@ class Protocol extends _isc.SerializationManager {
     if (dataClassName == 'FileVerification') {
       return deserialize<_ikk6q8b9.FileVerification>(data['data']);
     }
-    if (dataClassName == 'Greeting') {
-      return deserialize<_izw8z7ou.Greeting>(data['data']);
-    }
     if (dataClassName == 'ListReport') {
       return deserialize<_i49o1wen.ListReport>(data['data']);
     }
     if (dataClassName == 'LiveStatus') {
       return deserialize<_i5q61ine.LiveStatus>(data['data']);
+    }
+    if (dataClassName == 'VoterPlace') {
+      return deserialize<_i1gec43k.VoterPlace>(data['data']);
     }
     if (dataClassName == 'MunicipioRef') {
       return deserialize<_i663s1cn.MunicipioRef>(data['data']);

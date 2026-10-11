@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../conta/conta_controller.dart';
 import '../design/theme.dart';
 import '../l10n/l10n.dart';
 import '../replay/replay_controller.dart';
@@ -19,12 +20,16 @@ class UrnaAbertaApp extends StatelessWidget {
     required this.secaoSource,
     required this.verificarSource,
     required this.resultadosSource,
+    this.conta,
   });
 
   final TallySource tallySource;
   final SecaoSource secaoSource;
   final VerificarSource verificarSource;
   final ResultadosSource resultadosSource;
+
+  /// The viewer's account; none in builds without sign-in.
+  final ContaController? conta;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +58,9 @@ class UrnaAbertaApp extends StatelessWidget {
                 darkTheme: atlasTheme(Brightness.dark),
                 themeMode: themeModeNotifier.value,
                 home: const AppShell(),
+                builder: (context, child) => conta == null
+                    ? child!
+                    : ContaScope(controller: conta!, child: child!),
               ),
             ),
           ),

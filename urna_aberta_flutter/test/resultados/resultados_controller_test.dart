@@ -149,4 +149,57 @@ void main() {
     expect(c.uf, 'mg');
     expect(c.report!.scopeCode, 'mg');
   });
+
+  group('home (the saved place)', () {
+    test('known before opening: opens on the home UF', () async {
+      c.useHome('rj', 60011);
+      await c.start();
+      expect(c.uf, 'rj');
+      expect(source.reportCalls, [(6259, 6, 'rj')]);
+    });
+
+    test('known after opening: moves there', () async {
+      await c.start();
+      await c.useHome('rj', 60011);
+      expect(c.uf, 'rj');
+      expect(source.reportCalls.last, (6259, 6, 'rj'));
+    });
+
+    test('never overrides a UF the viewer chose', () async {
+      await c.start();
+      await c.selectUf('mg');
+      await c.useHome('rj', 60011);
+      expect(c.uf, 'mg');
+    });
+
+    test('a municipal election opens on the home municipality', () async {
+      c.useHome('sp', 62910);
+      await c.start();
+      await c.selectRound(c.rounds.singleWhere((e) => e.code == 619));
+      expect(c.municipio?.nome, 'CAMPINAS');
+      expect(source.reportCalls.last, (619, 11, 'sp62910'));
+    });
+
+    test('known after a municipal election opened: picks it', () async {
+      await c.start();
+      await c.selectRound(c.rounds.singleWhere((e) => e.code == 619));
+      expect(c.municipio, isNull);
+      await c.useHome('sp', 62910);
+      expect(c.municipio?.nome, 'CAMPINAS');
+    });
+
+    test('a 2nd round not held there leaves the choice open', () async {
+      c.useHome('sp', 62910);
+      await c.start();
+      await c.selectRound(c.rounds.singleWhere((e) => e.code == 620));
+      expect(c.municipio, isNull);
+    });
+
+    test('Presidente still opens on Brazil', () async {
+      c.useHome('rj', 60011);
+      await c.start();
+      await c.selectOffice(1);
+      expect(c.uf, 'br');
+    });
+  });
 }

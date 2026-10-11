@@ -9,6 +9,7 @@ import 'src/generated/serverpod.dart';
 import 'src/live/elections.dart';
 import 'src/live/live_ingestor.dart';
 import 'src/live/live_poll_call.dart';
+import 'src/meu_local/meu_local_endpoint.dart';
 import 'src/replay/fixture_seeder.dart';
 import 'src/results/resultados_endpoint.dart';
 import 'src/results/results_service.dart';
@@ -116,7 +117,7 @@ void run(List<String> args) async {
     bucket: TokenBucket(ratePerSecond: 20, burst: 5),
   );
   final urls = TseUrls.oficial();
-  SecaoEndpoint.service = SectionService(
+  MeuLocalEndpoint.sections = SecaoEndpoint.service = SectionService(
     client: tse,
     urls: urls,
     directory: SectionDirectories(

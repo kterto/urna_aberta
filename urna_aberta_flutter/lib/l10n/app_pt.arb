@@ -808,5 +808,50 @@
   "entendaPausePara2b": "O TSE informa ainda que, durante a pausa, os boletins de urna continuaram a ser transmitidos, recebidos e publicados, e que o cálculo da totalização seguiu normalmente, exceto por um breve momento em que foi suspenso pelo protocolo de segurança.",
   "entendaSourceFatoOuBoato": "TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)",
   "apuracaoSeeResults": "Ver os resultados finais",
-  "apuracaoAllOffices": "Ver todos os cargos em apuração"
+  "apuracaoAllOffices": "Ver todos os cargos em apuração",
+  "contaSignIn": "Entrar",
+  "contaTitle": "Meu local",
+  "contaLede": "Entre com seu e-mail para guardar o seu local de votação. A Urna Aberta passa a abrir Minha seção na sua seção e os Resultados no seu estado e município.",
+  "contaPrivacy": "Guardamos só o local que você escolher (estado, município e, se quiser, zona e seção), ligado ao seu e-mail. Nada mais sobre você. Você pode apagá-lo quando quiser.",
+  "contaPlacePlate": "Seu local de votação",
+  "contaPlaceMunicipio": "{municipio} ({uf})",
+  "@contaPlaceMunicipio": {
+    "placeholders": {
+      "municipio": {
+        "type": "String"
+      },
+      "uf": {
+        "type": "String"
+      }
+    }
+  },
+  "contaPlaceSecao": "Zona {zona} · Seção {secao}",
+  "@contaPlaceSecao": {
+    "placeholders": {
+      "zona": {
+        "type": "String"
+      },
+      "secao": {
+        "type": "String"
+      }
+    }
+  },
+  "contaPlaceZona": "Zona {zona}",
+  "@contaPlaceZona": {
+    "placeholders": {
+      "zona": {
+        "type": "String"
+      }
+    }
+  },
+  "contaNoPlace": "Você ainda não salvou um local. Escolha sua seção em Minha seção e toque em Salvar como meu local.",
+  "contaChoose": "Escolher em Minha seção",
+  "contaDelete": "Apagar meu local",
+  "contaDeleted": "Local apagado.",
+  "contaSignOut": "Sair",
+  "contaLoadError": "Não foi possível carregar o seu local. Tente de novo mais tarde.",
+  "secaoSaveAsMine": "Salvar como meu local",
+  "secaoIsMine": "Este é o seu local",
+  "secaoSaved": "Local salvo. Minha seção e Resultados vão abrir nele.",
+  "secaoSaveFailed": "Não foi possível salvar este local."
 }

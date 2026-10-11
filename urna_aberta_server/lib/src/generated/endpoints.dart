@@ -19,7 +19,7 @@ import 'package:urna_aberta_server/src/generated/future_calls.dart'
     as _iplz5ub8;
 import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
-import '../greetings/greeting_endpoint.dart' as _il624ik7;
+import '../meu_local/meu_local_endpoint.dart' as _i9rogxyk;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
 import '../results/resultados_endpoint.dart' as _ignf5cub;
 import '../secao/secao_endpoint.dart' as _i5402ufq;
@@ -42,10 +42,10 @@ class Endpoints extends _is.EndpointDispatch {
           'jwtRefresh',
           null,
         ),
-      'greeting': _il624ik7.GreetingEndpoint()
+      'meuLocal': _i9rogxyk.MeuLocalEndpoint()
         ..initialize(
           server,
-          'greeting',
+          'meuLocal',
           null,
         ),
       'tally': _iphjbc6w.TallyEndpoint()
@@ -279,17 +279,42 @@ class Endpoints extends _is.EndpointDispatch {
         ),
       },
     );
-    connectors['greeting'] = _is.EndpointConnector(
-      name: 'greeting',
-      endpoint: endpoints['greeting']!,
+    connectors['meuLocal'] = _is.EndpointConnector(
+      name: 'meuLocal',
+      endpoint: endpoints['meuLocal']!,
       methodConnectors: {
-        'hello': _is.MethodConnector(
-          name: 'hello',
+        'ler': _is.MethodConnector(
+          name: 'ler',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['meuLocal'] as _i9rogxyk.MeuLocalEndpoint)
+                  .ler(session),
+        ),
+        'salvar': _is.MethodConnector(
+          name: 'salvar',
           params: {
-            'name': _is.ParameterDescription(
-              name: 'name',
+            'uf': _is.ParameterDescription(
+              name: 'uf',
               type: _is.getType<String>(),
               nullable: false,
+            ),
+            'municipio': _is.ParameterDescription(
+              name: 'municipio',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'zona': _is.ParameterDescription(
+              name: 'zona',
+              type: _is.getType<int?>(),
+              nullable: true,
+            ),
+            'secao': _is.ParameterDescription(
+              name: 'secao',
+              type: _is.getType<int?>(),
+              nullable: true,
             ),
           },
           call:
@@ -297,10 +322,23 @@ class Endpoints extends _is.EndpointDispatch {
                 _is.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greeting'] as _il624ik7.GreetingEndpoint).hello(
+                  (endpoints['meuLocal'] as _i9rogxyk.MeuLocalEndpoint).salvar(
                     session,
-                    params['name'],
+                    params['uf'],
+                    params['municipio'],
+                    params['zona'],
+                    params['secao'],
                   ),
+        ),
+        'apagar': _is.MethodConnector(
+          name: 'apagar',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['meuLocal'] as _i9rogxyk.MeuLocalEndpoint)
+                  .apagar(session),
         ),
       },
     );
