@@ -32,8 +32,8 @@ dependencies:
   google_fonts: ^8.1.0
   urna_aberta_client:
     path: ../urna_aberta_client
-  serverpod_flutter: 4.0.0
-  serverpod_auth_idp_flutter: 4.0.0
+  serverpod_flutter: 4.0.4
+  serverpod_auth_idp_flutter: 4.0.4
   url_launcher: ^6.3.3
   cryptography: ^2.9.0
   crypto: ^3.0.7

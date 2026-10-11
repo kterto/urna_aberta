@@ -36,6 +36,10 @@ import 'package:urna_aberta_server/src/generated/office_report.dart'
     as _it8y8zyf;
 import 'package:urna_aberta_server/src/generated/replay_night.dart'
     as _igasjbde;
+import 'package:urna_aberta_server/src/generated/reports/report_quote.dart'
+    as _ikprksel;
+import 'package:urna_aberta_server/src/generated/reports/report_spec.dart'
+    as _icv1nmb7;
 import 'package:urna_aberta_server/src/generated/section_report.dart'
     as _i68ta11r;
 import 'package:urna_aberta_server/src/generated/tally_frame.dart' as _i5xgbeon;
@@ -184,6 +188,8 @@ class TestEndpoints {
 
   late final _TallyEndpoint tally;
 
+  late final _RelatoriosEndpoint relatorios;
+
   late final _ResultadosEndpoint resultados;
 
   late final _SecaoEndpoint secao;
@@ -211,6 +217,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     tally = _TallyEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    relatorios = _RelatoriosEndpoint(
       endpoints,
       serializationManager,
     );
@@ -821,6 +831,48 @@ class _TallyEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_ikfybxr9.LiveStatus>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _RelatoriosEndpoint {
+  _RelatoriosEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_ikprksel.ReportQuote> orcar(
+    _ist.TestSessionBuilder sessionBuilder,
+    _icv1nmb7.ReportSpec spec,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'relatorios',
+            method: 'orcar',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'relatorios',
+          methodName: 'orcar',
+          parameters: _ist.testObjectToJson({'spec': spec}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ikprksel.ReportQuote>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
