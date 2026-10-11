@@ -572,7 +572,7 @@ class _QuotePlate extends StatelessWidget {
   String _refusal(BuildContext context, ReportRefused r) {
     final l = context.l10n;
     return switch (r.reason) {
-      'tooLarge' => l.relatoriosTooLarge(context.integer(3000)),
+      'tooLarge' => l.relatoriosTooLarge(context.integer(6000)),
       'notPublished' => l.relatoriosRefusedNotPublished,
       'busy' => l.relatoriosRefusedBusy,
       _ => l.relatoriosRefusedInvalid,

@@ -43,7 +43,7 @@ class Scope {
     : code = '${uf.toLowerCase()}${mun.toString().padLeft(5, '0')}',
       municipio = mun {
     final u = uf.toLowerCase();
-    if (!ufs.contains(u) || u == 'zz') {
+    if (!ufs.contains(u)) {
       throw ArgumentError.value(uf, 'uf', 'not a UF');
     }
     if (mun < 1 || mun > 99999) {
@@ -264,10 +264,11 @@ class TseUrls {
   static void _checkScope(Scope scope, Office office) {
     final ok = switch (office.level) {
       OfficeLevel.federal => true,
-      OfficeLevel.municipal => scope.isMunicipality,
+      // Abroad (`zz`, and its cities) votes for federal offices only.
+      OfficeLevel.municipal => scope.isMunicipality && scope.uf != 'zz',
       OfficeLevel.state =>
         !scope.isBrazil &&
-            !scope.isExterior &&
+            scope.uf != 'zz' &&
             switch (office) {
               Office.deputadoEstadual => scope.uf != 'df',
               Office.deputadoDistrital => scope.uf == 'df',

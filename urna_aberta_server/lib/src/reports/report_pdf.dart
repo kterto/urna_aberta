@@ -81,6 +81,8 @@ Future<List<int>> reportPdf({
 
   doc.addPage(
     pw.MultiPage(
+      // The package stops at 20 pages; Brazil by municipality is ~150.
+      maxPages: 1000,
       pageTheme: pw.PageTheme(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.fromLTRB(48, 40, 48, 40),

@@ -270,6 +270,15 @@ void main() {
     });
   });
 
+  test('Presidente for all of Brazil by municipality fits', () async {
+    final p = await planner.plan(
+      spec([1], [br], elections: [6257], breakdown: ReportBreakdown.municipio),
+    );
+    // Every municipality, abroad included, plus Brazil's own file.
+    expect(p.files, 5758);
+    expect(p.files, lessThanOrEqualTo(ReportPlanner.fileLimit));
+  });
+
   test('a spec over the limit is refused as soon as it passes it', () async {
     await refused(spec([11, 13], [br], elections: [619]), 'tooLarge');
     // Brazil by zone would list every zone of every UF first.

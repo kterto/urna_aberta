@@ -307,6 +307,9 @@ Candidate _candidate(Map<String, dynamic> c, int party, String list) {
     birthDate: _date(c['dt']),
     validity: switch (c['dvt']) {
       'Válido' => Validity.valid,
+      // A city abroad where no section was installed lists its candidates
+      // with no votes and no validity.
+      null when c['vap'] == '0' => Validity.valid,
       'Válido (legenda)' => Validity.validForParty,
       'Anulado' => Validity.annulled,
       'Anulado sub judice' => Validity.annulledSubJudice,

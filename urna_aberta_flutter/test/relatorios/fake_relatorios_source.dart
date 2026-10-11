@@ -42,7 +42,7 @@ class FakeRelatoriosSource implements RelatoriosSource {
     files: 23,
     stored: 1,
     seconds: 2,
-    limit: 3000,
+    limit: 6000,
     tables: 23,
     sectionsWithoutFiles: 0,
   );

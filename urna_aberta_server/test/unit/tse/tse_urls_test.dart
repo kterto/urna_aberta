@@ -215,12 +215,29 @@ void main() {
       expect(Office.senador.proportional, isFalse);
     });
 
+    test('a city abroad has files for federal offices only', () {
+      final lisboa = Scope.municipality('zz', 29254);
+      expect(lisboa.code, 'zz29254');
+      expect(lisboa.uf, 'zz');
+      expect(
+        urls.result(6257, lisboa, Office.presidente).path,
+        endsWith('/dados/zz/zz29254-c0001-e006257-u.json'),
+      );
+      expect(
+        () => urls.result(6259, lisboa, Office.governador),
+        throwsArgumentError,
+      );
+      expect(
+        () => urls.result(619, lisboa, Office.prefeito),
+        throwsArgumentError,
+      );
+    });
+
     test('a municipality scope is UF + 5-digit TSE code', () {
       expect(sp.code, 'sp71072');
       expect(sp.uf, 'sp');
       expect(sp.isMunicipality, isTrue);
       expect(Scope.uf('sp').isMunicipality, isFalse);
-      expect(() => Scope.municipality('zz', 1), throwsArgumentError);
       expect(() => Scope.municipality('sp', 0), throwsArgumentError);
       expect(() => Scope.municipality('sp', 100000), throwsArgumentError);
       expect(Scope.municipality('ac', 1066).code, 'ac01066');

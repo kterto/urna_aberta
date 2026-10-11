@@ -123,7 +123,7 @@ class ReportPlanner {
   final DateTime Function() _now;
 
   /// Most TSE files one report may read.
-  static const fileLimit = 3000;
+  static const fileLimit = 6000;
 
   Future<ReportPlan> plan(ReportSpec spec) async {
     if (spec.elections.isEmpty || spec.offices.isEmpty || spec.places.isEmpty) {

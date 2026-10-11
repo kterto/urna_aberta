@@ -1,6 +1,6 @@
 # Plan: reports anyone can configure
 
-Status (11/10/2026): approved, with sign-in required, an opt-in public link and a limit of 3,000 files. Steps 1 to 4 done (spec and quote, sums, queue, PDF and CSV): the AC cities add up to TSE's AC file and the 34 BUs of Porto Walter's zone to TSE's Porto Walter file, figure by figure.
+Status (11/10/2026): approved, with sign-in required, an opt-in public link and a limit of 3,000 files (raised to 6,000 the same day, so one office for all of Brazil by municipality fits). Steps 1 to 4 done (spec and quote, sums, queue, PDF and CSV): the AC cities add up to TSE's AC file and the 34 BUs of Porto Walter's zone to TSE's Porto Walter file, figure by figure.
 
 ## Goal
 
@@ -76,7 +76,7 @@ The CSV is the same tables in long format: `eleicao, cargo, local, nivel, candid
 - **Reuse**: not built. Each report reads stored files from the database, so building one again costs no TSE requests once its files are final.
 - **Limits**:
   - One queued report per account.
-  - At most 3,000 TSE files per report. That covers every city of MG for two offices, and roughly 5 zones' worth of sections. Planning stops as soon as a spec passes the limit, so Brazil broken down by zone is refused without listing every section first. The quote and the request are refused with `tooLarge`.
+  - At most 6,000 TSE files per report. That covers one office for every municipality of Brazil (5,757 with the 186 abroad, plus Brazil's own file: about 5 minutes at 20 requests a second, then nothing once stored), and roughly 10 zones' worth of sections. Planning stops as soon as a spec passes the limit, so Brazil broken down by zone is refused without listing every section first. The quote and the request are refused with `tooLarge`.
 - **Cache** (done): `ResultsService` keeps the Câmara total per election, keyed by the newest stored Deputado Federal file, and for only 30 s while any state is still counting. Not `session.caches.local`, whose lifetimes run on the wall clock rather than the service's clock. Measured 11/10/2026 with every file stored: 139 ms cold, 1–2 ms cached. The 25 s seen before was the first read of the 27 files from TSE, which a cache cannot avoid.
 
 ## App

@@ -153,6 +153,18 @@ void main() {
     });
   });
 
+  test('a city abroad with no section installed: candidates have 0 votes '
+      'and no validity', () {
+    final r = load(
+      '2026-1t/oficial/ele2026/6257/dados/zz/zz99198-c0001-e006257-u.jws',
+    );
+    expect(r.scope, 'zz99198');
+    expect(r.totals.total, 0);
+    expect(r.candidates, isNotEmpty);
+    expect(r.candidates.every((c) => c.votes == 0), isTrue);
+    expect(r.candidates.every((c) => c.validity == Validity.valid), isTrue);
+  });
+
   test('a municipal file without its UF is refused', () {
     final bytes = TseJws.parse(
       File(

@@ -105,7 +105,7 @@ void main() {
     testWidgets('a report too large says so', (tester) async {
       reports.refuse = ReportRefused(message: 'x', reason: 'tooLarge');
       await pump(tester, novo(_acDraft));
-      expect(find.textContaining('mais de 3.000 arquivos'), findsOneWidget);
+      expect(find.textContaining('mais de 6.000 arquivos'), findsOneWidget);
     });
 
     testWidgets('in English', (tester) async {
