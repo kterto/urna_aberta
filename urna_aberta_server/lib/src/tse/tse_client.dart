@@ -108,11 +108,15 @@ class TseClient {
   final _cache = <Uri, _Cached>{};
   DateTime? _pausedUntil;
 
-  Future<TseFetch> fetch(Uri uri) async {
+  /// When requests resume, while a 404 or block backoff is in effect.
+  DateTime? get pausedUntil {
     final paused = _pausedUntil;
-    if (paused != null && _now().isBefore(paused)) {
-      throw TseBackingOff(uri, paused);
-    }
+    return paused != null && _now().isBefore(paused) ? paused : null;
+  }
+
+  Future<TseFetch> fetch(Uri uri) async {
+    final paused = pausedUntil;
+    if (paused != null) throw TseBackingOff(uri, paused);
 
     final cached = _cache[uri];
     final headers = <String, String>{

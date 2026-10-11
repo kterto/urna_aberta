@@ -6,6 +6,7 @@ import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 
 import 'src/cache_busting.dart';
 import 'src/generated/serverpod.dart';
+import 'src/health/health_indicators.dart';
 import 'src/live/elections.dart';
 import 'src/live/live_ingestor.dart';
 import 'src/live/live_poll_call.dart';
@@ -30,9 +31,25 @@ import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
+  // One rate-limited TSE client for the whole server, well under the
+  // 100 req/s per-IP limit.
+  final tse = TseClient(
+    http: IoTseHttp(),
+    bucket: TokenBucket(ratePerSecond: 20, burst: 5),
+  );
+  final replay = ReplayIndicator();
+
   // Initialize Serverpod. The generated Serverpod class is already connected
-  // with your project's generated code.
-  final pod = Serverpod(args);
+  // with your project's generated code. Besides the database, /readyz
+  // reports whether TSE requests are paused, and /startupz waits for the
+  // replay files.
+  final pod = Serverpod(
+    args,
+    healthConfig: HealthConfig(
+      additionalReadinessIndicators: [TseIndicator(tse)],
+      additionalStartupIndicators: [replay],
+    ),
+  );
 
   // Initialize authentication services for the server.
   // Token managers will be used to validate and issue authentication keys,
@@ -116,12 +133,6 @@ void run(List<String> args) async {
     ),
   );
 
-  // One rate-limited TSE client for the whole server, well under the
-  // 100 req/s per-IP limit.
-  final tse = TseClient(
-    http: IoTseHttp(),
-    bucket: TokenBucket(ratePerSecond: 20, burst: 5),
-  );
   final urls = TseUrls.oficial();
   // Section configs per pleito, each read once per UF.
   final directories = <int, SectionDirectories>{};
@@ -171,7 +182,7 @@ void run(List<String> args) async {
   // Start the server.
   await pod.start();
 
-  await _seedReplayFixtures(pod);
+  await _seedReplayFixtures(pod, replay);
   await _resumeReports(pod, reports);
 
   if (live != null) {
@@ -230,24 +241,28 @@ LiveIngestor? _liveIngestor(TseClient tse, TseUrls urls) {
 }
 
 /// Stores the archived 1st-round files so the replay works offline.
-Future<void> _seedReplayFixtures(Serverpod pod) async {
+Future<void> _seedReplayFixtures(Serverpod pod, ReplayIndicator replay) async {
   final root = _archive;
   final session = await pod.createSession();
+  var outcome = 'Replay fixtures failed to load.';
   try {
     if (!root.existsSync()) {
-      session.log('Replay fixtures not found at ${root.path}; replay is off.');
+      outcome = 'Replay fixtures not found at ${root.path}; replay is off.';
+      session.log(outcome);
       return;
     }
     final added = await FixtureSeeder.seed(session, root);
-    session.log('Replay fixtures: $added new snapshots from ${root.path}.');
+    outcome = 'Replay fixtures: $added new snapshots from ${root.path}.';
+    session.log(outcome);
   } catch (e, st) {
     session.log(
-      'Replay fixtures failed to load',
+      outcome,
       level: LogLevel.error,
       exception: e,
       stackTrace: st,
     );
   } finally {
+    replay.stored(outcome);
     await session.close();
   }
 }
