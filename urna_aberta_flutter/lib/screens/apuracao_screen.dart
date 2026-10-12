@@ -13,7 +13,6 @@ import '../l10n/format.dart';
 import '../l10n/l10n.dart';
 import '../live/live_controller.dart';
 import '../replay/replay_controller.dart';
-import '../showcase/design_system_screen.dart';
 
 /// The count: TSE's national file vs the independent sum of states. Live
 /// while TSE publishes (or once live files exist), otherwise the 1st-round
@@ -50,6 +49,13 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     _live ??= LiveController(TallyScope.of(context))..load();
   }
 
+  /// Pulled to refresh: the live count read again; the replay too, if it
+  /// never loaded.
+  Future<void> _refresh() => Future.wait([
+    _live!.load(),
+    if (_replay!.night == null) _replay!.load(),
+  ]);
+
   @override
   void dispose() {
     _replay?.dispose();
@@ -69,40 +75,46 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
         final showLive = status != null && liveFrame != null && !_replayChosen;
         return AtlasPage(
           title: wide ? l.apuracaoHeadline : l.navApuracao,
+          onRefresh: _refresh,
           lede: !showLive
               ? l.apuracaoLede
               : status.open
               ? l.apuracaoLiveLede(status.round ?? 1)
               : l.apuracaoLiveEndedLede(status.round ?? 1),
-          actions: [
-            if (!isWideLayout(context) || shellKindOf(context) != ShellKind.web)
-              IconButton(
-                tooltip: l.apuracaoDesignSystem,
-                icon: Icon(AtlasIcons.sistema(context)),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const DesignSystemScreen(),
-                  ),
-                ),
-              ),
-          ],
           children: [
             if (liveFrame != null) ...[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: AtlasSegmented<bool>(
-                  segments: {
-                    false: l.apuracaoModeLive,
-                    true: l.apuracaoModeReplay,
-                  },
-                  selected: _replayChosen,
-                  onChanged: (v) => setState(() => _replayChosen = v),
-                ),
+              Wrap(
+                spacing: Space.x4,
+                runSpacing: Space.x2,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  AtlasSegmented<bool>(
+                    segments: {
+                      false: l.apuracaoModeLive,
+                      true: l.apuracaoModeReplay,
+                    },
+                    selected: _replayChosen,
+                    onChanged: (v) => setState(() => _replayChosen = v),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        ShellScope.of(context)?.go(Section.resultados),
+                    child: Text(l.apuracaoAllOffices),
+                  ),
+                ],
               ),
               const SizedBox(height: Space.x5),
             ] else if (_liveNotice(context, status) case final notice?) ...[
               _Notice(text: notice),
-              const SizedBox(height: Space.x5),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () =>
+                      ShellScope.of(context)?.go(Section.resultados),
+                  child: Text(l.apuracaoSeeResults),
+                ),
+              ),
+              const SizedBox(height: Space.x3),
             ],
             if (showLive)
               ..._liveBody(context, wide, status, liveFrame)
@@ -176,7 +188,8 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: Space.x4),
                     child: DivergenceBanner(
-                      onLearnMore: () => ShellScope.of(context)?.go(3),
+                      onLearnMore: () =>
+                          ShellScope.of(context)?.go(Section.entenda),
                     ),
                   )
                 : const SizedBox.shrink(),
@@ -316,7 +329,8 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: Space.x4),
                     child: DivergenceBanner(
-                      onLearnMore: () => ShellScope.of(context)?.go(3),
+                      onLearnMore: () =>
+                          ShellScope.of(context)?.go(Section.entenda),
                     ),
                   )
                 : const SizedBox.shrink(),

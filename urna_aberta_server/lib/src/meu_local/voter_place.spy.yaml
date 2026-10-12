@@ -1,0 +1,18 @@
+### A signed-in viewer's own polling place, as they entered it. Deleted with
+### their account.
+class: VoterPlace
+table: voter_place
+fields:
+  authUser: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
+  ### TSE's lowercase UF code ('zz' is abroad).
+  uf: String
+  ### TSE's 5-digit municipality code.
+  municipio: int
+  municipioNome: String
+  zona: int?
+  secao: int?
+  updatedAt: DateTime
+indexes:
+  voter_place_auth_user_idx:
+    fields: authUserId
+    unique: true

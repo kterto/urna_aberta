@@ -1,0 +1,8 @@
+### Where a report request is in the queue.
+enum: ReportStatus
+serialized: byName
+values:
+  - queued
+  - running
+  - ready
+  - failed

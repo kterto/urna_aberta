@@ -1,0 +1,7 @@
+### TSE has not published this result, or the request names an office the
+### scope does not elect. The message is Portuguese; the app shows its own.
+exception: ResultUnavailable
+fields:
+  message: String
+  ### `notPublished`, `invalidRequest` or `tseUnavailable`.
+  reason: String

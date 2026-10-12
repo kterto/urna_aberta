@@ -1,0 +1,17 @@
+### A party, federation or coalition on the ballot for one office.
+class: ListReport
+fields:
+  number: String
+  name: String
+  ### `party`, `federation` or `coalition`.
+  kind: String
+  ### Party abbreviations, as TSE writes them.
+  parties: List<String>
+  ### Valid nominal plus legend votes.
+  votes: int
+  legendVotes: int
+  ### Seats as TSE published them, and as Urna Aberta computed them.
+  tseSeats: int?
+  ourSeats: int?
+  ### Quociente partidário.
+  partyQuotient: int?

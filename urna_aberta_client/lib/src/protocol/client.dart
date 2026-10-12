@@ -11,22 +11,35 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _ida;
+import 'dart:typed_data' as _idt;
 import 'package:http/http.dart' as _i85jenna;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _iacc;
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _iaic;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:urna_aberta_client/src/protocol/chamber_report.dart'
+    as _i3l1h7iq;
 import 'package:urna_aberta_client/src/protocol/divergence_event.dart'
     as _ivdor3em;
+import 'package:urna_aberta_client/src/protocol/election_summary.dart'
+    as _i35jelvf;
 import 'package:urna_aberta_client/src/protocol/file_verification.dart'
     as _i4bcni6a;
-import 'package:urna_aberta_client/src/protocol/greetings/greeting.dart'
-    as _i0ezu2ai;
 import 'package:urna_aberta_client/src/protocol/live_status.dart' as _iz8cte89;
+import 'package:urna_aberta_client/src/protocol/meu_local/voter_place.dart'
+    as _in6h62uh;
 import 'package:urna_aberta_client/src/protocol/municipio_ref.dart'
     as _iawxlp65;
+import 'package:urna_aberta_client/src/protocol/office_report.dart'
+    as _i8bxvetb;
 import 'package:urna_aberta_client/src/protocol/replay_night.dart' as _i47uhwzn;
+import 'package:urna_aberta_client/src/protocol/reports/report_quote.dart'
+    as _i9larcy2;
+import 'package:urna_aberta_client/src/protocol/reports/report_request.dart'
+    as _i4u38mzp;
+import 'package:urna_aberta_client/src/protocol/reports/report_spec.dart'
+    as _ipm39ypz;
 import 'package:urna_aberta_client/src/protocol/section_report.dart'
     as _it6gukgl;
 import 'package:urna_aberta_client/src/protocol/tally_frame.dart' as _iirfdrc4;
@@ -259,22 +272,46 @@ class EndpointJwtRefresh extends _iacc.EndpointRefreshJwtTokens {
       );
 }
 
-/// This is an example endpoint that returns a greeting message through
-/// its [hello] method.
+/// Meu local: the signed-in viewer's own polling place, so Minha seção and
+/// Resultados open on it. Only what the viewer typed is kept, and they can
+/// delete it.
 /// {@category Endpoint}
-class EndpointGreeting extends _isc.EndpointRef {
-  EndpointGreeting(_isc.EndpointCaller caller) : super(caller);
+class EndpointMeuLocal extends _isc.EndpointRef {
+  EndpointMeuLocal(_isc.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'greeting';
+  String get name => 'meuLocal';
 
-  /// Returns a personalized greeting message: "Hello {name}".
-  _ida.Future<_i0ezu2ai.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i0ezu2ai.Greeting>(
-        'greeting',
-        'hello',
-        {'name': name},
+  _ida.Future<_in6h62uh.VoterPlace?> ler() =>
+      caller.callServerEndpoint<_in6h62uh.VoterPlace?>(
+        'meuLocal',
+        'ler',
+        {},
       );
+
+  /// Saves a municipality, optionally down to zone and section, once TSE's
+  /// section config lists it.
+  _ida.Future<_in6h62uh.VoterPlace> salvar(
+    String uf,
+    int municipio,
+    int? zona,
+    int? secao,
+  ) => caller.callServerEndpoint<_in6h62uh.VoterPlace>(
+    'meuLocal',
+    'salvar',
+    {
+      'uf': uf,
+      'municipio': municipio,
+      'zona': zona,
+      'secao': secao,
+    },
+  );
+
+  _ida.Future<void> apagar() => caller.callServerEndpoint<void>(
+    'meuLocal',
+    'apagar',
+    {},
+  );
 }
 
 /// National file vs independent sum of states, on the replay clock.
@@ -331,6 +368,159 @@ class EndpointTally extends _isc.EndpointRef {
         'tally',
         'live',
         {},
+      );
+}
+
+/// Relatórios: reports anyone signed in can configure, over any election,
+/// office and place Urna Aberta covers.
+/// {@category Endpoint}
+class EndpointRelatorios extends _isc.EndpointRef {
+  EndpointRelatorios(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'relatorios';
+
+  /// What [spec] would read, how much is already stored, and how long the
+  /// rest would take. Refuses a spec naming anything TSE does not list.
+  _ida.Future<_i9larcy2.ReportQuote> orcar(_ipm39ypz.ReportSpec spec) =>
+      caller.callServerEndpoint<_i9larcy2.ReportQuote>(
+        'relatorios',
+        'orcar',
+        {'spec': spec},
+      );
+
+  /// Queues [spec]; the report is built in the background.
+  _ida.Future<_i4u38mzp.ReportRequest> pedir(_ipm39ypz.ReportSpec spec) =>
+      caller.callServerEndpoint<_i4u38mzp.ReportRequest>(
+        'relatorios',
+        'pedir',
+        {'spec': spec},
+      );
+
+  /// The viewer's reports, newest first.
+  _ida.Future<List<_i4u38mzp.ReportRequest>> listar() =>
+      caller.callServerEndpoint<List<_i4u38mzp.ReportRequest>>(
+        'relatorios',
+        'listar',
+        {},
+      );
+
+  /// One report's state now, then each change until it is ready or failed.
+  _ida.Stream<_i4u38mzp.ReportRequest> acompanhar(int id) =>
+      caller.callStreamingServerEndpoint<
+        _ida.Stream<_i4u38mzp.ReportRequest>,
+        _i4u38mzp.ReportRequest
+      >(
+        'relatorios',
+        'acompanhar',
+        {'id': id},
+        {},
+      );
+
+  /// A ready report's file: `pdf` or `csv`.
+  _ida.Future<_idt.ByteData> baixar(
+    int id,
+    String formato,
+  ) => caller.callServerEndpoint<_idt.ByteData>(
+    'relatorios',
+    'baixar',
+    {
+      'id': id,
+      'formato': formato,
+    },
+  );
+
+  /// Gives a ready report a public link (`/r/<publicToken>`), or removes it.
+  _ida.Future<_i4u38mzp.ReportRequest> publicar(
+    int id,
+    bool publico,
+  ) => caller.callServerEndpoint<_i4u38mzp.ReportRequest>(
+    'relatorios',
+    'publicar',
+    {
+      'id': id,
+      'publico': publico,
+    },
+  );
+
+  /// A download link for a ready report's file, valid for ten minutes:
+  /// opening it in a browser saves the file, on any platform.
+  _ida.Future<String> link(
+    int id,
+    String formato,
+  ) => caller.callServerEndpoint<String>(
+    'relatorios',
+    'link',
+    {
+      'id': id,
+      'formato': formato,
+    },
+  );
+
+  /// The public page of a published report, or null.
+  _ida.Future<String?> linkPublico(int id) =>
+      caller.callServerEndpoint<String?>(
+        'relatorios',
+        'linkPublico',
+        {'id': id},
+      );
+
+  _ida.Future<void> apagar(int id) => caller.callServerEndpoint<void>(
+    'relatorios',
+    'apagar',
+    {'id': id},
+  );
+}
+
+/// Resultados: the published result of any office, in any scope, for every
+/// ordinary election TSE lists, with an independent seat allocation for
+/// proportional offices.
+/// {@category Endpoint}
+class EndpointResultados extends _isc.EndpointRef {
+  EndpointResultados(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'resultados';
+
+  _ida.Future<List<_i35jelvf.ElectionSummary>> eleicoes() =>
+      caller.callServerEndpoint<List<_i35jelvf.ElectionSummary>>(
+        'resultados',
+        'eleicoes',
+        {},
+      );
+
+  _ida.Future<List<_iawxlp65.MunicipioRef>> municipios(
+    int eleicao,
+    String uf,
+  ) => caller.callServerEndpoint<List<_iawxlp65.MunicipioRef>>(
+    'resultados',
+    'municipios',
+    {
+      'eleicao': eleicao,
+      'uf': uf,
+    },
+  );
+
+  _ida.Future<_i8bxvetb.OfficeReport> resultado(
+    int eleicao,
+    int cargo,
+    String abrangencia,
+  ) => caller.callServerEndpoint<_i8bxvetb.OfficeReport>(
+    'resultados',
+    'resultado',
+    {
+      'eleicao': eleicao,
+      'cargo': cargo,
+      'abrangencia': abrangencia,
+    },
+  );
+
+  /// The Câmara dos Deputados: every UF's Deputado Federal race summed.
+  _ida.Future<_i3l1h7iq.ChamberReport> camara(int eleicao) =>
+      caller.callServerEndpoint<_i3l1h7iq.ChamberReport>(
+        'resultados',
+        'camara',
+        {'eleicao': eleicao},
       );
 }
 
@@ -458,8 +648,10 @@ class Client extends _isc.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
-    greeting = EndpointGreeting(this);
+    meuLocal = EndpointMeuLocal(this);
     tally = EndpointTally(this);
+    relatorios = EndpointRelatorios(this);
+    resultados = EndpointResultados(this);
     secao = EndpointSecao(this);
     verificar = EndpointVerificar(this);
     modules = Modules(this);
@@ -469,9 +661,13 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointJwtRefresh jwtRefresh;
 
-  late final EndpointGreeting greeting;
+  late final EndpointMeuLocal meuLocal;
 
   late final EndpointTally tally;
+
+  late final EndpointRelatorios relatorios;
+
+  late final EndpointResultados resultados;
 
   late final EndpointSecao secao;
 
@@ -483,8 +679,10 @@ class Client extends _isc.ServerpodClientShared {
   Map<String, _isc.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
-    'greeting': greeting,
+    'meuLocal': meuLocal,
     'tally': tally,
+    'relatorios': relatorios,
+    'resultados': resultados,
     'secao': secao,
     'verificar': verificar,
   };

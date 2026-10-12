@@ -1,0 +1,16 @@
+### An ordinary election TSE lists in EA11, with the offices it elects.
+class: ElectionSummary
+fields:
+  code: int
+  round: int
+  ### Election day (Brasília calendar), at 00:00 UTC.
+  day: DateTime
+  name: String
+  ### `federal`, `state` or `municipal`.
+  level: String
+  ### TSE office codes, e.g. 6 Deputado Federal, 13 Vereador.
+  offices: List<int>
+  ### Municipal elections held everywhere: the municipality list is EA12.
+  allMunicipalities: bool
+  ### Otherwise, the municipality scopes it covers (`sp71072`), if any.
+  municipalScopes: List<String>

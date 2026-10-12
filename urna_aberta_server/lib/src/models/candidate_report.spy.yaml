@@ -1,0 +1,15 @@
+### A candidacy and its outcome.
+class: CandidateReport
+fields:
+  number: int
+  ballotName: String
+  party: String
+  list: String
+  votes: int
+  ### `valid`, `validForParty`, `annulled` or `annulledSubJudice`.
+  validity: String
+  elected: bool
+  ### TSE's status as written, e.g. `Eleito por QP`, `Suplente`, `2º turno`.
+  tseStatus: String
+  ### Urna Aberta's seat: `QP`, `média`, or null when not elected by us.
+  ourSeat: String?

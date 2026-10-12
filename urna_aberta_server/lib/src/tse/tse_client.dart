@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'token_bucket.dart';
@@ -71,6 +72,17 @@ class TseBackingOff extends TseException {
   String toString() => 'TseBackingOff until $until: $uri';
 }
 
+/// No answer: a timeout or a dropped connection. Nothing pauses, since TSE
+/// did not refuse anything; asking again later may work.
+class TseUnreachable extends TseException {
+  TseUnreachable(super.uri, this.cause);
+
+  final Object cause;
+
+  @override
+  String toString() => 'TseUnreachable($cause): $uri';
+}
+
 class TseHttpError extends TseException {
   TseHttpError(super.uri, this.status);
 
@@ -108,11 +120,15 @@ class TseClient {
   final _cache = <Uri, _Cached>{};
   DateTime? _pausedUntil;
 
-  Future<TseFetch> fetch(Uri uri) async {
+  /// When requests resume, while a 404 or block backoff is in effect.
+  DateTime? get pausedUntil {
     final paused = _pausedUntil;
-    if (paused != null && _now().isBefore(paused)) {
-      throw TseBackingOff(uri, paused);
-    }
+    return paused != null && _now().isBefore(paused) ? paused : null;
+  }
+
+  Future<TseFetch> fetch(Uri uri) async {
+    final paused = pausedUntil;
+    if (paused != null) throw TseBackingOff(uri, paused);
 
     final cached = _cache[uri];
     final headers = <String, String>{
@@ -122,7 +138,16 @@ class TseClient {
     };
 
     await _bucket.acquire();
-    final r = await _http.get(uri, headers);
+    final TseHttpResponse r;
+    try {
+      r = await _http.get(uri, headers);
+    } on TimeoutException catch (e) {
+      throw TseUnreachable(uri, e);
+    } on SocketException catch (e) {
+      throw TseUnreachable(uri, e);
+    } on HttpException catch (e) {
+      throw TseUnreachable(uri, e);
+    }
 
     switch (r.status) {
       case 200:

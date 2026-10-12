@@ -1,0 +1,10 @@
+### What a report covers: every listed office of every listed election that
+### elects it, in every listed place.
+class: ReportSpec
+fields:
+  elections: List<int>
+  offices: List<int>
+  places: List<ReportPlace>
+  breakdown: ReportBreakdown
+  ### `pt` or `en`.
+  language: String

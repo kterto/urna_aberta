@@ -15,6 +15,7 @@ import 'dart:async' as _ida;
 import 'package:clock/clock.dart' as _io0w16m8;
 import 'package:serverpod/serverpod.dart' as _is;
 import '../live/live_poll_call.dart' as _i38plb6e;
+import '../reports/report_call.dart' as _iphalun1;
 
 /// Invokes a future call.
 typedef _InvokeFutureCall =
@@ -59,6 +60,8 @@ class FutureCalls extends _is.FutureCallDispatch<_FutureCallRef> {
   ) {
     var registeredFutureCalls = <String, _is.InvokableFutureCall>{
       'LivePollCallPollFutureCall': LivePollCallPollFutureCall(),
+      'ReportCallDrainFutureCall': ReportCallDrainFutureCall(),
+      'ReportCallWatchFutureCall': ReportCallWatchFutureCall(),
     };
     _futureCallManager = futureCallManager;
     _serverId = serverId;
@@ -182,6 +185,8 @@ class _FutureCallRef {
   late final livePollCall = _LivePollCallFutureCallDispatcher(
     _invokeFutureCall,
   );
+
+  late final reportCall = _ReportCallFutureCallDispatcher(_invokeFutureCall);
 }
 
 class _LivePollCallFutureCallDispatcher {
@@ -197,6 +202,26 @@ class _LivePollCallFutureCallDispatcher {
   }
 }
 
+class _ReportCallFutureCallDispatcher {
+  _ReportCallFutureCallDispatcher(this._invokeFutureCall);
+
+  final _InvokeFutureCall _invokeFutureCall;
+
+  Future<void> drain() {
+    return _invokeFutureCall(
+      'ReportCallDrainFutureCall',
+      null,
+    );
+  }
+
+  Future<void> watch() {
+    return _invokeFutureCall(
+      'ReportCallWatchFutureCall',
+      null,
+    );
+  }
+}
+
 class LivePollCallPollFutureCall extends _is.FutureCall
     implements _is.InvokableFutureCall {
   @override
@@ -205,5 +230,29 @@ class LivePollCallPollFutureCall extends _is.FutureCall
     _is.SerializableModel? object,
   ) async {
     await _i38plb6e.LivePollCall().poll(session);
+  }
+}
+
+class ReportCallDrainFutureCall extends _is.FutureCall
+    implements _is.InvokableFutureCall {
+  @override
+  _ida.Future<void> invoke(
+    _is.Session session,
+    _is.SerializableModel? object,
+  ) async {
+    await _iphalun1.ReportCall().drain(session);
+  }
+}
+
+/// Queues again the reports whose server went quiet (scheduled in
+/// `server.dart`).
+class ReportCallWatchFutureCall extends _is.FutureCall
+    implements _is.InvokableFutureCall {
+  @override
+  _ida.Future<void> invoke(
+    _is.Session session,
+    _is.SerializableModel? object,
+  ) async {
+    await _iphalun1.ReportCall().watch(session);
   }
 }

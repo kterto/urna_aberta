@@ -1,0 +1,16 @@
+### What a report would cost before it is queued.
+class: ReportQuote
+fields:
+  ### TSE files the report reads (a section counts its aux file, BU and
+  ### signature file).
+  files: int
+  ### Of those, already stored: read without asking TSE.
+  stored: int
+  ### Estimated time to fetch the rest at the client's rate.
+  seconds: int
+  ### Most files one report may read.
+  limit: int
+  ### One per election × office × place, breakdown rows included.
+  tables: int
+  ### Sections TSE lists with no urna files yet: shown, never requested.
+  sectionsWithoutFiles: int

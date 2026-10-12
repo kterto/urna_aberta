@@ -17,10 +17,14 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _iais;
 import 'package:urna_aberta_server/src/generated/future_calls.dart'
     as _iplz5ub8;
+import 'package:urna_aberta_server/src/generated/reports/report_spec.dart'
+    as _icv1nmb7;
 import '../auth/email_idp_endpoint.dart' as _iuc1hd5t;
 import '../auth/jwt_refresh_endpoint.dart' as _inwq3ztq;
-import '../greetings/greeting_endpoint.dart' as _il624ik7;
+import '../meu_local/meu_local_endpoint.dart' as _i9rogxyk;
 import '../replay/tally_endpoint.dart' as _iphjbc6w;
+import '../reports/relatorios_endpoint.dart' as _igbubms3;
+import '../results/resultados_endpoint.dart' as _ignf5cub;
 import '../secao/secao_endpoint.dart' as _i5402ufq;
 import '../verify/verificar_endpoint.dart' as _i11vp49h;
 export 'future_calls.dart' show ServerpodFutureCallsGetter;
@@ -41,16 +45,28 @@ class Endpoints extends _is.EndpointDispatch {
           'jwtRefresh',
           null,
         ),
-      'greeting': _il624ik7.GreetingEndpoint()
+      'meuLocal': _i9rogxyk.MeuLocalEndpoint()
         ..initialize(
           server,
-          'greeting',
+          'meuLocal',
           null,
         ),
       'tally': _iphjbc6w.TallyEndpoint()
         ..initialize(
           server,
           'tally',
+          null,
+        ),
+      'relatorios': _igbubms3.RelatoriosEndpoint()
+        ..initialize(
+          server,
+          'relatorios',
+          null,
+        ),
+      'resultados': _ignf5cub.ResultadosEndpoint()
+        ..initialize(
+          server,
+          'resultados',
           null,
         ),
       'secao': _i5402ufq.SecaoEndpoint()
@@ -272,17 +288,42 @@ class Endpoints extends _is.EndpointDispatch {
         ),
       },
     );
-    connectors['greeting'] = _is.EndpointConnector(
-      name: 'greeting',
-      endpoint: endpoints['greeting']!,
+    connectors['meuLocal'] = _is.EndpointConnector(
+      name: 'meuLocal',
+      endpoint: endpoints['meuLocal']!,
       methodConnectors: {
-        'hello': _is.MethodConnector(
-          name: 'hello',
+        'ler': _is.MethodConnector(
+          name: 'ler',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['meuLocal'] as _i9rogxyk.MeuLocalEndpoint)
+                  .ler(session),
+        ),
+        'salvar': _is.MethodConnector(
+          name: 'salvar',
           params: {
-            'name': _is.ParameterDescription(
-              name: 'name',
+            'uf': _is.ParameterDescription(
+              name: 'uf',
               type: _is.getType<String>(),
               nullable: false,
+            ),
+            'municipio': _is.ParameterDescription(
+              name: 'municipio',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'zona': _is.ParameterDescription(
+              name: 'zona',
+              type: _is.getType<int?>(),
+              nullable: true,
+            ),
+            'secao': _is.ParameterDescription(
+              name: 'secao',
+              type: _is.getType<int?>(),
+              nullable: true,
             ),
           },
           call:
@@ -290,10 +331,23 @@ class Endpoints extends _is.EndpointDispatch {
                 _is.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greeting'] as _il624ik7.GreetingEndpoint).hello(
+                  (endpoints['meuLocal'] as _i9rogxyk.MeuLocalEndpoint).salvar(
                     session,
-                    params['name'],
+                    params['uf'],
+                    params['municipio'],
+                    params['zona'],
+                    params['secao'],
                   ),
+        ),
+        'apagar': _is.MethodConnector(
+          name: 'apagar',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['meuLocal'] as _i9rogxyk.MeuLocalEndpoint)
+                  .apagar(session),
         ),
       },
     );
@@ -389,6 +443,298 @@ class Endpoints extends _is.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['tally'] as _iphjbc6w.TallyEndpoint).live(session),
+        ),
+      },
+    );
+    connectors['relatorios'] = _is.EndpointConnector(
+      name: 'relatorios',
+      endpoint: endpoints['relatorios']!,
+      methodConnectors: {
+        'orcar': _is.MethodConnector(
+          name: 'orcar',
+          params: {
+            'spec': _is.ParameterDescription(
+              name: 'spec',
+              type: _is.getType<_icv1nmb7.ReportSpec>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .orcar(
+                        session,
+                        params['spec'],
+                      ),
+        ),
+        'pedir': _is.MethodConnector(
+          name: 'pedir',
+          params: {
+            'spec': _is.ParameterDescription(
+              name: 'spec',
+              type: _is.getType<_icv1nmb7.ReportSpec>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .pedir(
+                        session,
+                        params['spec'],
+                      ),
+        ),
+        'listar': _is.MethodConnector(
+          name: 'listar',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .listar(session),
+        ),
+        'baixar': _is.MethodConnector(
+          name: 'baixar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'formato': _is.ParameterDescription(
+              name: 'formato',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .baixar(
+                        session,
+                        params['id'],
+                        params['formato'],
+                      ),
+        ),
+        'publicar': _is.MethodConnector(
+          name: 'publicar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'publico': _is.ParameterDescription(
+              name: 'publico',
+              type: _is.getType<bool>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .publicar(
+                        session,
+                        params['id'],
+                        params['publico'],
+                      ),
+        ),
+        'link': _is.MethodConnector(
+          name: 'link',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'formato': _is.ParameterDescription(
+              name: 'formato',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .link(
+                        session,
+                        params['id'],
+                        params['formato'],
+                      ),
+        ),
+        'linkPublico': _is.MethodConnector(
+          name: 'linkPublico',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .linkPublico(
+                        session,
+                        params['id'],
+                      ),
+        ),
+        'apagar': _is.MethodConnector(
+          name: 'apagar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                      .apagar(
+                        session,
+                        params['id'],
+                      ),
+        ),
+        'acompanhar': _is.MethodStreamConnector(
+          name: 'acompanhar',
+          params: {
+            'id': _is.ParameterDescription(
+              name: 'id',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          streamParams: {},
+          returnType: _is.MethodStreamReturnType.streamType,
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) => (endpoints['relatorios'] as _igbubms3.RelatoriosEndpoint)
+                  .acompanhar(
+                    session,
+                    params['id'],
+                  ),
+        ),
+      },
+    );
+    connectors['resultados'] = _is.EndpointConnector(
+      name: 'resultados',
+      endpoint: endpoints['resultados']!,
+      methodConnectors: {
+        'eleicoes': _is.MethodConnector(
+          name: 'eleicoes',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .eleicoes(session),
+        ),
+        'municipios': _is.MethodConnector(
+          name: 'municipios',
+          params: {
+            'eleicao': _is.ParameterDescription(
+              name: 'eleicao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'uf': _is.ParameterDescription(
+              name: 'uf',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .municipios(
+                        session,
+                        params['eleicao'],
+                        params['uf'],
+                      ),
+        ),
+        'resultado': _is.MethodConnector(
+          name: 'resultado',
+          params: {
+            'eleicao': _is.ParameterDescription(
+              name: 'eleicao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'cargo': _is.ParameterDescription(
+              name: 'cargo',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'abrangencia': _is.ParameterDescription(
+              name: 'abrangencia',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .resultado(
+                        session,
+                        params['eleicao'],
+                        params['cargo'],
+                        params['abrangencia'],
+                      ),
+        ),
+        'camara': _is.MethodConnector(
+          name: 'camara',
+          params: {
+            'eleicao': _is.ParameterDescription(
+              name: 'eleicao',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['resultados'] as _ignf5cub.ResultadosEndpoint)
+                      .camara(
+                        session,
+                        params['eleicao'],
+                      ),
         ),
       },
     );

@@ -159,7 +159,11 @@ ThemeData atlasTheme(Brightness brightness) {
       checkmarkColor: p.paper,
       side: BorderSide(color: p.ruleStrong),
       shape: controlShape,
-      labelStyle: text.labelMedium,
+      labelStyle: text.labelMedium?.copyWith(
+        color: WidgetStateColor.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? p.paper : p.ink,
+        ),
+      ),
       secondaryLabelStyle: text.labelMedium?.copyWith(color: p.paper),
       padding: const EdgeInsets.symmetric(horizontal: Space.x2),
     ),

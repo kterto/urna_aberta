@@ -1,0 +1,41 @@
+### A report a signed-in viewer asked for: its spec, its progress through
+### the queue and, once ready, its files in private storage. Deleted with
+### the account.
+class: ReportRequest
+table: report_request
+fields:
+  authUser: module:serverpod_auth_core:AuthUser?, relation(onDelete=Cascade)
+  spec: ReportSpec
+  ### The spec's places as people name them, in order (`PORTO WALTER (AC)`).
+  placeNames: List<String>?
+  status: ReportStatus
+  ### TSE files read so far, of those the report needs.
+  filesDone: int
+  filesTotal: int
+  ### Why it failed: `tseUnavailable`, `invalidRequest`, `serverLost` or
+  ### `internal`.
+  errorReason: String?
+  createdAt: DateTime
+  startedAt: DateTime?
+  finishedAt: DateTime?
+  ### While running: when the server building it last said it still was.
+  ### Left untouched for [ReportService.staleAfter], its server is gone and
+  ### the report is queued again.
+  aliveAt: DateTime?
+  ### Times a server took it off the queue. A report that keeps losing its
+  ### server (one that runs it out of memory, say) fails after
+  ### [ReportService.maxAttempts] instead of being queued forever.
+  attempts: int, default=0
+  ### SHA-256 of the CSV (the report's data), printed on the PDF.
+  sha256: String?
+  ### Set while the owner publishes it: the report is then readable by
+  ### anyone at `/r/<publicToken>`.
+  publicToken: String?
+indexes:
+  report_request_owner_idx:
+    fields: authUserId, createdAt
+  report_request_status_idx:
+    fields: status, createdAt
+  report_request_public_idx:
+    fields: publicToken
+    unique: true

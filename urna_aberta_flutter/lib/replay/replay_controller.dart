@@ -59,11 +59,6 @@ class ReplayController extends ChangeNotifier {
   static const tick = Duration(milliseconds: 250);
   static const speeds = [1, 10, 60];
 
-  /// The replay opens 38 minutes into the national freeze (19:52 on the
-  /// night of Oct 4; TSE dates the freeze 19:14–20:04), near where the two
-  /// sources are furthest apart.
-  static const openingIntoFreeze = Duration(minutes: 38);
-
   ReplayNight? _night;
   List<TimelinePoint> _timeline = const [];
   TallyFrame? _frame;
@@ -98,8 +93,9 @@ class ReplayController extends ChangeNotifier {
       final n = await _source.night();
       _timeline = await _source.timeline(n.start, n.end, 60);
       _night = n;
-      final opening = n.freezeStart.add(openingIntoFreeze);
-      _now = opening.isBefore(n.freezeEnd) ? opening : n.freezeStart;
+      // Opens paused where the count starts (17:00); "jump to the pause"
+      // goes straight to the freeze.
+      _now = n.start;
       await _fetch();
     } catch (e) {
       _error = e;

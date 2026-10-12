@@ -46,6 +46,7 @@ class _VerificarScreenState extends State<VerificarScreen> {
       builder: (context, _) => AtlasPage(
         title: l.verificarTitle,
         lede: l.verificarLede,
+        onRefresh: c.load,
         maxWidth: 1040,
         children: [
           if (c.files case final files?) ...[

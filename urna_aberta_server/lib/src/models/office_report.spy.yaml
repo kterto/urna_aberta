@@ -1,0 +1,32 @@
+### One office in one scope: TSE's published result and, for proportional
+### offices, Urna Aberta's own seat allocation compared with TSE's.
+class: OfficeReport
+fields:
+  electionCode: int
+  round: int
+  officeCode: int
+  proportional: bool
+  scopeCode: String
+  seats: int
+  ### TSE file name, e.g. `sp-c0006-e006259-u.jws`.
+  fileName: String
+  signature: SignatureStatus
+  tseGeneratedAt: DateTime
+  ### When Urna Aberta last read the file from TSE.
+  fetchedAt: DateTime
+  ### Every section totalized: the file will not change again.
+  complete: bool
+  sectionsTotal: int
+  sectionsTotalized: int
+  totalVotes: int
+  validVotes: int
+  nominalVotes: int
+  legendVotes: int
+  blankVotes: int
+  nullVotes: int
+  annulledSubJudice: int
+  lists: List<ListReport>
+  ### Ordered by votes, highest first.
+  candidates: List<CandidateReport>
+  ### Proportional offices only.
+  seatCheck: SeatCheck?

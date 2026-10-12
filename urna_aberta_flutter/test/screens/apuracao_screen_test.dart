@@ -110,7 +110,26 @@ void main() {
     expect(find.textContaining('64,81'), findsWidgets);
     expect(find.textContaining('74,8'), findsWidgets);
     expect(find.textContaining('FULANO DE TAL'), findsOneWidget);
-    expect(find.textContaining('19:52'), findsWidgets);
+    // The replay opens paused at the start of the count.
+    expect(find.text('17:00'), findsWidgets);
+  });
+
+  testWidgets('"jump to the pause" goes straight to the freeze', (
+    tester,
+  ) async {
+    await pumpScreen(tester, StubSource());
+    await tester.tap(find.text('Ir para a pausa'));
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('parado desde 19:14'), findsOneWidget);
+  });
+
+  testWidgets('no headline about one night, no design-system shortcut', (
+    tester,
+  ) async {
+    await pumpScreen(tester, StubSource());
+    expect(find.text('A contagem não parou.'), findsNothing);
+    expect(find.byTooltip('Sistema de design'), findsNothing);
   });
 
   testWidgets('non-live data carries the simulation stamp', (tester) async {
@@ -158,6 +177,9 @@ void main() {
         locale: const Locale('en'),
         size: size,
       );
+      await tester.tap(find.text('Jump to the pause'));
+      await tester.pump();
+      await tester.pump();
       expect(find.text('The two sources compared · President'), findsOneWidget);
       expect(find.text('TSE national file'), findsOneWidget);
       expect(find.text('64.81%'), findsWidgets);
@@ -222,6 +244,9 @@ void main() {
       expect(find.textContaining('começa em 25/10, às 17h'), findsOneWidget);
       expect(find.byType(ReplayBar), findsOneWidget);
       expect(find.byType(LiveStamp), findsNothing);
+      // The replay is a case study, and final results are a tap away.
+      expect(find.textContaining('caso real'), findsOneWidget);
+      expect(find.text('Ver os resultados finais'), findsOneWidget);
     });
 
     testWidgets('polls closed, no file yet: says it is waiting', (
@@ -246,6 +271,8 @@ void main() {
       expect(find.textContaining('BELTRANO'), findsOneWidget);
       expect(find.text('atualizado 19:15'), findsWidgets);
       expect(find.text('br-c0001-e006258-u.json'), findsWidgets);
+      // Governor and every other office counted tonight: in Resultados.
+      expect(find.text('Ver todos os cargos em apuração'), findsOneWidget);
     });
 
     testWidgets('the viewer can switch to the replay and back', (
@@ -253,7 +280,7 @@ void main() {
     ) async {
       final source = StubSource()..liveStatus = liveNow();
       await pumpScreen(tester, source);
-      await tester.tap(find.text('Reprise do 1º turno'));
+      await tester.tap(find.text('Caso: 4 de outubro'));
       await tester.pump();
       await tester.pump();
       expect(find.byType(ReplayBar), findsOneWidget);

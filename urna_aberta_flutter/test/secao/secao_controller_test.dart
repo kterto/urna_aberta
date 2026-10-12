@@ -128,4 +128,41 @@ void main() {
       expect(source.consults, hasLength(2));
     });
   });
+
+  group('openAt (the saved place)', () {
+    test('a full section opens and is consulted', () async {
+      await c.openAt('ac', 1066, 4, 77);
+      expect(
+        [c.uf, c.municipio?.nome, c.zona, c.secao],
+        [
+          'ac',
+          'PORTO WALTER',
+          4,
+          77,
+        ],
+      );
+      expect(c.report!.aptos, 289);
+    });
+
+    test('a municipality alone stops there', () async {
+      await c.openAt('ac', 1066, null, null);
+      expect(c.municipio?.nome, 'PORTO WALTER');
+      expect(c.zonas, [4]);
+      expect([c.zona, c.report], [null, null]);
+    });
+
+    test('a place no longer listed stops at what is', () async {
+      await c.openAt('ac', 1066, 4, 9999);
+      expect(c.zona, 4);
+      expect([c.secao, c.report], [null, null]);
+    });
+
+    test('a choice made meanwhile wins', () async {
+      final opening = c.openAt('ac', 1066, 4, 77);
+      await c.selectUf('sp');
+      await opening;
+      expect(c.uf, 'sp');
+      expect(c.report, isNull);
+    });
+  });
 }

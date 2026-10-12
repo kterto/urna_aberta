@@ -1,25 +1,53 @@
-/// Office codes used in TSE result file names (`c0001`, `c0003`, `c0005`).
-enum Office {
-  presidente(1),
-  governador(3),
-  senador(5);
+/// Who elects an office: the whole country, a UF, or a municipality.
+enum OfficeLevel { federal, state, municipal }
 
-  const Office(this.code);
+/// Office codes used in TSE result file names (`c0001` … `c0013`).
+enum Office {
+  presidente(1, OfficeLevel.federal),
+  governador(3, OfficeLevel.state),
+  senador(5, OfficeLevel.state),
+  deputadoFederal(6, OfficeLevel.state, proportional: true),
+  deputadoEstadual(7, OfficeLevel.state, proportional: true),
+  deputadoDistrital(8, OfficeLevel.state, proportional: true),
+  prefeito(11, OfficeLevel.municipal),
+  vereador(13, OfficeLevel.municipal, proportional: true);
+
+  const Office(this.code, this.level, {this.proportional = false});
 
   final int code;
+  final OfficeLevel level;
+
+  /// Seats filled by the proportional system (quocientes), not by majority.
+  final bool proportional;
 
   String get fileCode => 'c${code.toString().padLeft(4, '0')}';
+
+  static Office? byCode(int code) =>
+      values.where((o) => o.code == code).firstOrNull;
 }
 
-/// Geographic scope of a published file: Brazil (`br`), a UF, or exterior
-/// (`zz`). Construction validates the code so no URL can point at a file
-/// that does not exist.
+/// Geographic scope of a published file: Brazil (`br`), a UF, exterior
+/// (`zz`) or a municipality (`sp71072`). Construction validates the code so
+/// no URL can point at a file that does not exist.
 class Scope {
-  Scope.brazil() : code = 'br';
+  Scope.brazil() : code = 'br', municipio = null;
 
-  Scope.uf(String uf) : code = uf.toLowerCase() {
+  Scope.uf(String uf) : code = uf.toLowerCase(), municipio = null {
     if (!ufs.contains(code)) {
       throw ArgumentError.value(uf, 'uf', 'not a UF or exterior (ZZ)');
+    }
+  }
+
+  /// One municipality, by its 5-digit TSE code (not the IBGE code).
+  Scope.municipality(String uf, int mun)
+    : code = '${uf.toLowerCase()}${mun.toString().padLeft(5, '0')}',
+      municipio = mun {
+    final u = uf.toLowerCase();
+    if (!ufs.contains(u)) {
+      throw ArgumentError.value(uf, 'uf', 'not a UF');
+    }
+    if (mun < 1 || mun > 99999) {
+      throw ArgumentError.value(mun, 'municipio', 'must be 1 to 99999');
     }
   }
 
@@ -32,8 +60,15 @@ class Scope {
 
   final String code;
 
+  /// TSE municipality code, for a municipality scope.
+  final int? municipio;
+
   bool get isBrazil => code == 'br';
   bool get isExterior => code == 'zz';
+  bool get isMunicipality => municipio != null;
+
+  /// The UF folder the scope's files live in (`br` for Brazil).
+  String get uf => code.substring(0, 2);
 
   @override
   bool operator ==(Object other) => other is Scope && other.code == code;
@@ -102,11 +137,11 @@ class TseUrls {
     required this.cycle,
   });
 
-  TseUrls.oficial()
+  TseUrls.oficial({int year = 2026})
     : this(
         host: 'resultados.tse.jus.br',
         environment: 'oficial',
-        cycle: 'ele2026',
+        cycle: 'ele$year',
       );
 
   TseUrls.simulado()
@@ -130,6 +165,10 @@ class TseUrls {
     'config',
     'mun-e${_election6(election)}-cm.json',
   ]);
+
+  /// EA12, signed: what TSE's own Resultados app fetches.
+  Uri municipalitiesConfigJws(int election) =>
+      signatureOf(municipalitiesConfig(election));
 
   /// EA14: Brazil tracking file, used to detect which UFs changed.
   Uri brazilTracking(int election) => _uri([
@@ -206,27 +245,39 @@ class TseUrls {
 
   /// EA20: unified result file for a scope and office.
   Uri result(int election, Scope scope, Office office) {
-    if (scope.isBrazil && office != Office.presidente) {
-      throw ArgumentError.value(
-        office,
-        'office',
-        'Brazil scope is President only',
-      );
-    }
-    if (scope.isExterior && office != Office.presidente) {
-      throw ArgumentError.value(
-        office,
-        'office',
-        'exterior votes for President only',
-      );
-    }
+    _checkScope(scope, office);
     return _uri([
       cycle,
       '$election',
       'dados',
-      scope.code,
+      scope.uf,
       '${scope.code}-${office.fileCode}-e${_election6(election)}-u.json',
     ]);
+  }
+
+  /// EA20, signed (`.jws`, the JSON is its payload).
+  Uri resultJws(int election, Scope scope, Office office) =>
+      signatureOf(result(election, scope, office));
+
+  /// Each office is published for the scopes that elect it and, for
+  /// federal and state offices, for each city inside them.
+  static void _checkScope(Scope scope, Office office) {
+    final ok = switch (office.level) {
+      OfficeLevel.federal => true,
+      // Abroad (`zz`, and its cities) votes for federal offices only.
+      OfficeLevel.municipal => scope.isMunicipality && scope.uf != 'zz',
+      OfficeLevel.state =>
+        !scope.isBrazil &&
+            scope.uf != 'zz' &&
+            switch (office) {
+              Office.deputadoEstadual => scope.uf != 'df',
+              Office.deputadoDistrital => scope.uf == 'df',
+              _ => true,
+            },
+    };
+    if (!ok) {
+      throw ArgumentError.value(office, 'office', 'not published for $scope');
+    }
   }
 
   /// The `.jws` TSE publishes next to a `.json` file: the same file, signed

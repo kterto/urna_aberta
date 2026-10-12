@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
 
+import '../conta/conta_controller.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/typography.dart';
@@ -10,7 +11,11 @@ import '../design/widgets/atlas_components.dart';
 import '../design/widgets/atlas_page.dart';
 import '../l10n/format.dart';
 import '../l10n/l10n.dart';
+import 'conta_screen.dart';
+import '../relatorios/novo_relatorio_controller.dart';
+import '../relatorios/relatorios_source.dart';
 import '../secao/secao_controller.dart';
+import 'novo_relatorio_screen.dart';
 
 /// My polling section: locate it, read the official BU, compare with paper.
 class SecaoScreen extends StatefulWidget {
@@ -22,11 +27,44 @@ class SecaoScreen extends StatefulWidget {
 
 class _SecaoScreenState extends State<SecaoScreen> {
   SecaoController? _c;
+  VoterPlace? _opened;
+  bool _saving = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _c ??= SecaoController(SecaoScope.of(context));
+    final c = _c ??= SecaoController(SecaoScope.of(context));
+    // The saved place opens once, unless the viewer already chose.
+    final place = ContaScope.maybeOf(context)?.place;
+    if (place != null && _opened == null && c.uf == null) {
+      _opened = place;
+      c.openAt(place.uf, place.municipio, place.zona, place.secao);
+    }
+  }
+
+  bool _isSaved(VoterPlace? place, SecaoController c) =>
+      place != null &&
+      place.uf == c.uf &&
+      place.municipio == c.municipio?.codigo &&
+      place.zona == c.zona &&
+      place.secao == c.secao;
+
+  Future<void> _save(ContaController conta, SecaoController c) async {
+    final l = context.l10n;
+    if (!conta.signedIn) {
+      await ContaScreen.open(context);
+      if (!mounted || !conta.signedIn) return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _saving = true);
+    try {
+      await conta.salvar(c.uf!, c.municipio!.codigo, c.zona, c.secao);
+      messenger.showSnackBar(SnackBar(content: Text(l.secaoSaved)));
+    } on Object {
+      messenger.showSnackBar(SnackBar(content: Text(l.secaoSaveFailed)));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -46,6 +84,10 @@ class _SecaoScreenState extends State<SecaoScreen> {
         return AtlasPage(
           title: l.secaoTitle,
           lede: l.secaoLede,
+          // The section on screen, looked up again.
+          onRefresh: c.canConsult && (c.report != null || c.error != null)
+              ? c.consultar
+              : null,
           maxWidth: 1040,
           children: [
             _form(context, c, wide),
@@ -142,6 +184,25 @@ class _SecaoScreenState extends State<SecaoScreen> {
                   ),
                 ),
               ),
+              if (ContaScope.maybeOf(context) case final conta?) ...[
+                const SizedBox(width: Space.x3),
+                Flexible(child: _saveButton(context, conta, c)),
+              ],
+              if (RelatoriosScope.maybeOf(context) != null &&
+                  c.municipio != null) ...[
+                const SizedBox(width: Space.x3),
+                Flexible(
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        NovoRelatorioScreen.open(context, draft: _draft(c)),
+                    icon: Icon(AtlasIcons.report(context), size: 18),
+                    label: Text(
+                      l.relatoriosFromHere,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
               if (c.loading == SecaoLoad.report) ...[
                 const SizedBox(width: Space.x3),
                 const _Spinner(),
@@ -165,6 +226,46 @@ class _SecaoScreenState extends State<SecaoScreen> {
       ),
     );
   }
+
+  Widget _saveButton(
+    BuildContext context,
+    ContaController conta,
+    SecaoController c,
+  ) {
+    final l = context.l10n;
+    if (_isSaved(conta.place, c)) {
+      return TextButton.icon(
+        onPressed: null,
+        icon: Icon(AtlasIcons.selected(context), size: 18),
+        label: Text(l.secaoIsMine, overflow: TextOverflow.ellipsis),
+      );
+    }
+    return OutlinedButton(
+      onPressed: c.municipio == null || _saving ? null : () => _save(conta, c),
+      child: Text(l.secaoSaveAsMine, overflow: TextOverflow.ellipsis),
+    );
+  }
+}
+
+/// A report on the chosen section, zone or city, for Minha seção's round.
+ReportDraft _draft(SecaoController c) {
+  final m = c.municipio!;
+  final place = ReportPlace(
+    kind: c.secao != null
+        ? ReportPlaceKind.secao
+        : c.zona != null
+        ? ReportPlaceKind.zona
+        : ReportPlaceKind.municipio,
+    uf: c.uf,
+    municipio: m.codigo,
+    zona: c.zona,
+    secao: c.zona == null ? null : c.secao,
+  );
+  return ReportDraft(
+    day: NovoRelatorioController.sectionsDay,
+    places: [place],
+    names: {cityKey(place)!: m.nome},
+  );
 }
 
 /// `YYYY-MM-DDThh:mm:ss` on the urna's own clock (local to the urna, not

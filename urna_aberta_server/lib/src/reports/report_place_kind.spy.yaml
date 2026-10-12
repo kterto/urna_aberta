@@ -1,0 +1,11 @@
+### How large a place a report covers.
+enum: ReportPlaceKind
+serialized: byName
+values:
+  - br
+  ### One of the five IBGE regions.
+  - regiao
+  - uf
+  - municipio
+  - zona
+  - secao

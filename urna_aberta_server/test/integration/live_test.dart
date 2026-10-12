@@ -87,10 +87,14 @@ void main() {
       expect(live.nextDelay(), const Duration(minutes: 1));
     });
 
+    // 1st round: President (29 files), Governor and Senator (27 each) and
+    // the deputies (27 federal, 26 state, 1 district).
+    const firstRoundFiles = 29 + 27 + 27 + 27 + 26 + 1;
+
     test('election night: every result file, signed, stored as live', () async {
       final r = await live.tick(session);
-      expect(r.recorded, 83);
-      expect(tse.requested, hasLength(83));
+      expect(r.recorded, firstRoundFiles);
+      expect(tse.requested, hasLength(firstRoundFiles));
       expect(tse.requested.every((p) => p.endsWith('-u.jws')), isTrue);
       final rows = await ResultSnapshot.db.find(session);
       expect(rows.map((s) => s.origin).toSet(), {DataOrigin.live});
@@ -102,9 +106,9 @@ void main() {
       await live.tick(session);
       tse.requested.clear();
       final r = await live.tick(session);
-      expect(tse.requested, hasLength(83));
+      expect(tse.requested, hasLength(firstRoundFiles));
       expect(r.recorded, 0);
-      expect(r.unchanged, 83);
+      expect(r.unchanged, firstRoundFiles);
     });
 
     test(
@@ -148,6 +152,7 @@ void main() {
             round: 2,
             name: '2º turno',
             day: (2026, 10, 4),
+            offices: {Office.presidente},
             targets: [
               (Scope.brazil(), Office.presidente),
               (Scope.uf('ac'), Office.presidente),

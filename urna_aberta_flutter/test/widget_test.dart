@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:urna_aberta_flutter/app/app.dart';
-import 'package:urna_aberta_flutter/app/shell.dart';
+import 'package:urna_aberta_flutter/app/router.dart';
 import 'package:urna_aberta_flutter/l10n/l10n.dart';
 import 'package:urna_aberta_flutter/design/geo/brasil_geo.dart';
 import 'package:urna_aberta_flutter/design/tokens.dart';
 import 'package:urna_aberta_flutter/replay/replay_controller.dart';
+import 'package:urna_aberta_flutter/resultados/resultados_controller.dart';
 
 import 'package:urna_aberta_flutter/secao/secao_controller.dart';
 import 'package:urna_aberta_flutter/verificar/verificar_controller.dart';
 
 import 'screens/apuracao_screen_test.dart' show StubSource;
+import 'resultados/fake_resultados_source.dart';
 import 'secao/fake_secao_source.dart';
 import 'verificar/fake_verificar_source.dart';
 import 'support/test_app.dart';
@@ -21,7 +23,10 @@ Widget _app(Brightness b) => TallyScope(
     source: FakeSecaoSource(),
     child: VerificarScope(
       source: FakeVerificarSource(),
-      child: testApp(brightness: b, home: const AppShell()),
+      child: ResultadosScope(
+        source: FakeResultadosSource(),
+        child: testApp(brightness: b, router: appRouter()),
+      ),
     ),
   ),
 );
@@ -56,6 +61,8 @@ void main() {
       expect(find.text('Localizar seção'), findsOneWidget);
       await tester.tap(find.text('Verificar').last);
       await tester.pump(const Duration(milliseconds: 500));
+      // A section is built the first time it is opened.
+      await tester.pump();
       expect(find.text('Conferir neste aparelho'), findsOneWidget);
     });
   }
@@ -73,6 +80,7 @@ void main() {
         tallySource: StubSource(),
         secaoSource: FakeSecaoSource(),
         verificarSource: FakeVerificarSource(),
+        resultadosSource: FakeResultadosSource(),
       ),
     );
     await tester.pump();

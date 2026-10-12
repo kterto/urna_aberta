@@ -26,14 +26,14 @@ abstract final class AtlasIcons {
 
   static IconData apuracao(BuildContext c) =>
       _pick(c, CupertinoIcons.chart_bar_alt_fill, Icons.bar_chart_rounded);
+  static IconData resultados(BuildContext c) =>
+      _pick(c, CupertinoIcons.list_number, Icons.format_list_numbered);
   static IconData secao(BuildContext c) =>
       _pick(c, CupertinoIcons.location, Icons.place_outlined);
   static IconData verificar(BuildContext c) =>
       _pick(c, CupertinoIcons.checkmark_shield, Icons.verified_user_outlined);
   static IconData entenda(BuildContext c) =>
       _pick(c, CupertinoIcons.book, Icons.menu_book_outlined);
-  static IconData sistema(BuildContext c) =>
-      _pick(c, CupertinoIcons.square_grid_2x2, Icons.grid_view_outlined);
   static IconData external(BuildContext c) =>
       _pick(c, CupertinoIcons.arrow_up_right_square, Icons.open_in_new);
   static IconData copy(BuildContext c) =>
@@ -60,6 +60,17 @@ abstract final class AtlasIcons {
       _pick(c, CupertinoIcons.checkmark_alt, Icons.check);
   static IconData language(BuildContext c) =>
       _pick(c, CupertinoIcons.globe, Icons.translate);
+  static IconData account(BuildContext c) => _pick(
+    c,
+    CupertinoIcons.person_crop_circle,
+    Icons.account_circle_outlined,
+  );
+  static IconData report(BuildContext c) =>
+      _pick(c, CupertinoIcons.doc_text, Icons.description_outlined);
+  static IconData download(BuildContext c) =>
+      _pick(c, CupertinoIcons.arrow_down_doc, Icons.download_outlined);
+  static IconData link(BuildContext c) =>
+      _pick(c, CupertinoIcons.link, Icons.link);
   static IconData theme(BuildContext c) =>
       _pick(c, CupertinoIcons.circle_lefthalf_fill, Icons.contrast);
 }

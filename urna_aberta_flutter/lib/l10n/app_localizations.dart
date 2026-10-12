@@ -435,20 +435,14 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoHeadline.
   ///
   /// In pt, this message translates to:
-  /// **'A contagem não parou.'**
+  /// **'Acompanhe a apuração'**
   String get apuracaoHeadline;
 
   /// No description provided for @apuracaoLede.
   ///
   /// In pt, this message translates to:
-  /// **'Presidente, 1º turno. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Cada número leva ao arquivo de onde veio.'**
+  /// **'Na noite da eleição, esta tela mostra o arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Fora dela, reprisa um caso real: o 1º turno de 2026 para Presidente, quando a divulgação nacional parou por cerca de 50 minutos e os arquivos dos estados continuaram. Cada número leva ao arquivo de onde veio.'**
   String get apuracaoLede;
-
-  /// No description provided for @apuracaoDesignSystem.
-  ///
-  /// In pt, this message translates to:
-  /// **'Sistema de design'**
-  String get apuracaoDesignSystem;
 
   /// No description provided for @apuracaoDuoTitle.
   ///
@@ -551,6 +545,318 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Entenda'**
   String get navEntenda;
+
+  /// No description provided for @navResultados.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resultados'**
+  String get navResultados;
+
+  /// No description provided for @resultadosTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resultados'**
+  String get resultadosTitle;
+
+  /// No description provided for @resultadosLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'O resultado de cada cargo, em cada estado ou município, lido do arquivo assinado do TSE. Para deputados e vereadores, a Urna Aberta refaz a distribuição das vagas e compara com a do TSE.'**
+  String get resultadosLede;
+
+  /// No description provided for @resultadosRound.
+  ///
+  /// In pt, this message translates to:
+  /// **'{year} · {round}º turno'**
+  String resultadosRound(String year, int round);
+
+  /// No description provided for @resultadosElection.
+  ///
+  /// In pt, this message translates to:
+  /// **'Eleição'**
+  String get resultadosElection;
+
+  /// No description provided for @resultadosOffice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cargo'**
+  String get resultadosOffice;
+
+  /// No description provided for @resultadosPlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Estado'**
+  String get resultadosPlace;
+
+  /// No description provided for @resultadosMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Município'**
+  String get resultadosMunicipio;
+
+  /// No description provided for @resultadosMunicipioHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Digite para buscar'**
+  String get resultadosMunicipioHint;
+
+  /// No description provided for @cargoPrefeito.
+  ///
+  /// In pt, this message translates to:
+  /// **'Prefeito'**
+  String get cargoPrefeito;
+
+  /// No description provided for @cargoVereador.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vereador'**
+  String get cargoVereador;
+
+  /// No description provided for @resultadosNotHeld.
+  ///
+  /// In pt, this message translates to:
+  /// **'Esta votação ainda não aconteceu. O TSE começa a publicar os resultados às 17h (horário de Brasília) do dia da eleição.'**
+  String get resultadosNotHeld;
+
+  /// No description provided for @resultadosChooseMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha o município para ver o resultado.'**
+  String get resultadosChooseMunicipio;
+
+  /// No description provided for @resultadosNotPublished.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE ainda não publicou este resultado.'**
+  String get resultadosNotPublished;
+
+  /// No description provided for @resultadosInvalidRequest.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este cargo não é eleito neste lugar.'**
+  String get resultadosInvalidRequest;
+
+  /// No description provided for @resultadosTseUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE não respondeu. Tente de novo em instantes.'**
+  String get resultadosTseUnavailable;
+
+  /// No description provided for @resultadosError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar o resultado.'**
+  String get resultadosError;
+
+  /// No description provided for @resultadosSummaryPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Resumo do resultado'**
+  String get resultadosSummaryPlate;
+
+  /// No description provided for @resultadosValidVotes.
+  ///
+  /// In pt, this message translates to:
+  /// **'Votos válidos'**
+  String get resultadosValidVotes;
+
+  /// No description provided for @resultadosSeats.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vagas'**
+  String get resultadosSeats;
+
+  /// No description provided for @resultadosQuotient.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quociente eleitoral'**
+  String get resultadosQuotient;
+
+  /// No description provided for @resultadosTotalized.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seções totalizadas'**
+  String get resultadosTotalized;
+
+  /// No description provided for @resultadosBlankNull.
+  ///
+  /// In pt, this message translates to:
+  /// **'Brancos e nulos'**
+  String get resultadosBlankNull;
+
+  /// No description provided for @resultadosSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · resultado do cargo (EA20), gerado em {when}'**
+  String resultadosSource(String when);
+
+  /// No description provided for @resultadosSeatsPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vagas por partido ou federação'**
+  String get resultadosSeatsPlate;
+
+  /// No description provided for @resultadosSeatsSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · vagas publicadas; Urna Aberta · distribuição refeita a partir dos votos'**
+  String get resultadosSeatsSource;
+
+  /// No description provided for @resultadosCheckMatches.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nossa conta confere com a do TSE'**
+  String get resultadosCheckMatches;
+
+  /// No description provided for @resultadosCheckDiffers.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{Nossa conta difere da do TSE em 1 ponto} other{Nossa conta difere da do TSE em {count} pontos}}'**
+  String resultadosCheckDiffers(int count);
+
+  /// No description provided for @resultadosCheckNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'A Urna Aberta refez a distribuição das vagas com os votos deste arquivo, pelas regras do Código Eleitoral (arts. 106 a 109) e da Resolução TSE 23.677, e comparou o quociente eleitoral, as vagas de cada partido ou federação e os eleitos com os publicados pelo TSE.'**
+  String get resultadosCheckNote;
+
+  /// No description provided for @resultadosColList.
+  ///
+  /// In pt, this message translates to:
+  /// **'Partido ou federação'**
+  String get resultadosColList;
+
+  /// No description provided for @resultadosColVotes.
+  ///
+  /// In pt, this message translates to:
+  /// **'Votos'**
+  String get resultadosColVotes;
+
+  /// No description provided for @resultadosColQp.
+  ///
+  /// In pt, this message translates to:
+  /// **'QP'**
+  String get resultadosColQp;
+
+  /// No description provided for @resultadosColSeats.
+  ///
+  /// In pt, this message translates to:
+  /// **'Vagas'**
+  String get resultadosColSeats;
+
+  /// No description provided for @resultadosOurSeats.
+  ///
+  /// In pt, this message translates to:
+  /// **'nossa conta: {count}'**
+  String resultadosOurSeats(int count);
+
+  /// No description provided for @resultadosQpUnfilled.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count, plural, =1{1 vaga do QP sem candidato com 10% do quociente: foi para as sobras} other{{count} vagas do QP sem candidato com 10% do quociente: foram para as sobras}}'**
+  String resultadosQpUnfilled(int count);
+
+  /// No description provided for @resultadosKindFederation.
+  ///
+  /// In pt, this message translates to:
+  /// **'Federação'**
+  String get resultadosKindFederation;
+
+  /// No description provided for @resultadosKindCoalition.
+  ///
+  /// In pt, this message translates to:
+  /// **'Coligação'**
+  String get resultadosKindCoalition;
+
+  /// No description provided for @resultadosBrasilCamara.
+  ///
+  /// In pt, this message translates to:
+  /// **'Brasil (Câmara)'**
+  String get resultadosBrasilCamara;
+
+  /// No description provided for @resultadosChamber.
+  ///
+  /// In pt, this message translates to:
+  /// **'Câmara dos Deputados'**
+  String get resultadosChamber;
+
+  /// No description provided for @resultadosChamberPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Bancadas eleitas, por partido ou federação'**
+  String get resultadosChamberPlate;
+
+  /// No description provided for @resultadosChamberMatches.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nossa conta confere com a do TSE nos {count} estados'**
+  String resultadosChamberMatches(int count);
+
+  /// No description provided for @resultadosChamberDiffers.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nossa conta difere da do TSE em: {states}'**
+  String resultadosChamberDiffers(String states);
+
+  /// No description provided for @resultadosChamberNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Soma das 27 disputas: cada estado elege a sua bancada separadamente, com o seu próprio quociente. A Urna Aberta refez a distribuição das vagas em cada estado e comparou com a do TSE.'**
+  String get resultadosChamberNote;
+
+  /// No description provided for @resultadosChamberSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · 27 arquivos de Deputado Federal (EA20); soma e conta: Urna Aberta'**
+  String get resultadosChamberSource;
+
+  /// No description provided for @resultadosCandidatesPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Candidaturas'**
+  String get resultadosCandidatesPlate;
+
+  /// No description provided for @resultadosCandidatesSource.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · votos e situação de cada candidatura'**
+  String get resultadosCandidatesSource;
+
+  /// No description provided for @resultadosSearch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscar por nome, número ou partido'**
+  String get resultadosSearch;
+
+  /// No description provided for @resultadosShowMore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mostrar mais {count}'**
+  String resultadosShowMore(int count);
+
+  /// No description provided for @resultadosNoMatch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhuma candidatura encontrada.'**
+  String get resultadosNoMatch;
+
+  /// No description provided for @resultadosOurSeatDiffers.
+  ///
+  /// In pt, this message translates to:
+  /// **'nossa conta: {how}'**
+  String resultadosOurSeatDiffers(String how);
+
+  /// No description provided for @resultadosNotElectedByUs.
+  ///
+  /// In pt, this message translates to:
+  /// **'não eleito'**
+  String get resultadosNotElectedByUs;
+
+  /// No description provided for @resultadosOfValid.
+  ///
+  /// In pt, this message translates to:
+  /// **'{percent} dos válidos'**
+  String resultadosOfValid(String percent);
 
   /// No description provided for @themeLight.
   ///
@@ -689,6 +995,78 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'E, com a mesma clareza, o que ele não prova.'**
   String get entendaCh7Summary;
+
+  /// No description provided for @entendaChSeatsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Como as vagas são distribuídas'**
+  String get entendaChSeatsTitle;
+
+  /// No description provided for @entendaChSeatsSummary.
+  ///
+  /// In pt, this message translates to:
+  /// **'Quociente eleitoral, quociente partidário e sobras, passo a passo.'**
+  String get entendaChSeatsSummary;
+
+  /// No description provided for @entendaChSeatsPara1.
+  ///
+  /// In pt, this message translates to:
+  /// **'Deputados federais, estaduais e distritais e vereadores são eleitos pelo sistema proporcional: as vagas são divididas primeiro entre partidos e federações, conforme os votos de cada um, e só depois vão para os candidatos mais votados de cada lista. Coligações valem apenas para cargos majoritários; uma federação conta como um único partido.'**
+  String get entendaChSeatsPara1;
+
+  /// No description provided for @entendaChSeatsPara2.
+  ///
+  /// In pt, this message translates to:
+  /// **'O ponto de partida é o quociente eleitoral: os votos válidos (votos em candidatos e na legenda; brancos e nulos não entram) divididos pelo número de vagas, desprezada a fração igual ou inferior a meio. O quociente partidário de cada lista é a divisão dos seus votos pelo quociente eleitoral, sem a fração: é o número de vagas que a lista conquista direto.'**
+  String get entendaChSeatsPara2;
+
+  /// No description provided for @entendaChSeatsPara3.
+  ///
+  /// In pt, this message translates to:
+  /// **'Para ocupar uma dessas vagas, o candidato precisa ter votos nominais iguais ou superiores a 10% do quociente eleitoral. Se a lista não tiver candidatos suficientes com esse mínimo, as vagas que faltam vão para as sobras.'**
+  String get entendaChSeatsPara3;
+
+  /// No description provided for @entendaChSeatsPara4.
+  ///
+  /// In pt, this message translates to:
+  /// **'As sobras são distribuídas pela maior média: os votos da lista divididos pelo seu quociente partidário mais as sobras que já ganhou, mais um. Primeiro disputam só as listas com pelo menos 80% do quociente eleitoral e com candidatos que tenham pelo menos 20% dele. Quando nenhuma lista cumpre essas condições, todas as listas e todos os candidatos disputam as vagas restantes, como decidiu o STF em 2024; em 2025, o tribunal fixou que a regra vale desde as eleições de 2022.'**
+  String get entendaChSeatsPara4;
+
+  /// No description provided for @entendaChSeatsPara5.
+  ///
+  /// In pt, this message translates to:
+  /// **'Empate de médias entre listas: fica com a vaga a que tiver mais votos. Empate de votos entre candidatos da mesma lista: o mais velho.'**
+  String get entendaChSeatsPara5;
+
+  /// No description provided for @entendaChSeatsCallout.
+  ///
+  /// In pt, this message translates to:
+  /// **'A Urna Aberta refaz essa conta para cada disputa, com os votos do arquivo assinado do TSE, e mostra se chega ao mesmo resultado: quociente eleitoral, vagas de cada partido ou federação e eleitos. Nas 54 disputas de deputado de 2026 e nas câmaras das 26 capitais em 2024, chegou.'**
+  String get entendaChSeatsCallout;
+
+  /// No description provided for @entendaSourceCodigoEleitoral.
+  ///
+  /// In pt, this message translates to:
+  /// **'Planalto · Código Eleitoral (Lei 4.737/1965), arts. 106 a 112'**
+  String get entendaSourceCodigoEleitoral;
+
+  /// No description provided for @entendaSourceRes23677.
+  ///
+  /// In pt, this message translates to:
+  /// **'TSE · Resolução nº 23.677/2021 (sistema proporcional), arts. 9 a 14'**
+  String get entendaSourceRes23677;
+
+  /// No description provided for @entendaSourceStfSobras2024.
+  ///
+  /// In pt, this message translates to:
+  /// **'STF · Supremo invalida regra sobre distribuição de sobras eleitorais (2024)'**
+  String get entendaSourceStfSobras2024;
+
+  /// No description provided for @entendaSourceStfSobras2025.
+  ///
+  /// In pt, this message translates to:
+  /// **'STF · Decisão sobre sobras eleitorais vale desde 2022 (2025)'**
+  String get entendaSourceStfSobras2025;
 
   /// No description provided for @entendaChapterLabel.
   ///
@@ -885,7 +1263,7 @@ abstract class AppLocalizations {
   /// No description provided for @entendaCh7Para2.
   ///
   /// In pt, this message translates to:
-  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022).'**
+  /// **'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022). Que a distribuição das vagas de deputados e vereadores, refeita a partir dos votos do arquivo, é igual à publicada pelo TSE, ou exatamente onde difere.'**
   String get entendaCh7Para2;
 
   /// No description provided for @entendaCh7NotTitle.
@@ -1798,7 +2176,7 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoModeReplay.
   ///
   /// In pt, this message translates to:
-  /// **'Reprise do 1º turno'**
+  /// **'Caso: 4 de outubro'**
   String get apuracaoModeReplay;
 
   /// No description provided for @apuracaoLiveLede.
@@ -1816,7 +2194,7 @@ abstract class AppLocalizations {
   /// No description provided for @apuracaoLiveSoon.
   ///
   /// In pt, this message translates to:
-  /// **'A apuração ao vivo do {round}º turno começa em {date}, às 17h (Brasília). Enquanto isso, reveja o 1º turno.'**
+  /// **'A apuração ao vivo do {round}º turno começa em {date}, às 17h (Brasília). Os resultados finais de cada cargo, em cada estado e município, estão em Resultados.'**
   String apuracaoLiveSoon(int round, String date);
 
   /// No description provided for @apuracaoLiveWaiting.
@@ -1866,6 +2244,569 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)'**
   String get entendaSourceFatoOuBoato;
+
+  /// No description provided for @apuracaoSeeResults.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver os resultados finais'**
+  String get apuracaoSeeResults;
+
+  /// No description provided for @apuracaoAllOffices.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ver todos os cargos em apuração'**
+  String get apuracaoAllOffices;
+
+  /// No description provided for @contaSignIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar'**
+  String get contaSignIn;
+
+  /// No description provided for @contaTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Meu local'**
+  String get contaTitle;
+
+  /// No description provided for @contaLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre com seu e-mail para guardar o seu local de votação. A Urna Aberta passa a abrir Minha seção na sua seção e os Resultados no seu estado e município.'**
+  String get contaLede;
+
+  /// No description provided for @contaPrivacy.
+  ///
+  /// In pt, this message translates to:
+  /// **'Guardamos só o local que você escolher (estado, município e, se quiser, zona e seção), ligado ao seu e-mail. Nada mais sobre você. Você pode apagá-lo quando quiser.'**
+  String get contaPrivacy;
+
+  /// No description provided for @contaPlacePlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seu local de votação'**
+  String get contaPlacePlate;
+
+  /// No description provided for @contaPlaceMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'{municipio} ({uf})'**
+  String contaPlaceMunicipio(String municipio, String uf);
+
+  /// No description provided for @contaPlaceSecao.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zona {zona} · Seção {secao}'**
+  String contaPlaceSecao(String zona, String secao);
+
+  /// No description provided for @contaPlaceZona.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zona {zona}'**
+  String contaPlaceZona(String zona);
+
+  /// No description provided for @contaNoPlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não salvou um local. Escolha sua seção em Minha seção e toque em Salvar como meu local.'**
+  String get contaNoPlace;
+
+  /// No description provided for @contaChoose.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolher em Minha seção'**
+  String get contaChoose;
+
+  /// No description provided for @contaDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Apagar meu local'**
+  String get contaDelete;
+
+  /// No description provided for @contaDeleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Local apagado.'**
+  String get contaDeleted;
+
+  /// No description provided for @contaSignOut.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sair'**
+  String get contaSignOut;
+
+  /// No description provided for @contaLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar o seu local. Tente de novo mais tarde.'**
+  String get contaLoadError;
+
+  /// No description provided for @secaoSaveAsMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Salvar como meu local'**
+  String get secaoSaveAsMine;
+
+  /// No description provided for @secaoIsMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este é o seu local'**
+  String get secaoIsMine;
+
+  /// No description provided for @secaoSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Local salvo. Minha seção e Resultados vão abrir nele.'**
+  String get secaoSaved;
+
+  /// No description provided for @secaoSaveFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível salvar este local.'**
+  String get secaoSaveFailed;
+
+  /// No description provided for @relatoriosNew.
+  ///
+  /// In pt, this message translates to:
+  /// **'Novo relatório'**
+  String get relatoriosNew;
+
+  /// No description provided for @relatoriosNewLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha eleições, cargos e locais. A Urna Aberta lê os arquivos assinados do TSE, soma o que precisar somar e entrega um PDF e um CSV.'**
+  String get relatoriosNewLede;
+
+  /// No description provided for @relatoriosMine.
+  ///
+  /// In pt, this message translates to:
+  /// **'Meus relatórios'**
+  String get relatoriosMine;
+
+  /// No description provided for @relatoriosMineLede.
+  ///
+  /// In pt, this message translates to:
+  /// **'Os relatórios que você pediu. Ficam guardados até você apagá-los.'**
+  String get relatoriosMineLede;
+
+  /// No description provided for @relatoriosSignIn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entre para montar relatórios'**
+  String get relatoriosSignIn;
+
+  /// No description provided for @relatoriosSignInBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Os relatórios ficam na sua conta: você acompanha a montagem, baixa os arquivos e, se quiser, publica um link.'**
+  String get relatoriosSignInBody;
+
+  /// No description provided for @relatoriosSignInAction.
+  ///
+  /// In pt, this message translates to:
+  /// **'Entrar'**
+  String get relatoriosSignInAction;
+
+  /// No description provided for @relatoriosDays.
+  ///
+  /// In pt, this message translates to:
+  /// **'Eleições'**
+  String get relatoriosDays;
+
+  /// No description provided for @relatoriosDaysHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Um ou mais dias de votação. Escolha dois para comparar turnos.'**
+  String get relatoriosDaysHint;
+
+  /// No description provided for @relatoriosOffices.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cargos'**
+  String get relatoriosOffices;
+
+  /// No description provided for @relatoriosPlaces.
+  ///
+  /// In pt, this message translates to:
+  /// **'Locais'**
+  String get relatoriosPlaces;
+
+  /// No description provided for @relatoriosNoPlaces.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum local ainda.'**
+  String get relatoriosNoPlaces;
+
+  /// No description provided for @relatoriosAddPlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar'**
+  String get relatoriosAddPlace;
+
+  /// No description provided for @relatoriosPlaceKind.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tipo de local'**
+  String get relatoriosPlaceKind;
+
+  /// No description provided for @relatoriosKindBr.
+  ///
+  /// In pt, this message translates to:
+  /// **'Brasil'**
+  String get relatoriosKindBr;
+
+  /// No description provided for @relatoriosKindRegiao.
+  ///
+  /// In pt, this message translates to:
+  /// **'Região'**
+  String get relatoriosKindRegiao;
+
+  /// No description provided for @relatoriosKindUf.
+  ///
+  /// In pt, this message translates to:
+  /// **'UF'**
+  String get relatoriosKindUf;
+
+  /// No description provided for @relatoriosKindMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Município'**
+  String get relatoriosKindMunicipio;
+
+  /// No description provided for @relatoriosKindZona.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zona'**
+  String get relatoriosKindZona;
+
+  /// No description provided for @relatoriosKindSecao.
+  ///
+  /// In pt, this message translates to:
+  /// **'Seção'**
+  String get relatoriosKindSecao;
+
+  /// No description provided for @relatoriosSectionsOnly.
+  ///
+  /// In pt, this message translates to:
+  /// **'Zonas e seções, por enquanto, só para o 1º turno de 2026 (4 de outubro).'**
+  String get relatoriosSectionsOnly;
+
+  /// No description provided for @relatoriosRemovePlace.
+  ///
+  /// In pt, this message translates to:
+  /// **'Remover {place}'**
+  String relatoriosRemovePlace(String place);
+
+  /// No description provided for @relatoriosZoneLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'{city}, zona {zona}'**
+  String relatoriosZoneLabel(String city, String zona);
+
+  /// No description provided for @relatoriosSectionLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'{city}, zona {zona}, seção {secao}'**
+  String relatoriosSectionLabel(String city, String zona, String secao);
+
+  /// No description provided for @relatoriosBreakdown.
+  ///
+  /// In pt, this message translates to:
+  /// **'Detalhamento'**
+  String get relatoriosBreakdown;
+
+  /// No description provided for @relatoriosBreakdownHint.
+  ///
+  /// In pt, this message translates to:
+  /// **'Uma linha por UF, município ou zona dentro de cada local, conferida com o total do TSE quando ele existe.'**
+  String get relatoriosBreakdownHint;
+
+  /// No description provided for @relatoriosBreakdownNone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum'**
+  String get relatoriosBreakdownNone;
+
+  /// No description provided for @relatoriosBreakdownUf.
+  ///
+  /// In pt, this message translates to:
+  /// **'Por UF'**
+  String get relatoriosBreakdownUf;
+
+  /// No description provided for @relatoriosBreakdownMunicipio.
+  ///
+  /// In pt, this message translates to:
+  /// **'Por município'**
+  String get relatoriosBreakdownMunicipio;
+
+  /// No description provided for @relatoriosBreakdownZona.
+  ///
+  /// In pt, this message translates to:
+  /// **'Por zona'**
+  String get relatoriosBreakdownZona;
+
+  /// No description provided for @relatoriosLanguage.
+  ///
+  /// In pt, this message translates to:
+  /// **'Idioma do PDF'**
+  String get relatoriosLanguage;
+
+  /// No description provided for @relatoriosQuote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Antes de gerar'**
+  String get relatoriosQuote;
+
+  /// No description provided for @relatoriosQuoteBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Lê {files} arquivos do TSE, {stored} já guardados aqui. Cerca de {time} para buscar o resto. {tables} tabelas.'**
+  String relatoriosQuoteBody(
+    String files,
+    String stored,
+    String time,
+    String tables,
+  );
+
+  /// No description provided for @relatoriosSeconds.
+  ///
+  /// In pt, this message translates to:
+  /// **'{seconds} s'**
+  String relatoriosSeconds(String seconds);
+
+  /// No description provided for @relatoriosMinutes.
+  ///
+  /// In pt, this message translates to:
+  /// **'{minutes} min'**
+  String relatoriosMinutes(String minutes);
+
+  /// No description provided for @relatoriosQuoting.
+  ///
+  /// In pt, this message translates to:
+  /// **'Calculando o que o relatório vai ler…'**
+  String get relatoriosQuoting;
+
+  /// No description provided for @relatoriosIncomplete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Escolha ao menos uma eleição, um cargo e um local.'**
+  String get relatoriosIncomplete;
+
+  /// No description provided for @relatoriosTooLarge.
+  ///
+  /// In pt, this message translates to:
+  /// **'Grande demais: leria mais de {limit} arquivos do TSE. Escolha menos locais ou um detalhamento menor.'**
+  String relatoriosTooLarge(String limit);
+
+  /// No description provided for @relatoriosRefusedInvalid.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE não publica essa combinação de eleição, cargo e local.'**
+  String get relatoriosRefusedInvalid;
+
+  /// No description provided for @relatoriosRefusedNotPublished.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE ainda não publicou resultados dessa eleição.'**
+  String get relatoriosRefusedNotPublished;
+
+  /// No description provided for @relatoriosRefusedBusy.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você já tem um relatório na fila. Espere ele terminar.'**
+  String get relatoriosRefusedBusy;
+
+  /// No description provided for @relatoriosQuoteError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível calcular agora. Tente de novo.'**
+  String get relatoriosQuoteError;
+
+  /// No description provided for @relatoriosWithoutFiles.
+  ///
+  /// In pt, this message translates to:
+  /// **'{count} seções ainda sem arquivos da urna ficam de fora.'**
+  String relatoriosWithoutFiles(String count);
+
+  /// No description provided for @relatoriosGenerate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Gerar relatório'**
+  String get relatoriosGenerate;
+
+  /// No description provided for @relatoriosStatusQueued.
+  ///
+  /// In pt, this message translates to:
+  /// **'Na fila'**
+  String get relatoriosStatusQueued;
+
+  /// No description provided for @relatoriosStatusRunning.
+  ///
+  /// In pt, this message translates to:
+  /// **'Montando'**
+  String get relatoriosStatusRunning;
+
+  /// No description provided for @relatoriosStatusReady.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pronto'**
+  String get relatoriosStatusReady;
+
+  /// No description provided for @relatoriosStatusFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Falhou'**
+  String get relatoriosStatusFailed;
+
+  /// No description provided for @relatoriosProgress.
+  ///
+  /// In pt, this message translates to:
+  /// **'{done} de {total} arquivos'**
+  String relatoriosProgress(String done, String total);
+
+  /// No description provided for @relatoriosDownloadPdf.
+  ///
+  /// In pt, this message translates to:
+  /// **'Baixar PDF'**
+  String get relatoriosDownloadPdf;
+
+  /// No description provided for @relatoriosDownloadCsv.
+  ///
+  /// In pt, this message translates to:
+  /// **'Baixar CSV'**
+  String get relatoriosDownloadCsv;
+
+  /// No description provided for @relatoriosPublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Publicar link'**
+  String get relatoriosPublish;
+
+  /// No description provided for @relatoriosUnpublish.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tirar link do ar'**
+  String get relatoriosUnpublish;
+
+  /// No description provided for @relatoriosCopyLink.
+  ///
+  /// In pt, this message translates to:
+  /// **'Copiar link'**
+  String get relatoriosCopyLink;
+
+  /// No description provided for @relatoriosLinkCopied.
+  ///
+  /// In pt, this message translates to:
+  /// **'Link copiado.'**
+  String get relatoriosLinkCopied;
+
+  /// No description provided for @relatoriosPublicNote.
+  ///
+  /// In pt, this message translates to:
+  /// **'Publicado: qualquer pessoa com o link vê este relatório.'**
+  String get relatoriosPublicNote;
+
+  /// No description provided for @relatoriosDelete.
+  ///
+  /// In pt, this message translates to:
+  /// **'Apagar'**
+  String get relatoriosDelete;
+
+  /// No description provided for @relatoriosDeleted.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatório apagado.'**
+  String get relatoriosDeleted;
+
+  /// No description provided for @relatoriosCancel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar'**
+  String get relatoriosCancel;
+
+  /// No description provided for @relatoriosCancelled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatório cancelado.'**
+  String get relatoriosCancelled;
+
+  /// No description provided for @relatoriosFailedServer.
+  ///
+  /// In pt, this message translates to:
+  /// **'O servidor parou várias vezes enquanto montava este relatório. Tente de novo mais tarde, ou peça um relatório menor.'**
+  String get relatoriosFailedServer;
+
+  /// No description provided for @relatoriosRetry.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tentar de novo'**
+  String get relatoriosRetry;
+
+  /// No description provided for @relatoriosFailedTse.
+  ///
+  /// In pt, this message translates to:
+  /// **'O TSE não respondeu enquanto o relatório era montado.'**
+  String get relatoriosFailedTse;
+
+  /// No description provided for @relatoriosFailedOther.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível montar este relatório.'**
+  String get relatoriosFailedOther;
+
+  /// No description provided for @relatoriosEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você ainda não pediu nenhum relatório.'**
+  String get relatoriosEmpty;
+
+  /// No description provided for @relatoriosLoadError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar seus relatórios.'**
+  String get relatoriosLoadError;
+
+  /// No description provided for @relatoriosRequestedAt.
+  ///
+  /// In pt, this message translates to:
+  /// **'Pedido em {at}'**
+  String relatoriosRequestedAt(String at);
+
+  /// No description provided for @relatoriosActionFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não deu certo. Tente de novo.'**
+  String get relatoriosActionFailed;
+
+  /// No description provided for @relatoriosFromHere.
+  ///
+  /// In pt, this message translates to:
+  /// **'Gerar relatório'**
+  String get relatoriosFromHere;
+
+  /// No description provided for @relatoriosPlate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatórios'**
+  String get relatoriosPlate;
+
+  /// No description provided for @relatoriosPlateBody.
+  ///
+  /// In pt, this message translates to:
+  /// **'Monte relatórios de qualquer eleição, cargo e local, em PDF e CSV, conferidos com os arquivos do TSE.'**
+  String get relatoriosPlateBody;
+
+  /// No description provided for @relatoriosSha.
+  ///
+  /// In pt, this message translates to:
+  /// **'SHA-256 dos dados: {hash}'**
+  String relatoriosSha(String hash);
+
+  /// No description provided for @relatoriosElectionsError.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não foi possível carregar a lista de eleições do TSE.'**
+  String get relatoriosElectionsError;
 }
 
 class _AppLocalizationsDelegate

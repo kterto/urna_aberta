@@ -70,19 +70,31 @@ void main() {
     expect(() => TseJws.parse('!!.??.**'), throwsFormatException);
   });
 
-  test('every archived result file verifies and matches its .json', () async {
-    final root = Directory('../fixtures/2026-1t/oficial');
-    final signed = root
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((f) => f.path.endsWith('-u.jws'))
-        .toList();
-    expect(signed, hasLength(83));
-    for (final f in signed) {
-      final jws = TseJws.parse(f.readAsStringSync());
-      final plain = File(f.path.replaceFirst(RegExp(r'\.jws$'), '.json'));
-      expect(jws.payload, plain.readAsBytesSync(), reason: f.path);
-      expect(await checkJws(jws), JwsCheck.valid, reason: f.path);
-    }
-  });
+  test(
+    'every archived signed file verifies; its .json, if kept, matches',
+    () async {
+      final signed = [
+        for (final root in [
+          '../fixtures/2026-1t/oficial',
+          '../fixtures/2024/oficial',
+        ])
+          ...Directory(root)
+              .listSync(recursive: true)
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.jws')),
+      ];
+      // 83 President/Governor/Senator, 54 deputies, 67 municipal, 3 EA12,
+      // and for reports President in the 22 AC cities and Governor in
+      // Porto Walter.
+      expect(signed, hasLength(231));
+      for (final f in signed) {
+        final jws = TseJws.parse(f.readAsStringSync());
+        final plain = File(f.path.replaceFirst(RegExp(r'\.jws$'), '.json'));
+        if (plain.existsSync()) {
+          expect(jws.payload, plain.readAsBytesSync(), reason: f.path);
+        }
+        expect(await checkJws(jws), JwsCheck.valid, reason: f.path);
+      }
+    },
+  );
 }

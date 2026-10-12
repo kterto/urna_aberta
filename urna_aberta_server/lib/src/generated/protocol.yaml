@@ -9,14 +9,31 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
-greeting:
-  - hello:
+meuLocal:
+  - ler:
+  - salvar:
+  - apagar:
 tally:
   - night:
   - frame:
   - timeline:
   - divergence:
   - live:
+relatorios:
+  - orcar:
+  - pedir:
+  - listar:
+  - acompanhar:
+  - baixar:
+  - publicar:
+  - link:
+  - linkPublico:
+  - apagar:
+resultados:
+  - eleicoes:
+  - municipios:
+  - resultado:
+  - camara:
 secao:
   - municipios:
   - zonas:

@@ -1,0 +1,699 @@
+{
+  "source": "TSE, resultados.tse.jus.br (ambiente oficial), .jws only",
+  "set": "municipal2024",
+  "complete": true,
+  "files": [
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/config/mun-e000619-cm.jws",
+      "path": "oficial/ele2024/619/config/mun-e000619-cm.jws",
+      "sha256": "d0796433f8cf90754116a02e9a4e56c3534fd3425d7834f1c8126d4466ea7708",
+      "bytes": 691525,
+      "jws": "valid",
+      "etag": null,
+      "lastModified": null,
+      "fetchedAt": "2026-10-10T18:32:38.179171+00:00",
+      "note": "entry rebuilt from the archived file; signature checked at download"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/config/mun-e000620-cm.jws",
+      "path": "oficial/ele2024/620/config/mun-e000620-cm.jws",
+      "sha256": "29d3c6aaf36eb3b9c38d29de3484ab5942931a72ea62e7429822f395578d2235",
+      "bytes": 10164,
+      "jws": "valid",
+      "etag": null,
+      "lastModified": null,
+      "fetchedAt": "2026-10-10T18:32:38.320751+00:00",
+      "note": "entry rebuilt from the archived file; signature checked at download"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ac/ac01392-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ac/ac01392-c0011-e000619-u.jws",
+      "sha256": "d8abf8152a94c1419c293743bc2497d39244637cb97b36b4d8c52eb63ea28111",
+      "bytes": 6092,
+      "jws": "valid",
+      "etag": "\"cf34871bcaf83ed1da7da6982a6ddb08\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:22 GMT",
+      "fetchedAt": "2026-10-10T18:33:29.853527Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ac/ac01392-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ac/ac01392-c0013-e000619-u.jws",
+      "sha256": "4bd8dd5cb750206ec444e3d8760d23d0914c84f0713b582dfdd937ef6191b2ce",
+      "bytes": 110265,
+      "jws": "valid",
+      "etag": "\"a5891516b4c0bd4f1bc7711e543bd756\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:24 GMT",
+      "fetchedAt": "2026-10-10T18:33:30.282305Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/al/al27855-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/al/al27855-c0011-e000619-u.jws",
+      "sha256": "16b6ffe4c7a38a9a07258a4acae4a27fc096d8aeb33449a9ccf5760ac639e8f4",
+      "bytes": 6954,
+      "jws": "valid",
+      "etag": "\"c831c17d9e56a9138f46b003a174e5f4\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:41 GMT",
+      "fetchedAt": "2026-10-10T18:33:30.792646Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/al/al27855-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/al/al27855-c0013-e000619-u.jws",
+      "sha256": "335d187d7eb76359616eeff7cf46d377ae6282da2a5588d6a84dc4ef94afd4bd",
+      "bytes": 112789,
+      "jws": "valid",
+      "etag": "\"7d93b8ad73b5253e2037e1093c5ad79d\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:41 GMT",
+      "fetchedAt": "2026-10-10T18:33:30.949477Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ap/ap06050-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ap/ap06050-c0011-e000619-u.jws",
+      "sha256": "b05c1a245b1f0d5ce64030921e10ef29831f9369f632981c1154f5d80f06c19c",
+      "bytes": 9634,
+      "jws": "valid",
+      "etag": "\"fe44319936ab2851174e1037294f5e4b\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:11 GMT",
+      "fetchedAt": "2026-10-10T18:33:31.510436Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ap/ap06050-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ap/ap06050-c0013-e000619-u.jws",
+      "sha256": "3675c68d26f7c46ac307e44851de74fcd4c167e9dace7ec3657ea519ea91b200",
+      "bytes": 96701,
+      "jws": "valid",
+      "etag": "\"83e13880a6219c0ee6ab002e3b2dcefe\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:12 GMT",
+      "fetchedAt": "2026-10-10T18:33:32.168508Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/am/am02550-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/am/am02550-c0011-e000619-u.jws",
+      "sha256": "e6f34ce4d0fe98725043fb074dd1561bafba3a3a785abc2146ee293d0943ba4d",
+      "bytes": 9056,
+      "jws": "valid",
+      "etag": "\"f0148ee83e6bda53796d44e09caec58f\"",
+      "lastModified": "Fri, 02 Oct 2026 20:53:32 GMT",
+      "fetchedAt": "2026-10-10T18:33:32.610631Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/am/am02550-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/am/am02550-c0013-e000619-u.jws",
+      "sha256": "ce4e48e77ade6212f6205fc2cca81898020a5167e0562c2165f88b98a8dcd275",
+      "bytes": 289618,
+      "jws": "valid",
+      "etag": "\"0eec354d8a2c2a772e866547d5fd0001\"",
+      "lastModified": "Fri, 02 Oct 2026 20:53:32 GMT",
+      "fetchedAt": "2026-10-10T18:33:32.774791Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/am/am02550-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/am/am02550-c0011-e000620-u.jws",
+      "sha256": "52a90de7f3059eac4bb37a7121e61af2e178556770bf261a923531042040dabc",
+      "bytes": 4200,
+      "jws": "valid",
+      "etag": "\"5e975e96c0b984dc4aa730b6c827dd83\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:35 GMT",
+      "fetchedAt": "2026-10-10T18:33:32.889550Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ba/ba38490-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ba/ba38490-c0011-e000619-u.jws",
+      "sha256": "7c43a79eca36999d8da5111412b9c7137b204a730c1de9cde0d6220d68def8ce",
+      "bytes": 8945,
+      "jws": "valid",
+      "etag": "\"3544c8c37ecc18e2a389eda9a6ab7a5b\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:57 GMT",
+      "fetchedAt": "2026-10-10T18:33:33.373347Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ba/ba38490-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ba/ba38490-c0013-e000619-u.jws",
+      "sha256": "0a613bef69c2b34270d1193fbb795cf0204a40c94f52faf26291a715f40960ac",
+      "bytes": 287561,
+      "jws": "valid",
+      "etag": "\"4ad8b3dadd91b192fa112ecc4f8dd186\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:59 GMT",
+      "fetchedAt": "2026-10-10T18:33:33.562655Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ce/ce13897-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ce/ce13897-c0011-e000619-u.jws",
+      "sha256": "20be9f97b5f2db718841d6ca63e04cf82d0a6579cd37a65bcfb6e5a1bbc342b1",
+      "bytes": 10616,
+      "jws": "valid",
+      "etag": "\"5c7060e1ea8c1ff4553ec61642464180\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:53 GMT",
+      "fetchedAt": "2026-10-10T18:33:34.233005Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ce/ce13897-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ce/ce13897-c0013-e000619-u.jws",
+      "sha256": "31c1ca85c48622748bb7b28031224af8674ecc80f6aa139184e9dd090eb389c7",
+      "bytes": 262678,
+      "jws": "valid",
+      "etag": "\"548f2b1059396be679e78c65fa9f89eb\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:53 GMT",
+      "fetchedAt": "2026-10-10T18:33:34.803365Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/ce/ce13897-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/ce/ce13897-c0011-e000620-u.jws",
+      "sha256": "293ca8a2892f985fcddfc0ebd65331f01ae4bea034030f181ee1458eb9c31343",
+      "bytes": 4421,
+      "jws": "valid",
+      "etag": "\"8d2bf3a4edcaa9ef8e1965e6b0aa6873\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:49 GMT",
+      "fetchedAt": "2026-10-10T18:33:35.463744Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/es/es57053-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/es/es57053-c0011-e000619-u.jws",
+      "sha256": "1dfdc5b12cc5d74a0c58f5a4d9941898697596ff6245cffada82bae0d3921b0b",
+      "bytes": 8246,
+      "jws": "valid",
+      "etag": "\"442de352841c92a7b696560e3f16aeb6\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:54 GMT",
+      "fetchedAt": "2026-10-10T18:33:35.569667Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/es/es57053-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/es/es57053-c0013-e000619-u.jws",
+      "sha256": "ef9508b4be8584f0d0b2f2f995dc33191e6cc400486279c0cbe61359b6a09991",
+      "bytes": 102792,
+      "jws": "valid",
+      "etag": "\"5e763d4edb55f2332bf352e41c6a6bfa\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:53 GMT",
+      "fetchedAt": "2026-10-10T18:33:35.701842Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/go/go93734-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/go/go93734-c0011-e000619-u.jws",
+      "sha256": "b00ebfb238fde1729e945180d079715f806ebd5e8bcf7ed15febf87567f76550",
+      "bytes": 9018,
+      "jws": "valid",
+      "etag": "\"105227e1e513f4510668f2254adac2e4\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:29 GMT",
+      "fetchedAt": "2026-10-10T18:33:36.212886Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/go/go93734-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/go/go93734-c0013-e000619-u.jws",
+      "sha256": "7c9767fbdb675f17f933cc14e2c9759f6f946ba45f6b87feba828992316bd3be",
+      "bytes": 234000,
+      "jws": "valid",
+      "etag": "\"d097683a79b0d14956e534434380ffae\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:31 GMT",
+      "fetchedAt": "2026-10-10T18:33:36.809156Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/go/go93734-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/go/go93734-c0011-e000620-u.jws",
+      "sha256": "bb95aa0d77c8fe7261f4181623dddc03606cfd1ed095c8b5d6d698f7bdb03662",
+      "bytes": 4396,
+      "jws": "valid",
+      "etag": "\"df10055102d87bfb90afc381c174b882\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:55 GMT",
+      "fetchedAt": "2026-10-10T18:33:37.134697Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ma/ma09210-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ma/ma09210-c0011-e000619-u.jws",
+      "sha256": "39b14ecd635e915d38504306a2660ab9efde535887ded11e773e834f8cd4cb62",
+      "bytes": 9824,
+      "jws": "valid",
+      "etag": "\"eab1e185dd02883bdc65cc2b3cd79c17\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:34 GMT",
+      "fetchedAt": "2026-10-10T18:33:37.246998Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ma/ma09210-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ma/ma09210-c0013-e000619-u.jws",
+      "sha256": "4a8c7a173450c181f88b61156caa46a66fda428cbee25c46ad12a60126c113dc",
+      "bytes": 181365,
+      "jws": "valid",
+      "etag": "\"ebb821934f4efd4b9c2787bcbb8abbc3\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:35 GMT",
+      "fetchedAt": "2026-10-10T18:33:37.384057Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/mt/mt90670-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/mt/mt90670-c0011-e000619-u.jws",
+      "sha256": "b472c6220757ad93d575f7aa8f2233a57887415092a5352d93bdeb6408396264",
+      "bytes": 6214,
+      "jws": "valid",
+      "etag": "\"bf4f4189b24748ba75317402002de0f9\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:45 GMT",
+      "fetchedAt": "2026-10-10T18:33:37.813177Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/mt/mt90670-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/mt/mt90670-c0013-e000619-u.jws",
+      "sha256": "95efd31632d038eff45e65f03cd4e96d5c7d53d702410675f784d0aa09691b48",
+      "bytes": 152433,
+      "jws": "valid",
+      "etag": "\"7bd82d7db6d7862ab559e2d08fb3dfec\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:46 GMT",
+      "fetchedAt": "2026-10-10T18:33:38.339696Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/mt/mt90670-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/mt/mt90670-c0011-e000620-u.jws",
+      "sha256": "9ad5d0290a186cddbd6ab581a3ab873fda8cf7740cdab97ec973d097905287fb",
+      "bytes": 4368,
+      "jws": "valid",
+      "etag": "\"cc248497f7ebd25b9c5687c516e32d2b\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:56 GMT",
+      "fetchedAt": "2026-10-10T18:33:38.820084Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ms/ms90514-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ms/ms90514-c0011-e000619-u.jws",
+      "sha256": "4c54a0148c6f0ccf4927148d7ac7d859d22bb21cb1dcb3863b05bbec753bb776",
+      "bytes": 9173,
+      "jws": "valid",
+      "etag": "\"04f4dbc7e0ba58fc86a5fef86875da88\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:18 GMT",
+      "fetchedAt": "2026-10-10T18:33:39.349850Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ms/ms90514-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ms/ms90514-c0013-e000619-u.jws",
+      "sha256": "6eddebbf8cff53b9f490fd7bc2f606159dc746812b80bea61be7fd0772881e95",
+      "bytes": 168382,
+      "jws": "valid",
+      "etag": "\"924eac9c9d85be4644098c60e7b292b8\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:19 GMT",
+      "fetchedAt": "2026-10-10T18:33:39.907893Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/ms/ms90514-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/ms/ms90514-c0011-e000620-u.jws",
+      "sha256": "67f2668b0f367d392224b13adbf8ae2a34c873e4de85d4a3e4457fb0db4fecdc",
+      "bytes": 4182,
+      "jws": "valid",
+      "etag": "\"0759f0a0599787bbd530c9d2f1f811fa\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:55 GMT",
+      "fetchedAt": "2026-10-10T18:33:40.618341Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/mg/mg41238-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/mg/mg41238-c0011-e000619-u.jws",
+      "sha256": "acf999ff4b69d3f8058e9d3037519a9a253e62c1c9a9a7da7e6ef9503cffc448",
+      "bytes": 11389,
+      "jws": "valid",
+      "etag": "\"f3abf60d02f1cc9480e18f75889e4067\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:52 GMT",
+      "fetchedAt": "2026-10-10T18:33:41.254019Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/mg/mg41238-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/mg/mg41238-c0013-e000619-u.jws",
+      "sha256": "84b0e37fe0c1964075139d95321acd4328e0a4ffa4628f72d2cfab7aeca3b813",
+      "bytes": 301665,
+      "jws": "valid",
+      "etag": "\"0b25245e996035d23d5ad49e872d21f1\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:55 GMT",
+      "fetchedAt": "2026-10-10T18:33:41.676137Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/mg/mg41238-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/mg/mg41238-c0011-e000620-u.jws",
+      "sha256": "073c9d405f3db83c298353cacfdd57c8667790d1b8ea512ef506931efe393596",
+      "bytes": 4236,
+      "jws": "valid",
+      "etag": "\"9116bec049d9a43d73474f11b99170a3\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:52 GMT",
+      "fetchedAt": "2026-10-10T18:33:41.924980Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pr/pr75353-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pr/pr75353-c0011-e000619-u.jws",
+      "sha256": "cc6966d64f73aa4bf5f93dbf281bc7408a1fc08c04a7ca7237938359a7478a83",
+      "bytes": 11521,
+      "jws": "valid",
+      "etag": "\"47dec541ed1aff167a68c6ee49ba03f7\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:46 GMT",
+      "fetchedAt": "2026-10-10T18:33:42.541228Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pr/pr75353-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pr/pr75353-c0013-e000619-u.jws",
+      "sha256": "ff7ce528dc085be40b5b75490df5125dc941e6be203c2cd76c27e4a1dabba62f",
+      "bytes": 259685,
+      "jws": "valid",
+      "etag": "\"826177ea5271bcdb02dfd33defb987af\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:46 GMT",
+      "fetchedAt": "2026-10-10T18:33:42.955219Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/pr/pr75353-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/pr/pr75353-c0011-e000620-u.jws",
+      "sha256": "924e1d8109d07e1c12b9135e525f5c9d414ec3ec2f8536121d4b5dafacbebe98",
+      "bytes": 4204,
+      "jws": "valid",
+      "etag": "\"739489614bae6372ae4a186019eb69de\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:52 GMT",
+      "fetchedAt": "2026-10-10T18:33:43.585007Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pb/pb20516-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pb/pb20516-c0011-e000619-u.jws",
+      "sha256": "97759e912cf9443dcd967ee5d9e56efffd386732aa4d342f41e5464bf804b1ba",
+      "bytes": 7988,
+      "jws": "valid",
+      "etag": "\"a69140c43b514eb8ce1604bea2762d19\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:13 GMT",
+      "fetchedAt": "2026-10-10T18:33:43.996675Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pb/pb20516-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pb/pb20516-c0013-e000619-u.jws",
+      "sha256": "8adffee75b437e0d1c91086fa01ee11252095dbccdf5f8562fba896e8366f01b",
+      "bytes": 159636,
+      "jws": "valid",
+      "etag": "\"9ec43cc55953e421d43203ef38b756e7\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:12 GMT",
+      "fetchedAt": "2026-10-10T18:33:44.441152Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/pb/pb20516-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/pb/pb20516-c0011-e000620-u.jws",
+      "sha256": "3772fc84e170debdf11fe9c1a074ff92814d37f8a6da38166c5a69ef9b118b4e",
+      "bytes": 4285,
+      "jws": "valid",
+      "etag": "\"e9b586f9eed5c4cfb1e4dfc7834eeb8f\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:05 GMT",
+      "fetchedAt": "2026-10-10T18:33:45.200627Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pa/pa04278-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pa/pa04278-c0011-e000619-u.jws",
+      "sha256": "88ffa71ab93c756f753498379751280d5e366c651b698399e7de6cf5264e736a",
+      "bytes": 10384,
+      "jws": "valid",
+      "etag": "\"9f065222d0717f9a28065a096af852bf\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:24 GMT",
+      "fetchedAt": "2026-10-10T18:33:45.320932Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pa/pa04278-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pa/pa04278-c0013-e000619-u.jws",
+      "sha256": "fa76cf86cd5ac0aa9eedd6dc3a33e983fef9e007a2e579499ea573dc72b919f7",
+      "bytes": 200536,
+      "jws": "valid",
+      "etag": "\"20cfdcea7b362d32952af480518ab3d2\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:26 GMT",
+      "fetchedAt": "2026-10-10T18:33:45.469971Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/pa/pa04278-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/pa/pa04278-c0011-e000620-u.jws",
+      "sha256": "1c791114be3dd4cb2609594013bbcbe522b4e280cfa73fcbd567ffce1d20cf16",
+      "bytes": 4141,
+      "jws": "valid",
+      "etag": "\"aa1aae8f77f75bad3738e991bfb7195a\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:50 GMT",
+      "fetchedAt": "2026-10-10T18:33:45.944333Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pe/pe25313-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pe/pe25313-c0011-e000619-u.jws",
+      "sha256": "8f22affdc2947af2e91859932d5ceb76a71334a076ff53124d29da6dc102e1b9",
+      "bytes": 8872,
+      "jws": "valid",
+      "etag": "\"bd27c3560a3c8b59aaa3e928b011d07e\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:28 GMT",
+      "fetchedAt": "2026-10-10T18:33:46.458224Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pe/pe25313-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pe/pe25313-c0013-e000619-u.jws",
+      "sha256": "46dd3a846c86a48dfd9e2a4a5b2feeba833f10b914a8162e5708bc81a8ce70e2",
+      "bytes": 178864,
+      "jws": "valid",
+      "etag": "\"e60a9798869a46e4b91cd55252b0409f\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:28 GMT",
+      "fetchedAt": "2026-10-10T18:33:46.904794Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pi/pi12190-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pi/pi12190-c0011-e000619-u.jws",
+      "sha256": "bffe9c48a06af3dd6a95b2f4e187b786111f967b188cda7729508191c2cc12b5",
+      "bytes": 10682,
+      "jws": "valid",
+      "etag": "\"bb612d232fc0105163ab499159922ed3\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:25 GMT",
+      "fetchedAt": "2026-10-10T18:33:47.582261Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/pi/pi12190-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/pi/pi12190-c0013-e000619-u.jws",
+      "sha256": "7f77f38c2d6c9db3a02037d07aa4e0bf72953805521ea119cf539ebf3860ea8e",
+      "bytes": 171362,
+      "jws": "valid",
+      "etag": "\"d13cbe37d9a6abea60730ee59795a203\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:25 GMT",
+      "fetchedAt": "2026-10-10T18:33:48.224379Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rj/rj60011-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rj/rj60011-c0011-e000619-u.jws",
+      "sha256": "052ed62fe2f0672d9c73cc8c7a2a5ffa21d5c0603b663498710c8dc3f8c488b5",
+      "bytes": 10861,
+      "jws": "valid",
+      "etag": "\"2a21e9741c3ace7540d4e21a562f868a\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:37 GMT",
+      "fetchedAt": "2026-10-10T18:33:48.603963Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rj/rj60011-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rj/rj60011-c0013-e000619-u.jws",
+      "sha256": "956cfeaa3f2904ff69224b1c4c0c5fe0711b4c19a90ecc2f37696e4cfea505f8",
+      "bytes": 353190,
+      "jws": "valid",
+      "etag": "\"25bfac8139ac3edf99039a7eb609b6d6\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:41 GMT",
+      "fetchedAt": "2026-10-10T18:33:49.173534Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rn/rn17612-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rn/rn17612-c0011-e000619-u.jws",
+      "sha256": "ac0e34e45539a2864125f22eb4ea14b49d60f6dc09c0215c46772d01f87e425d",
+      "bytes": 7853,
+      "jws": "valid",
+      "etag": "\"4012f964e1ea0008254810629e7c2343\"",
+      "lastModified": "Fri, 02 Oct 2026 20:54:08 GMT",
+      "fetchedAt": "2026-10-10T18:33:49.522578Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rn/rn17612-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rn/rn17612-c0013-e000619-u.jws",
+      "sha256": "b12ea6e82493f3f0702598b20d222df7f20d2f995ffe554b04b5232b2d5c6f7f",
+      "bytes": 155337,
+      "jws": "valid",
+      "etag": "\"a84ca92a832de30229fc5dde6ce53d04\"",
+      "lastModified": "Fri, 02 Oct 2026 20:54:07 GMT",
+      "fetchedAt": "2026-10-10T18:33:50.299288Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/rn/rn17612-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/rn/rn17612-c0011-e000620-u.jws",
+      "sha256": "22b5d878e7dc8c3b08a41b7cc442fe372e23b343cb2c3edb21100db328f486b7",
+      "bytes": 4448,
+      "jws": "valid",
+      "etag": "\"c1329cbb06fa18535e54be0b1d3fc7a9\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:55 GMT",
+      "fetchedAt": "2026-10-10T18:33:50.649215Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rs/rs88013-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rs/rs88013-c0011-e000619-u.jws",
+      "sha256": "50fae8549128e7ec50f0f597e97e72415b3dfdcb6087f59c486f0c266a20bec3",
+      "bytes": 9749,
+      "jws": "valid",
+      "etag": "\"51b0ece686cbd43e3137e57e83003864\"",
+      "lastModified": "Fri, 02 Oct 2026 20:53:05 GMT",
+      "fetchedAt": "2026-10-10T18:33:51.157383Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rs/rs88013-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rs/rs88013-c0013-e000619-u.jws",
+      "sha256": "6ad242db6942d36c8d2500bf2a523cb944f9a3799c2f7765a74966ebeb505f6c",
+      "bytes": 183792,
+      "jws": "valid",
+      "etag": "\"6d8488decfb2aaacc9bba6d99beacc7c\"",
+      "lastModified": "Fri, 02 Oct 2026 20:53:06 GMT",
+      "fetchedAt": "2026-10-10T18:33:51.999025Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/rs/rs88013-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/rs/rs88013-c0011-e000620-u.jws",
+      "sha256": "90a8ca10e5e7ac47ec6cf70e62778880abfd6fe0b04c1b95984a6a6e4982d3f2",
+      "bytes": 4493,
+      "jws": "valid",
+      "etag": "\"1b5d2a1cbc0e0b4e5f253e93b3a99757\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:59 GMT",
+      "fetchedAt": "2026-10-10T18:33:52.538517Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ro/ro00035-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ro/ro00035-c0011-e000619-u.jws",
+      "sha256": "f964b659b21cd58879bd9347c8e3d0b689bcad62f757db30a3e4db6a6afbbcc8",
+      "bytes": 8664,
+      "jws": "valid",
+      "etag": "\"55f84dfd097428ab15cfa4f368cca617\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:31 GMT",
+      "fetchedAt": "2026-10-10T18:33:53.101008Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/ro/ro00035-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/ro/ro00035-c0013-e000619-u.jws",
+      "sha256": "dd5e0f7f50158a21b3e7f9ac73a349e7d2362657e3f15dd6f53f32e3f3a37fa6",
+      "bytes": 153141,
+      "jws": "valid",
+      "etag": "\"9b29cded23be465f621f4a9c77486bdc\"",
+      "lastModified": "Fri, 02 Oct 2026 20:52:32 GMT",
+      "fetchedAt": "2026-10-10T18:33:53.582058Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/ro/ro00035-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/ro/ro00035-c0011-e000620-u.jws",
+      "sha256": "b75ebb1f284a782b99a418380bfffcb5452ee5e35348ac925e8bb5f105df900e",
+      "bytes": 4182,
+      "jws": "valid",
+      "etag": "\"a4f87420cfeeaf3c02860646f10e55ea\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:35 GMT",
+      "fetchedAt": "2026-10-10T18:33:54.031795Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rr/rr03018-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rr/rr03018-c0011-e000619-u.jws",
+      "sha256": "75800a7ca2ebed4f67f52a16a5e4326748a16da9fc6551fc3511c5e62d070b40",
+      "bytes": 6413,
+      "jws": "valid",
+      "etag": "\"f8c402af21feaf2c50b23a37a3097027\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:31 GMT",
+      "fetchedAt": "2026-10-10T18:33:54.671828Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/rr/rr03018-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/rr/rr03018-c0013-e000619-u.jws",
+      "sha256": "3b3e1ff142d7dbab5072255aad96f2389167c80807e7f405bb1750861b647f4d",
+      "bytes": 104426,
+      "jws": "valid",
+      "etag": "\"f2e7e44a950f8a9a9d2210bfba24edfb\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:30 GMT",
+      "fetchedAt": "2026-10-10T18:33:55.386725Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/sc/sc81051-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/sc/sc81051-c0011-e000619-u.jws",
+      "sha256": "dffbf6825383c7b9561dde5b3351b61f6eaa8d4cb1e533414da12207c690ac66",
+      "bytes": 10690,
+      "jws": "valid",
+      "etag": "\"da0dc6823f47644b71223f6a004b590b\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:26 GMT",
+      "fetchedAt": "2026-10-10T18:33:56.142367Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/sc/sc81051-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/sc/sc81051-c0013-e000619-u.jws",
+      "sha256": "a572dabc039eb496f1c2b5e1b0bdade6be9a1c26db1aa9f246536d27d1610ed1",
+      "bytes": 111121,
+      "jws": "valid",
+      "etag": "\"f24b6a6a225b0857ece0c195432c393d\"",
+      "lastModified": "Fri, 02 Oct 2026 20:51:28 GMT",
+      "fetchedAt": "2026-10-10T18:33:56.601771Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/se/se31054-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/se/se31054-c0011-e000619-u.jws",
+      "sha256": "5b77754f975d72cccf136ced6294a88bb7b4c49e0b44c647c082055d3fbda4a4",
+      "bytes": 9893,
+      "jws": "valid",
+      "etag": "\"38fac41f2d342ba2c609c212a3ae532b\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:41 GMT",
+      "fetchedAt": "2026-10-10T18:33:57.282968Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/se/se31054-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/se/se31054-c0013-e000619-u.jws",
+      "sha256": "7c6e846c54aabbb2fe1cccd022af78c6676cf7becad52a2dca2ef272fd79836c",
+      "bytes": 171777,
+      "jws": "valid",
+      "etag": "\"7f74e3abc2f753e89f7a15923c5cb7d4\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:43 GMT",
+      "fetchedAt": "2026-10-10T18:33:57.998306Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/se/se31054-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/se/se31054-c0011-e000620-u.jws",
+      "sha256": "1ab5d9d3426798a90694e497d998e8921b220ccf2c3fa8d49025025107d622d7",
+      "bytes": 4273,
+      "jws": "valid",
+      "etag": "\"ebe58902ed6a61e863c885f030c80fc1\"",
+      "lastModified": "Fri, 02 Oct 2026 20:48:55 GMT",
+      "fetchedAt": "2026-10-10T18:33:58.429575Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/sp/sp71072-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/sp/sp71072-c0011-e000619-u.jws",
+      "sha256": "910a558d2fd64e6b80f6e9698061e15acc3d0d986b42a51c8689f352f4b44601",
+      "bytes": 11581,
+      "jws": "valid",
+      "etag": "\"f75c7826d77c978d8ea1dc086a25747d\"",
+      "lastModified": "Fri, 02 Oct 2026 20:57:47 GMT",
+      "fetchedAt": "2026-10-10T18:33:58.538473Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/sp/sp71072-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/sp/sp71072-c0013-e000619-u.jws",
+      "sha256": "6f03553f7b988cb566054493c730186df332b65ba4d28595a8267f7cc05156c4",
+      "bytes": 347010,
+      "jws": "valid",
+      "etag": "\"7a765028a7b1d9cf746cae292a15ce1c\"",
+      "lastModified": "Fri, 02 Oct 2026 20:57:49 GMT",
+      "fetchedAt": "2026-10-10T18:33:58.689086Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/sp/sp71072-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/sp/sp71072-c0011-e000620-u.jws",
+      "sha256": "d09c4fa3114f5f962fead21e5ffb4cbf3c3d33f806bd2d9360c23d136aeca3b5",
+      "bytes": 4532,
+      "jws": "valid",
+      "etag": "\"0fad7faff40bbe5b0455ec7d70e957e1\"",
+      "lastModified": "Fri, 02 Oct 2026 20:49:05 GMT",
+      "fetchedAt": "2026-10-10T18:33:59.189007Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/to/to73440-c0011-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/to/to73440-c0011-e000619-u.jws",
+      "sha256": "b9c8ea5c5bc95ee7fb3bc54dcf2917a45d29be8be3bcb96752c50dafc885d0c5",
+      "bytes": 6386,
+      "jws": "valid",
+      "etag": "\"1f596ecccc7715a3942293ded7f6cf2e\"",
+      "lastModified": "Fri, 02 Oct 2026 20:57:02 GMT",
+      "fetchedAt": "2026-10-10T18:33:59.447783Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/619/dados/to/to73440-c0013-e000619-u.jws",
+      "path": "oficial/ele2024/619/dados/to/to73440-c0013-e000619-u.jws",
+      "sha256": "60ed23bfda365042596d545acedde38a7627b4322fc621415c0436b236fa0c55",
+      "bytes": 116417,
+      "jws": "valid",
+      "etag": "\"409ff9d38f4b095c4310233879153e1c\"",
+      "lastModified": "Fri, 02 Oct 2026 20:57:04 GMT",
+      "fetchedAt": "2026-10-10T18:33:59.697550Z"
+    },
+    {
+      "url": "https://resultados.tse.jus.br/oficial/ele2024/620/dados/to/to73440-c0011-e000620-u.jws",
+      "path": "oficial/ele2024/620/dados/to/to73440-c0011-e000620-u.jws",
+      "sha256": "4175cb5c96bb25605d357deba93000336207faabf2cd7694919f47ac74df216d",
+      "bytes": 4246,
+      "jws": "valid",
+      "etag": "\"81bf4500204ad543d136d1bd3c7c8758\"",
+      "lastModified": "Fri, 02 Oct 2026 20:50:35 GMT",
+      "fetchedAt": "2026-10-10T18:33:59.990198Z"
+    }
+  ]
+}

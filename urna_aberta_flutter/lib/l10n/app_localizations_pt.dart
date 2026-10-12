@@ -218,14 +218,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get apuracaoHeadline => 'A contagem não parou.';
+  String get apuracaoHeadline => 'Acompanhe a apuração';
 
   @override
   String get apuracaoLede =>
-      'Presidente, 1º turno. O arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Cada número leva ao arquivo de onde veio.';
-
-  @override
-  String get apuracaoDesignSystem => 'Sistema de design';
+      'Na noite da eleição, esta tela mostra o arquivo nacional do TSE e a soma dos arquivos de cada estado, lado a lado. Fora dela, reprisa um caso real: o 1º turno de 2026 para Presidente, quando a divulgação nacional parou por cerca de 50 minutos e os arquivos dos estados continuaram. Cada número leva ao arquivo de onde veio.';
 
   @override
   String get apuracaoDuoTitle => 'Comparação das duas fontes · Presidente';
@@ -290,6 +287,207 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get navEntenda => 'Entenda';
+
+  @override
+  String get navResultados => 'Resultados';
+
+  @override
+  String get resultadosTitle => 'Resultados';
+
+  @override
+  String get resultadosLede =>
+      'O resultado de cada cargo, em cada estado ou município, lido do arquivo assinado do TSE. Para deputados e vereadores, a Urna Aberta refaz a distribuição das vagas e compara com a do TSE.';
+
+  @override
+  String resultadosRound(String year, int round) {
+    return '$year · $roundº turno';
+  }
+
+  @override
+  String get resultadosElection => 'Eleição';
+
+  @override
+  String get resultadosOffice => 'Cargo';
+
+  @override
+  String get resultadosPlace => 'Estado';
+
+  @override
+  String get resultadosMunicipio => 'Município';
+
+  @override
+  String get resultadosMunicipioHint => 'Digite para buscar';
+
+  @override
+  String get cargoPrefeito => 'Prefeito';
+
+  @override
+  String get cargoVereador => 'Vereador';
+
+  @override
+  String get resultadosNotHeld =>
+      'Esta votação ainda não aconteceu. O TSE começa a publicar os resultados às 17h (horário de Brasília) do dia da eleição.';
+
+  @override
+  String get resultadosChooseMunicipio =>
+      'Escolha o município para ver o resultado.';
+
+  @override
+  String get resultadosNotPublished =>
+      'O TSE ainda não publicou este resultado.';
+
+  @override
+  String get resultadosInvalidRequest => 'Este cargo não é eleito neste lugar.';
+
+  @override
+  String get resultadosTseUnavailable =>
+      'O TSE não respondeu. Tente de novo em instantes.';
+
+  @override
+  String get resultadosError => 'Não foi possível carregar o resultado.';
+
+  @override
+  String get resultadosSummaryPlate => 'Resumo do resultado';
+
+  @override
+  String get resultadosValidVotes => 'Votos válidos';
+
+  @override
+  String get resultadosSeats => 'Vagas';
+
+  @override
+  String get resultadosQuotient => 'Quociente eleitoral';
+
+  @override
+  String get resultadosTotalized => 'Seções totalizadas';
+
+  @override
+  String get resultadosBlankNull => 'Brancos e nulos';
+
+  @override
+  String resultadosSource(String when) {
+    return 'TSE · resultado do cargo (EA20), gerado em $when';
+  }
+
+  @override
+  String get resultadosSeatsPlate => 'Vagas por partido ou federação';
+
+  @override
+  String get resultadosSeatsSource =>
+      'TSE · vagas publicadas; Urna Aberta · distribuição refeita a partir dos votos';
+
+  @override
+  String get resultadosCheckMatches => 'Nossa conta confere com a do TSE';
+
+  @override
+  String resultadosCheckDiffers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Nossa conta difere da do TSE em $count pontos',
+      one: 'Nossa conta difere da do TSE em 1 ponto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resultadosCheckNote =>
+      'A Urna Aberta refez a distribuição das vagas com os votos deste arquivo, pelas regras do Código Eleitoral (arts. 106 a 109) e da Resolução TSE 23.677, e comparou o quociente eleitoral, as vagas de cada partido ou federação e os eleitos com os publicados pelo TSE.';
+
+  @override
+  String get resultadosColList => 'Partido ou federação';
+
+  @override
+  String get resultadosColVotes => 'Votos';
+
+  @override
+  String get resultadosColQp => 'QP';
+
+  @override
+  String get resultadosColSeats => 'Vagas';
+
+  @override
+  String resultadosOurSeats(int count) {
+    return 'nossa conta: $count';
+  }
+
+  @override
+  String resultadosQpUnfilled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count vagas do QP sem candidato com 10% do quociente: foram para as sobras',
+      one:
+          '1 vaga do QP sem candidato com 10% do quociente: foi para as sobras',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resultadosKindFederation => 'Federação';
+
+  @override
+  String get resultadosKindCoalition => 'Coligação';
+
+  @override
+  String get resultadosBrasilCamara => 'Brasil (Câmara)';
+
+  @override
+  String get resultadosChamber => 'Câmara dos Deputados';
+
+  @override
+  String get resultadosChamberPlate =>
+      'Bancadas eleitas, por partido ou federação';
+
+  @override
+  String resultadosChamberMatches(int count) {
+    return 'Nossa conta confere com a do TSE nos $count estados';
+  }
+
+  @override
+  String resultadosChamberDiffers(String states) {
+    return 'Nossa conta difere da do TSE em: $states';
+  }
+
+  @override
+  String get resultadosChamberNote =>
+      'Soma das 27 disputas: cada estado elege a sua bancada separadamente, com o seu próprio quociente. A Urna Aberta refez a distribuição das vagas em cada estado e comparou com a do TSE.';
+
+  @override
+  String get resultadosChamberSource =>
+      'TSE · 27 arquivos de Deputado Federal (EA20); soma e conta: Urna Aberta';
+
+  @override
+  String get resultadosCandidatesPlate => 'Candidaturas';
+
+  @override
+  String get resultadosCandidatesSource =>
+      'TSE · votos e situação de cada candidatura';
+
+  @override
+  String get resultadosSearch => 'Buscar por nome, número ou partido';
+
+  @override
+  String resultadosShowMore(int count) {
+    return 'Mostrar mais $count';
+  }
+
+  @override
+  String get resultadosNoMatch => 'Nenhuma candidatura encontrada.';
+
+  @override
+  String resultadosOurSeatDiffers(String how) {
+    return 'nossa conta: $how';
+  }
+
+  @override
+  String get resultadosNotElectedByUs => 'não eleito';
+
+  @override
+  String resultadosOfValid(String percent) {
+    return '$percent dos válidos';
+  }
 
   @override
   String get themeLight => 'Claro';
@@ -366,6 +564,53 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get entendaCh7Summary =>
       'E, com a mesma clareza, o que ele não prova.';
+
+  @override
+  String get entendaChSeatsTitle => 'Como as vagas são distribuídas';
+
+  @override
+  String get entendaChSeatsSummary =>
+      'Quociente eleitoral, quociente partidário e sobras, passo a passo.';
+
+  @override
+  String get entendaChSeatsPara1 =>
+      'Deputados federais, estaduais e distritais e vereadores são eleitos pelo sistema proporcional: as vagas são divididas primeiro entre partidos e federações, conforme os votos de cada um, e só depois vão para os candidatos mais votados de cada lista. Coligações valem apenas para cargos majoritários; uma federação conta como um único partido.';
+
+  @override
+  String get entendaChSeatsPara2 =>
+      'O ponto de partida é o quociente eleitoral: os votos válidos (votos em candidatos e na legenda; brancos e nulos não entram) divididos pelo número de vagas, desprezada a fração igual ou inferior a meio. O quociente partidário de cada lista é a divisão dos seus votos pelo quociente eleitoral, sem a fração: é o número de vagas que a lista conquista direto.';
+
+  @override
+  String get entendaChSeatsPara3 =>
+      'Para ocupar uma dessas vagas, o candidato precisa ter votos nominais iguais ou superiores a 10% do quociente eleitoral. Se a lista não tiver candidatos suficientes com esse mínimo, as vagas que faltam vão para as sobras.';
+
+  @override
+  String get entendaChSeatsPara4 =>
+      'As sobras são distribuídas pela maior média: os votos da lista divididos pelo seu quociente partidário mais as sobras que já ganhou, mais um. Primeiro disputam só as listas com pelo menos 80% do quociente eleitoral e com candidatos que tenham pelo menos 20% dele. Quando nenhuma lista cumpre essas condições, todas as listas e todos os candidatos disputam as vagas restantes, como decidiu o STF em 2024; em 2025, o tribunal fixou que a regra vale desde as eleições de 2022.';
+
+  @override
+  String get entendaChSeatsPara5 =>
+      'Empate de médias entre listas: fica com a vaga a que tiver mais votos. Empate de votos entre candidatos da mesma lista: o mais velho.';
+
+  @override
+  String get entendaChSeatsCallout =>
+      'A Urna Aberta refaz essa conta para cada disputa, com os votos do arquivo assinado do TSE, e mostra se chega ao mesmo resultado: quociente eleitoral, vagas de cada partido ou federação e eleitos. Nas 54 disputas de deputado de 2026 e nas câmaras das 26 capitais em 2024, chegou.';
+
+  @override
+  String get entendaSourceCodigoEleitoral =>
+      'Planalto · Código Eleitoral (Lei 4.737/1965), arts. 106 a 112';
+
+  @override
+  String get entendaSourceRes23677 =>
+      'TSE · Resolução nº 23.677/2021 (sistema proporcional), arts. 9 a 14';
+
+  @override
+  String get entendaSourceStfSobras2024 =>
+      'STF · Supremo invalida regra sobre distribuição de sobras eleitorais (2024)';
+
+  @override
+  String get entendaSourceStfSobras2025 =>
+      'STF · Decisão sobre sobras eleitorais vale desde 2022 (2025)';
 
   @override
   String entendaChapterLabel(int number) {
@@ -496,7 +741,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get entendaCh7Para2 =>
-      'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022).';
+      'Que os arquivos de resultado foram assinados pelo TSE e não foram alterados depois (assinatura EdDSA conferida com a chave oficial, no servidor e, se você pedir, no seu aparelho). Que a soma independente dos estados e do exterior bate, ou não, com o arquivo nacional. Que o boletim publicado da sua seção é exatamente o arquivo que a urna listou, e que essa lista foi assinada por uma urna com certificado emitido pelo TSE (urnas modelo 2020 e 2022). Que a distribuição das vagas de deputados e vereadores, refeita a partir dos votos do arquivo, é igual à publicada pelo TSE, ou exatamente onde difere.';
 
   @override
   String get entendaCh7NotTitle => 'O que ela não prova';
@@ -1058,7 +1303,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get apuracaoModeLive => 'Ao vivo';
 
   @override
-  String get apuracaoModeReplay => 'Reprise do 1º turno';
+  String get apuracaoModeReplay => 'Caso: 4 de outubro';
 
   @override
   String apuracaoLiveLede(int round) {
@@ -1072,7 +1317,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String apuracaoLiveSoon(int round, String date) {
-    return 'A apuração ao vivo do $roundº turno começa em $date, às 17h (Brasília). Enquanto isso, reveja o 1º turno.';
+    return 'A apuração ao vivo do $roundº turno começa em $date, às 17h (Brasília). Os resultados finais de cada cargo, em cada estado e município, estão em Resultados.';
   }
 
   @override
@@ -1107,4 +1352,338 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get entendaSourceFatoOuBoato =>
       'TSE · Fato ou Boato: É falso que a interrupção na divulgação dos resultados tenha fraudado o resultado do 1º turno para presidente (06/10/2026)';
+
+  @override
+  String get apuracaoSeeResults => 'Ver os resultados finais';
+
+  @override
+  String get apuracaoAllOffices => 'Ver todos os cargos em apuração';
+
+  @override
+  String get contaSignIn => 'Entrar';
+
+  @override
+  String get contaTitle => 'Meu local';
+
+  @override
+  String get contaLede =>
+      'Entre com seu e-mail para guardar o seu local de votação. A Urna Aberta passa a abrir Minha seção na sua seção e os Resultados no seu estado e município.';
+
+  @override
+  String get contaPrivacy =>
+      'Guardamos só o local que você escolher (estado, município e, se quiser, zona e seção), ligado ao seu e-mail. Nada mais sobre você. Você pode apagá-lo quando quiser.';
+
+  @override
+  String get contaPlacePlate => 'Seu local de votação';
+
+  @override
+  String contaPlaceMunicipio(String municipio, String uf) {
+    return '$municipio ($uf)';
+  }
+
+  @override
+  String contaPlaceSecao(String zona, String secao) {
+    return 'Zona $zona · Seção $secao';
+  }
+
+  @override
+  String contaPlaceZona(String zona) {
+    return 'Zona $zona';
+  }
+
+  @override
+  String get contaNoPlace =>
+      'Você ainda não salvou um local. Escolha sua seção em Minha seção e toque em Salvar como meu local.';
+
+  @override
+  String get contaChoose => 'Escolher em Minha seção';
+
+  @override
+  String get contaDelete => 'Apagar meu local';
+
+  @override
+  String get contaDeleted => 'Local apagado.';
+
+  @override
+  String get contaSignOut => 'Sair';
+
+  @override
+  String get contaLoadError =>
+      'Não foi possível carregar o seu local. Tente de novo mais tarde.';
+
+  @override
+  String get secaoSaveAsMine => 'Salvar como meu local';
+
+  @override
+  String get secaoIsMine => 'Este é o seu local';
+
+  @override
+  String get secaoSaved =>
+      'Local salvo. Minha seção e Resultados vão abrir nele.';
+
+  @override
+  String get secaoSaveFailed => 'Não foi possível salvar este local.';
+
+  @override
+  String get relatoriosNew => 'Novo relatório';
+
+  @override
+  String get relatoriosNewLede =>
+      'Escolha eleições, cargos e locais. A Urna Aberta lê os arquivos assinados do TSE, soma o que precisar somar e entrega um PDF e um CSV.';
+
+  @override
+  String get relatoriosMine => 'Meus relatórios';
+
+  @override
+  String get relatoriosMineLede =>
+      'Os relatórios que você pediu. Ficam guardados até você apagá-los.';
+
+  @override
+  String get relatoriosSignIn => 'Entre para montar relatórios';
+
+  @override
+  String get relatoriosSignInBody =>
+      'Os relatórios ficam na sua conta: você acompanha a montagem, baixa os arquivos e, se quiser, publica um link.';
+
+  @override
+  String get relatoriosSignInAction => 'Entrar';
+
+  @override
+  String get relatoriosDays => 'Eleições';
+
+  @override
+  String get relatoriosDaysHint =>
+      'Um ou mais dias de votação. Escolha dois para comparar turnos.';
+
+  @override
+  String get relatoriosOffices => 'Cargos';
+
+  @override
+  String get relatoriosPlaces => 'Locais';
+
+  @override
+  String get relatoriosNoPlaces => 'Nenhum local ainda.';
+
+  @override
+  String get relatoriosAddPlace => 'Adicionar';
+
+  @override
+  String get relatoriosPlaceKind => 'Tipo de local';
+
+  @override
+  String get relatoriosKindBr => 'Brasil';
+
+  @override
+  String get relatoriosKindRegiao => 'Região';
+
+  @override
+  String get relatoriosKindUf => 'UF';
+
+  @override
+  String get relatoriosKindMunicipio => 'Município';
+
+  @override
+  String get relatoriosKindZona => 'Zona';
+
+  @override
+  String get relatoriosKindSecao => 'Seção';
+
+  @override
+  String get relatoriosSectionsOnly =>
+      'Zonas e seções, por enquanto, só para o 1º turno de 2026 (4 de outubro).';
+
+  @override
+  String relatoriosRemovePlace(String place) {
+    return 'Remover $place';
+  }
+
+  @override
+  String relatoriosZoneLabel(String city, String zona) {
+    return '$city, zona $zona';
+  }
+
+  @override
+  String relatoriosSectionLabel(String city, String zona, String secao) {
+    return '$city, zona $zona, seção $secao';
+  }
+
+  @override
+  String get relatoriosBreakdown => 'Detalhamento';
+
+  @override
+  String get relatoriosBreakdownHint =>
+      'Uma linha por UF, município ou zona dentro de cada local, conferida com o total do TSE quando ele existe.';
+
+  @override
+  String get relatoriosBreakdownNone => 'Nenhum';
+
+  @override
+  String get relatoriosBreakdownUf => 'Por UF';
+
+  @override
+  String get relatoriosBreakdownMunicipio => 'Por município';
+
+  @override
+  String get relatoriosBreakdownZona => 'Por zona';
+
+  @override
+  String get relatoriosLanguage => 'Idioma do PDF';
+
+  @override
+  String get relatoriosQuote => 'Antes de gerar';
+
+  @override
+  String relatoriosQuoteBody(
+    String files,
+    String stored,
+    String time,
+    String tables,
+  ) {
+    return 'Lê $files arquivos do TSE, $stored já guardados aqui. Cerca de $time para buscar o resto. $tables tabelas.';
+  }
+
+  @override
+  String relatoriosSeconds(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String relatoriosMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get relatoriosQuoting => 'Calculando o que o relatório vai ler…';
+
+  @override
+  String get relatoriosIncomplete =>
+      'Escolha ao menos uma eleição, um cargo e um local.';
+
+  @override
+  String relatoriosTooLarge(String limit) {
+    return 'Grande demais: leria mais de $limit arquivos do TSE. Escolha menos locais ou um detalhamento menor.';
+  }
+
+  @override
+  String get relatoriosRefusedInvalid =>
+      'O TSE não publica essa combinação de eleição, cargo e local.';
+
+  @override
+  String get relatoriosRefusedNotPublished =>
+      'O TSE ainda não publicou resultados dessa eleição.';
+
+  @override
+  String get relatoriosRefusedBusy =>
+      'Você já tem um relatório na fila. Espere ele terminar.';
+
+  @override
+  String get relatoriosQuoteError =>
+      'Não foi possível calcular agora. Tente de novo.';
+
+  @override
+  String relatoriosWithoutFiles(String count) {
+    return '$count seções ainda sem arquivos da urna ficam de fora.';
+  }
+
+  @override
+  String get relatoriosGenerate => 'Gerar relatório';
+
+  @override
+  String get relatoriosStatusQueued => 'Na fila';
+
+  @override
+  String get relatoriosStatusRunning => 'Montando';
+
+  @override
+  String get relatoriosStatusReady => 'Pronto';
+
+  @override
+  String get relatoriosStatusFailed => 'Falhou';
+
+  @override
+  String relatoriosProgress(String done, String total) {
+    return '$done de $total arquivos';
+  }
+
+  @override
+  String get relatoriosDownloadPdf => 'Baixar PDF';
+
+  @override
+  String get relatoriosDownloadCsv => 'Baixar CSV';
+
+  @override
+  String get relatoriosPublish => 'Publicar link';
+
+  @override
+  String get relatoriosUnpublish => 'Tirar link do ar';
+
+  @override
+  String get relatoriosCopyLink => 'Copiar link';
+
+  @override
+  String get relatoriosLinkCopied => 'Link copiado.';
+
+  @override
+  String get relatoriosPublicNote =>
+      'Publicado: qualquer pessoa com o link vê este relatório.';
+
+  @override
+  String get relatoriosDelete => 'Apagar';
+
+  @override
+  String get relatoriosDeleted => 'Relatório apagado.';
+
+  @override
+  String get relatoriosCancel => 'Cancelar';
+
+  @override
+  String get relatoriosCancelled => 'Relatório cancelado.';
+
+  @override
+  String get relatoriosFailedServer =>
+      'O servidor parou várias vezes enquanto montava este relatório. Tente de novo mais tarde, ou peça um relatório menor.';
+
+  @override
+  String get relatoriosRetry => 'Tentar de novo';
+
+  @override
+  String get relatoriosFailedTse =>
+      'O TSE não respondeu enquanto o relatório era montado.';
+
+  @override
+  String get relatoriosFailedOther => 'Não foi possível montar este relatório.';
+
+  @override
+  String get relatoriosEmpty => 'Você ainda não pediu nenhum relatório.';
+
+  @override
+  String get relatoriosLoadError =>
+      'Não foi possível carregar seus relatórios.';
+
+  @override
+  String relatoriosRequestedAt(String at) {
+    return 'Pedido em $at';
+  }
+
+  @override
+  String get relatoriosActionFailed => 'Não deu certo. Tente de novo.';
+
+  @override
+  String get relatoriosFromHere => 'Gerar relatório';
+
+  @override
+  String get relatoriosPlate => 'Relatórios';
+
+  @override
+  String get relatoriosPlateBody =>
+      'Monte relatórios de qualquer eleição, cargo e local, em PDF e CSV, conferidos com os arquivos do TSE.';
+
+  @override
+  String relatoriosSha(String hash) {
+    return 'SHA-256 dos dados: $hash';
+  }
+
+  @override
+  String get relatoriosElectionsError =>
+      'Não foi possível carregar a lista de eleições do TSE.';
 }
