@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../conta/conta_button.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../l10n/l10n.dart';
-import '../screens/apuracao_screen.dart';
-import '../screens/entenda_screen.dart';
-import '../screens/resultados_screen.dart';
-import '../screens/secao_screen.dart';
-import '../screens/verificar_screen.dart';
 import 'app.dart';
 
 class Destination {
@@ -52,45 +48,31 @@ class ShellScope extends InheritedWidget {
 }
 
 /// One shell, three idioms: masthead on wide web, navigation rail on wide
-/// native, iOS tab bar or Material navigation bar on phones.
-class AppShell extends StatefulWidget {
-  const AppShell({super.key});
+/// native, iOS tab bar or Material navigation bar on phones. [shell] holds
+/// the sections, each keeping its state (see `router.dart`).
+class AppShell extends StatelessWidget {
+  const AppShell({super.key, required this.shell});
 
-  @override
-  State<AppShell> createState() => _AppShellState();
-}
-
-class _AppShellState extends State<AppShell> {
-  int _index = 0;
-
-  static const _pages = <Widget>[
-    ApuracaoScreen(),
-    ResultadosScreen(),
-    SecaoScreen(),
-    VerificarScreen(),
-    EntendaScreen(),
-  ];
-
-  void _go(int i) {
-    if (i == _index) return;
-    selectionHaptic();
-    setState(() => _index = i);
-  }
+  final StatefulNavigationShell shell;
 
   @override
   Widget build(BuildContext context) {
     final kind = shellKindOf(context);
     final wide = isWideLayout(context);
-    final body = ShellScope(
-      go: _go,
-      child: IndexedStack(index: _index, children: _pages),
-    );
+    final index = shell.currentIndex;
+    void go(int i) {
+      if (i == index) return;
+      selectionHaptic();
+      shell.goBranch(i);
+    }
+
+    final body = ShellScope(go: go, child: shell);
 
     if (wide && kind == ShellKind.web) {
       return Scaffold(
         body: Column(
           children: [
-            _Masthead(index: _index, onSelect: _go),
+            _Masthead(index: index, onSelect: go),
             Expanded(child: body),
           ],
         ),
@@ -103,8 +85,8 @@ class _AppShellState extends State<AppShell> {
         body: Row(
           children: [
             NavigationRail(
-              selectedIndex: _index,
-              onDestinationSelected: _go,
+              selectedIndex: index,
+              onDestinationSelected: go,
               labelType: NavigationRailLabelType.all,
               leading: Padding(
                 padding: const EdgeInsets.symmetric(vertical: Space.x4),
@@ -128,8 +110,8 @@ class _AppShellState extends State<AppShell> {
       return Scaffold(
         body: body,
         bottomNavigationBar: CupertinoTabBar(
-          currentIndex: _index,
-          onTap: _go,
+          currentIndex: index,
+          onTap: go,
           items: [
             for (final d in destinations)
               BottomNavigationBarItem(
@@ -144,8 +126,8 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       body: body,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: _go,
+        selectedIndex: index,
+        onDestinationSelected: go,
         destinations: [
           for (final d in destinations)
             NavigationDestination(

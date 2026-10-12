@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 import '../conta/conta_controller.dart';
 import '../design/theme.dart';
@@ -9,12 +10,12 @@ import '../replay/replay_controller.dart';
 import '../resultados/resultados_controller.dart';
 import '../secao/secao_controller.dart';
 import '../verificar/verificar_controller.dart';
-import 'shell.dart';
+import 'router.dart';
 
 /// Theme choice: follows the system by default; the web masthead can pin it.
 final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 
-class UrnaAbertaApp extends StatelessWidget {
+class UrnaAbertaApp extends StatefulWidget {
   const UrnaAbertaApp({
     super.key,
     required this.tallySource,
@@ -37,18 +38,32 @@ class UrnaAbertaApp extends StatelessWidget {
   final RelatoriosSource? relatoriosSource;
 
   @override
+  State<UrnaAbertaApp> createState() => _UrnaAbertaAppState();
+}
+
+class _UrnaAbertaAppState extends State<UrnaAbertaApp> {
+  final GoRouter _router = appRouter();
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final widget = this.widget;
     return ListenableBuilder(
       listenable: Listenable.merge([themeModeNotifier, localeNotifier]),
       builder: (context, _) => TallyScope(
-        source: tallySource,
+        source: widget.tallySource,
         child: SecaoScope(
-          source: secaoSource,
+          source: widget.secaoSource,
           child: VerificarScope(
-            source: verificarSource,
+            source: widget.verificarSource,
             child: ResultadosScope(
-              source: resultadosSource,
-              child: MaterialApp(
+              source: widget.resultadosSource,
+              child: MaterialApp.router(
                 title: 'Urna Aberta',
                 locale: localeNotifier.value,
                 supportedLocales: AppLocalizations.supportedLocales,
@@ -62,15 +77,15 @@ class UrnaAbertaApp extends StatelessWidget {
                 theme: atlasTheme(Brightness.light),
                 darkTheme: atlasTheme(Brightness.dark),
                 themeMode: themeModeNotifier.value,
-                home: const AppShell(),
+                routerConfig: _router,
                 builder: (context, child) {
                   var app = child!;
-                  if (relatoriosSource case final source?) {
+                  if (widget.relatoriosSource case final source?) {
                     app = RelatoriosScope(source: source, child: app);
                   }
-                  return conta == null
+                  return widget.conta == null
                       ? app
-                      : ContaScope(controller: conta!, child: app);
+                      : ContaScope(controller: widget.conta!, child: app);
                 },
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app/app.dart';
 import 'client.dart';
@@ -12,6 +13,9 @@ import 'verificar/verificar_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // `/app/relatorios`, not `/app/#/relatorios`; the server answers every
+  // path under `/app/` with the app.
+  usePathUrlStrategy();
   await initializeClient();
   runApp(
     UrnaAbertaApp(

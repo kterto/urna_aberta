@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
 
+import '../app/router.dart';
 import '../conta/conta_controller.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
@@ -13,7 +15,6 @@ import '../relatorios/relatorios_source.dart';
 import '../resultados/resultados_controller.dart';
 import '../secao/secao_controller.dart';
 import 'conta_screen.dart';
-import 'meus_relatorios_screen.dart';
 import 'resultados_screen.dart' show officeName;
 
 /// A place as the viewer reads it: `Brasil`, `Norte`, `AC`,
@@ -48,7 +49,7 @@ class NovoRelatorioScreen extends StatefulWidget {
     this.now,
   });
 
-  static const routeName = '/relatorios/novo';
+  static const routeName = Paths.novoRelatorio;
 
   final ReportDraft draft;
   final Duration debounce;
@@ -57,12 +58,7 @@ class NovoRelatorioScreen extends StatefulWidget {
   static Future<void> open(
     BuildContext context, {
     ReportDraft draft = const ReportDraft(),
-  }) => Navigator.of(context).push(
-    MaterialPageRoute(
-      settings: const RouteSettings(name: routeName),
-      builder: (_) => NovoRelatorioScreen(draft: draft),
-    ),
-  );
+  }) => context.push<void>(Paths.novoRelatorio, extra: draft);
 
   @override
   State<NovoRelatorioScreen> createState() => _NovoRelatorioScreenState();
@@ -110,7 +106,7 @@ class _NovoRelatorioScreenState extends State<NovoRelatorioScreen> {
           showBack: true,
           children: [
             if (!c.signedIn) ...[
-              const _SignInPlate(),
+              const RelatoriosSignInPlate(),
               const SizedBox(height: Space.x4),
             ],
             if (c.loadError != null)
@@ -135,8 +131,9 @@ class _NovoRelatorioScreenState extends State<NovoRelatorioScreen> {
   }
 }
 
-class _SignInPlate extends StatelessWidget {
-  const _SignInPlate();
+/// Reports live in the viewer's account: what a signed-out viewer sees.
+class RelatoriosSignInPlate extends StatelessWidget {
+  const RelatoriosSignInPlate({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -582,16 +579,11 @@ class _QuotePlate extends StatelessWidget {
   Future<void> _submit(BuildContext context) async {
     final l = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
+    final router = GoRouter.of(context);
     try {
       final r = await c.submit();
       if (r == null) return;
-      navigator.pushReplacement(
-        MaterialPageRoute(
-          settings: const RouteSettings(name: MeusRelatoriosScreen.routeName),
-          builder: (_) => MeusRelatoriosScreen(highlight: r.id),
-        ),
-      );
+      router.pushReplacement(Paths.relatorio(r.id!));
     } on Object {
       messenger.showSnackBar(SnackBar(content: Text(l.relatoriosActionFailed)));
     }

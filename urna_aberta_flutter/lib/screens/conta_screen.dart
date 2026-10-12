@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../app/router.dart';
+import '../app/shell.dart';
 import '../conta/conta_controller.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
@@ -12,20 +15,12 @@ import 'novo_relatorio_screen.dart';
 
 /// Meu local: sign in, see and delete the saved polling place.
 class ContaScreen extends StatelessWidget {
-  const ContaScreen({super.key, this.onChoose});
+  const ContaScreen({super.key});
 
-  static const routeName = '/conta';
+  static const routeName = Paths.conta;
 
-  /// Goes to Minha seção to pick the place.
-  final VoidCallback? onChoose;
-
-  static Future<void> open(BuildContext context, {VoidCallback? onChoose}) =>
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          settings: const RouteSettings(name: routeName),
-          builder: (_) => ContaScreen(onChoose: onChoose),
-        ),
-      );
+  static Future<void> open(BuildContext context) =>
+      context.push<void>(Paths.conta);
 
   @override
   Widget build(BuildContext context) {
@@ -100,14 +95,10 @@ class ContaScreen extends StatelessWidget {
             spacing: Space.x3,
             runSpacing: Space.x2,
             children: [
-              if (onChoose != null)
-                FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    onChoose!();
-                  },
-                  child: Text(l.contaChoose),
-                ),
+              FilledButton(
+                onPressed: () => context.go(Paths.sections[Section.secao]),
+                child: Text(l.contaChoose),
+              ),
               if (place != null)
                 OutlinedButton(
                   onPressed: () async {

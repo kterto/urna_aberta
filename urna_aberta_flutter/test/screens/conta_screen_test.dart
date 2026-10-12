@@ -10,7 +10,6 @@ Future<FakeContaSource> pumpConta(
   WidgetTester tester,
   FakeContaSource source, {
   Locale locale = const Locale('pt'),
-  VoidCallback? onChoose,
 }) async {
   final conta = ContaController(source);
   await conta.start();
@@ -18,7 +17,7 @@ Future<FakeContaSource> pumpConta(
     testApp(
       locale: locale,
       conta: conta,
-      home: ContaScreen(onChoose: onChoose),
+      home: const ContaScreen(),
     ),
   );
   await tester.pumpAndSettle();
@@ -45,17 +44,12 @@ void main() {
   });
 
   testWidgets('no place yet says how to save one', (tester) async {
-    var chose = false;
-    await pumpConta(
-      tester,
-      FakeContaSource(signedIn: true),
-      onChoose: () => chose = true,
-    );
+    await pumpConta(tester, FakeContaSource(signedIn: true));
     expect(find.textContaining('ainda não salvou'), findsOneWidget);
     expect(find.text('Apagar meu local'), findsNothing);
     await tester.tap(find.text('Escolher em Minha seção'));
     await tester.pumpAndSettle();
-    expect(chose, isTrue);
+    expect(find.text('section /secao'), findsOneWidget);
   });
 
   testWidgets('delete the place', (tester) async {

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:urna_aberta_client/urna_aberta_client.dart';
 
+import '../app/router.dart';
+import '../conta/conta_controller.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/widgets/atlas_components.dart';
@@ -23,7 +26,7 @@ Future<void> _launch(Uri uri) async {
 class MeusRelatoriosScreen extends StatefulWidget {
   const MeusRelatoriosScreen({super.key, this.highlight, this.open});
 
-  static const routeName = '/relatorios';
+  static const routeName = Paths.relatorios;
 
   /// The report just asked for, shown first and marked.
   final int? highlight;
@@ -31,12 +34,8 @@ class MeusRelatoriosScreen extends StatefulWidget {
   /// Opens download links; the browser by default.
   final Future<void> Function(Uri)? open;
 
-  static Future<void> push(BuildContext context) => Navigator.of(context).push(
-    MaterialPageRoute(
-      settings: const RouteSettings(name: routeName),
-      builder: (_) => const MeusRelatoriosScreen(),
-    ),
-  );
+  static Future<void> push(BuildContext context) =>
+      context.push<void>(Paths.relatorios);
 
   @override
   State<MeusRelatoriosScreen> createState() => _MeusRelatoriosScreenState();
@@ -44,15 +43,20 @@ class MeusRelatoriosScreen extends StatefulWidget {
 
 class _MeusRelatoriosScreenState extends State<MeusRelatoriosScreen> {
   MeusRelatoriosController? _c;
+  bool _signedIn = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_c != null) return;
-    _c = MeusRelatoriosController(
+    final c = _c ??= MeusRelatoriosController(
       RelatoriosScope.maybeOf(context)!,
       open: widget.open ?? _launch,
-    )..load();
+    );
+    // Opened from a link or a refresh, the session may come back after the
+    // screen does: the list is asked for once signed in.
+    final signedIn = ContaScope.maybeOf(context)?.signedIn ?? true;
+    if (signedIn && !_signedIn) c.load();
+    _signedIn = signedIn;
   }
 
   @override
@@ -81,7 +85,9 @@ class _MeusRelatoriosScreenState extends State<MeusRelatoriosScreen> {
             ),
           ],
           children: [
-            if (c.loading && c.reports.isEmpty)
+            if (!_signedIn)
+              const RelatoriosSignInPlate()
+            else if (c.loading && c.reports.isEmpty)
               const Center(child: CircularProgressIndicator())
             else if (c.error != null)
               Text(l.relatoriosLoadError)

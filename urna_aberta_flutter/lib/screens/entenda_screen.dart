@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../app/router.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../design/typography.dart';
@@ -244,6 +246,10 @@ List<_Chapter> _chapters(AppLocalizations l) => [
 class EntendaScreen extends StatelessWidget {
   const EntendaScreen({super.key});
 
+  /// How many chapters [_chapters] lists; their addresses are
+  /// `/entenda/1` to `/entenda/8`.
+  static const chapters = 8;
+
   @override
   Widget build(BuildContext context) {
     final p = context.atlas;
@@ -251,15 +257,14 @@ class EntendaScreen extends StatelessWidget {
     final wide = isWideLayout(context);
     final l = context.l10n;
     final chapters = _chapters(l);
+    assert(chapters.length == EntendaScreen.chapters);
 
     final index = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < chapters.length; i++)
           InkWell(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => _ChapterScreen(index: i)),
-            ),
+            onTap: () => context.go(Paths.chapter(i)),
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: Space.x4),
               decoration: BoxDecoration(
@@ -316,8 +321,9 @@ class EntendaScreen extends StatelessWidget {
   }
 }
 
-class _ChapterScreen extends StatelessWidget {
-  const _ChapterScreen({required this.index});
+/// One chapter, over the shell.
+class EntendaChapterScreen extends StatelessWidget {
+  const EntendaChapterScreen({super.key, required this.index});
 
   final int index;
 

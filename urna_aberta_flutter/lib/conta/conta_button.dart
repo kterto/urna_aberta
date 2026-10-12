@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../app/shell.dart';
 import '../design/platform.dart';
 import '../design/tokens.dart';
 import '../l10n/l10n.dart';
@@ -22,11 +21,7 @@ class ContaButton extends StatelessWidget {
       return const SizedBox.shrink();
     }
     final l = context.l10n;
-    final go = ShellScope.of(context)?.go;
-    void open() => ContaScreen.open(
-      context,
-      onChoose: go == null ? null : () => go(Section.secao),
-    );
+    void open() => ContaScreen.open(context);
     final label = !conta.signedIn
         ? l.contaSignIn
         : conta.place?.municipioNome ?? l.contaTitle;

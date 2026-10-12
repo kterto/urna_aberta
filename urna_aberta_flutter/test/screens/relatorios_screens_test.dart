@@ -24,6 +24,7 @@ final _acDraft = ReportDraft(
 void main() {
   late FakeRelatoriosSource reports;
   late List<Uri> opened;
+  late FakeContaSource account;
 
   setUp(() {
     reports = FakeRelatoriosSource();
@@ -39,7 +40,8 @@ void main() {
     tester.view.physicalSize = const Size(1280, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final conta = ContaController(FakeContaSource(signedIn: signedIn));
+    account = FakeContaSource(signedIn: signedIn);
+    final conta = ContaController(account);
     await conta.start();
     await tester.pumpWidget(
       ResultadosScope(
@@ -130,6 +132,21 @@ void main() {
   group('Meus relatórios', () {
     MeusRelatoriosScreen meus() =>
         MeusRelatoriosScreen(open: (u) async => opened.add(u));
+
+    testWidgets('signed out: asks to sign in, then lists them once in', (
+      tester,
+    ) async {
+      reports.reports = [sampleRequest(id: 5)];
+      await pump(tester, meus(), signedIn: false);
+      expect(find.text('Entre para montar relatórios'), findsOneWidget);
+      expect(find.text('Presidente · AC'), findsNothing);
+      expect(find.textContaining('Não foi possível'), findsNothing);
+
+      account.signIn();
+      await tester.pumpAndSettle();
+      expect(find.text('Entre para montar relatórios'), findsNothing);
+      expect(find.text('Presidente · AC'), findsOneWidget);
+    });
 
     testWidgets('a ready report downloads and can be published', (
       tester,
