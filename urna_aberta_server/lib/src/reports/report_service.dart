@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show ProcessInfo;
 import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
@@ -225,22 +226,22 @@ class ReportService {
     );
   }
 
-  /// Deletes the viewer's report and its files.
+  /// Deletes the viewer's report and its files. One still queued or being
+  /// built is cancelled: the server building it sees the row gone at its
+  /// next write and stops.
   Future<void> delete(Session session, int id) async {
     final r = await _owned(session, id);
-    if (r.status == ReportStatus.running) {
-      throw ReportRefused(
-        message: 'Espere o relatório terminar para apagá-lo.',
-        reason: 'busy',
-      );
-    }
+    await ReportRequest.db.deleteRow(session, r);
+    await _deleteFiles(session, id);
+  }
+
+  Future<void> _deleteFiles(Session session, int id) async {
     for (final format in formats.keys) {
       await session.storage.deleteFile(
         storageId: storageId,
         path: filePath(id, format),
       );
     }
-    await ReportRequest.db.deleteRow(session, r);
   }
 
   /// A published report, by its public token; null when there is none.
@@ -296,6 +297,7 @@ class ReportService {
         t.startedAt(now),
         t.aliveAt(now),
         t.filesDone(0),
+        t.attempts(r.attempts + 1),
       ],
       where: (t) => t.id.equals(r.id) & t.status.equals(ReportStatus.queued),
     );
@@ -317,10 +319,35 @@ class ReportService {
     if (await recover(session)) await _schedule();
   }
 
-  /// Queues again every report whose server went quiet. Returns whether
-  /// any report is waiting.
+  /// Servers a report may lose before it fails.
+  static const maxAttempts = 3;
+
+  /// Queues again every report whose server went quiet, or fails it once
+  /// it has lost [maxAttempts] of them. Returns whether any report is
+  /// waiting.
   Future<bool> recover(Session session) async {
-    final quiet = _now().toUtc().subtract(staleAfter);
+    final now = _now().toUtc();
+    final quiet = now.subtract(staleAfter);
+    final lost = await ReportRequest.db.updateWhere(
+      session,
+      columnValues: (t) => [
+        t.status(ReportStatus.failed),
+        t.errorReason('serverLost'),
+        t.finishedAt(now),
+        t.aliveAt(null),
+      ],
+      where: (t) =>
+          t.status.equals(ReportStatus.running) &
+          (t.aliveAt.equals(null) | (t.aliveAt < quiet)) &
+          (t.attempts >= maxAttempts),
+    );
+    for (final r in lost) {
+      session.log(
+        'Relatório ${r.id} falhou: perdeu o servidor ${r.attempts} vezes.',
+        level: LogLevel.error,
+      );
+      await session.messages.postMessage(channel(r.id!), r);
+    }
     await ReportRequest.db.updateWhere(
       session,
       columnValues: (t) => [
@@ -341,51 +368,82 @@ class ReportService {
 
   Future<void> _build(Session session, ReportRequest claimed) async {
     var r = claimed;
+    final id = r.id!;
     var lastSaved = _now();
+    // Completes when the report is no longer running here: deleted by its
+    // owner, or queued again after this server went quiet.
+    final stopped = Completer<void>();
+    void stop() {
+      if (!stopped.isCompleted) stopped.complete();
+    }
+
     // Progress is saved in order, and always before the outcome: a late
     // progress write would otherwise put a finished report back to running.
     // A failed write only delays the count; the next one catches up.
     var progressWrites = Future<void>.value();
-    void saveProgress(int done) => progressWrites = progressWrites
-        .then((_) => _progress(session, r.id!, done))
-        .catchError((_) {});
+    void saveProgress(int done) => progressWrites = progressWrites.then((
+      _,
+    ) async {
+      try {
+        if (await _update(session, id, (t) => [t.filesDone(done)]) == null) {
+          stop();
+        }
+      } on Exception {
+        // Written again with the next count.
+      }
+    });
     final alive = Timer.periodic(aliveEvery, (_) => saveProgress(r.filesDone));
     try {
       final plan = await planner.plan(r.spec);
-      r = await _save(session, r.copyWith(filesTotal: plan.files));
+      r = await _advance(session, id, (t) => [t.filesTotal(plan.files)]);
       final tables = await builder.build(
         session,
         plan,
         onProgress: (done, total) {
+          if (stopped.isCompleted) throw const _Stopped();
           if (_now().difference(lastSaved) < progressEvery) return;
           lastSaved = _now();
           final snapshot = r = r.copyWith(filesDone: done);
           // Sent as it happens; saved for whoever reconnects.
-          session.messages.postMessage(channel(r.id!), snapshot).ignore();
+          session.messages.postMessage(channel(id), snapshot).ignore();
           saveProgress(done);
         },
       );
       await progressWrites;
       // Every file is read; what is left is writing the report.
-      r = await _save(session, r.copyWith(filesDone: plan.files));
+      r = await _advance(session, id, (t) => [t.filesDone(plan.files)]);
+      _logMemory(session, id, 'arquivos lidos');
       final finishedAt = _now().toUtc();
-      final (:csv, :dataSha256, :pdf) = await _render(r, tables, finishedAt);
+      final (:csv, :dataSha256, :pdf) = await _render(
+        r,
+        tables,
+        finishedAt,
+        stopped: stopped.future,
+      );
+      _logMemory(session, id, 'PDF pronto');
       for (final (format, bytes) in [('csv', csv), ('pdf', pdf)]) {
         await session.storage.storeFile(
           storageId: storageId,
-          path: filePath(r.id!, format),
+          path: filePath(id, format),
           byteData: ByteData.sublistView(Uint8List.fromList(bytes)),
         );
       }
-      r = await _save(
+      final ready = await _update(
         session,
-        r.copyWith(
-          status: ReportStatus.ready,
-          filesDone: plan.files,
-          finishedAt: finishedAt,
-          sha256: dataSha256,
-        ),
+        id,
+        (t) => [
+          t.status(ReportStatus.ready),
+          t.finishedAt(finishedAt),
+          t.sha256(dataSha256),
+        ],
       );
+      // Deleted while its files were stored: they go too.
+      if (ready == null &&
+          await ReportRequest.db.findById(session, id) == null) {
+        await _deleteFiles(session, id);
+      }
+    } on _Stopped {
+      // Its owner deleted it, or another server builds it now.
     } on Exception catch (e, st) {
       await progressWrites;
       final reason = switch (e) {
@@ -397,33 +455,47 @@ class ReportService {
       };
       if (reason == 'internal') {
         session.log(
-          'Relatório ${r.id} falhou: $e',
+          'Relatório $id falhou: $e',
           level: LogLevel.error,
           exception: e,
           stackTrace: st,
         );
       }
-      await _save(
+      await _update(
         session,
-        r.copyWith(
-          status: ReportStatus.failed,
-          errorReason: reason,
-          finishedAt: _now().toUtc(),
-        ),
+        id,
+        (t) => [
+          t.status(ReportStatus.failed),
+          t.errorReason(reason),
+          t.finishedAt(_now().toUtc()),
+        ],
       );
     } finally {
       alive.cancel();
     }
   }
 
+  /// Logs how much memory the server holds while it builds report [id]:
+  /// a server out of memory is killed without a word in its log.
+  static void _logMemory(Session session, int id, String stage) {
+    const mb = 1024 * 1024;
+    session.log(
+      'Relatório $id, $stage: memória ${ProcessInfo.currentRss ~/ mb} MB '
+      '(pico ${ProcessInfo.maxRss ~/ mb} MB).',
+    );
+  }
+
   /// The report's CSV, its hash and its PDF, written on another isolate:
   /// Brazil by municipality keeps the CPU for tens of seconds, and a server
   /// that stops answering its health checks for that long is restarted.
+  /// The isolate is killed, and [_Stopped] thrown, once [stopped]
+  /// completes.
   static Future<({List<int> csv, String dataSha256, List<int> pdf})> _render(
     ReportRequest request,
     List<ReportTable> tables,
-    DateTime generatedAt,
-  ) => Isolate.run(() async {
+    DateTime generatedAt, {
+    required Future<void> stopped,
+  }) => _killable(() async {
     final csv = reportCsv(tables);
     final dataSha256 = sha256.convert(csv).toString();
     final pdf = await reportPdf(
@@ -434,23 +506,78 @@ class ReportService {
       fonts: await ReportFonts.load(),
     );
     return (csv: csv, dataSha256: dataSha256, pdf: pdf);
-  });
+  }, stopped);
 
-  /// Saves how far the report got, and that its server is still on it.
-  /// Only while it is running here: a report queued again is left alone.
-  Future<void> _progress(Session session, int id, int done) =>
-      ReportRequest.db.updateWhere(
-        session,
-        columnValues: (t) => [t.filesDone(done), t.aliveAt(_now().toUtc())],
-        where: (t) => t.id.equals(id) & t.status.equals(ReportStatus.running),
-        noReturn: true,
-      );
-
-  Future<ReportRequest> _save(Session session, ReportRequest r) async {
-    final saved = await ReportRequest.db.updateRow(session, r);
-    await session.messages.postMessage(channel(saved.id!), saved);
-    return saved;
+  /// [work] on another isolate, like [Isolate.run], killed when [stopped]
+  /// completes first.
+  static Future<T> _killable<T>(
+    Future<T> Function() work,
+    Future<void> stopped,
+  ) async {
+    final port = RawReceivePort();
+    final outcome = Completer<T>();
+    port.handler = (Object? message) {
+      port.close();
+      if (outcome.isCompleted) return;
+      switch (message) {
+        case (T value,):
+          outcome.complete(value);
+        case [final String error, final String stack]:
+          outcome.completeError(
+            Exception(error),
+            StackTrace.fromString(stack),
+          );
+        default:
+          // Exited without a result: killed, or out of memory.
+          outcome.completeError(const _Stopped());
+      }
+    };
+    final isolate = await _spawn(work, port.sendPort);
+    stopped.then((_) {
+      isolate.kill(priority: Isolate.immediate);
+      if (!outcome.isCompleted) outcome.completeError(const _Stopped());
+      port.close();
+    }).ignore();
+    return outcome.future;
   }
+
+  /// Kept apart from [_killable], so the isolate's closure holds [work]
+  /// alone: anything else it captured would be sent along.
+  static Future<Isolate> _spawn<T>(
+    Future<T> Function() work,
+    SendPort reply,
+  ) => Isolate.spawn(
+    (SendPort reply) async => Isolate.exit(reply, (await work(),)),
+    reply,
+    onError: reply,
+    onExit: reply,
+    errorsAreFatal: true,
+  );
+
+  /// Writes [columns] of report [id], and that its server is still on it,
+  /// then tells its followers. Only while it is running: null when it was
+  /// deleted or queued again meanwhile.
+  Future<ReportRequest?> _update(
+    Session session,
+    int id,
+    ColumnValueListBuilder<ReportRequestUpdateTable> columns,
+  ) async {
+    final rows = await ReportRequest.db.updateWhere(
+      session,
+      columnValues: (t) => [...columns(t), t.aliveAt(_now().toUtc())],
+      where: (t) => t.id.equals(id) & t.status.equals(ReportStatus.running),
+    );
+    if (rows.isEmpty) return null;
+    await session.messages.postMessage(channel(id), rows.single);
+    return rows.single;
+  }
+
+  /// [_update], stopping the build when the report is no longer running.
+  Future<ReportRequest> _advance(
+    Session session,
+    int id,
+    ColumnValueListBuilder<ReportRequestUpdateTable> columns,
+  ) async => await _update(session, id, columns) ?? (throw const _Stopped());
 
   Future<ByteData> _file(Session session, ReportRequest r, String format) {
     if (r.status != ReportStatus.ready || !formats.containsKey(format)) {
@@ -555,4 +682,9 @@ class ReportService {
     }
     return stored;
   }
+}
+
+/// The report stopped running on this server mid-build.
+class _Stopped implements Exception {
+  const _Stopped();
 }

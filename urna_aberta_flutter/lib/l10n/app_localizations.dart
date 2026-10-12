@@ -2718,6 +2718,24 @@ abstract class AppLocalizations {
   /// **'Relatório apagado.'**
   String get relatoriosDeleted;
 
+  /// No description provided for @relatoriosCancel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Cancelar'**
+  String get relatoriosCancel;
+
+  /// No description provided for @relatoriosCancelled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Relatório cancelado.'**
+  String get relatoriosCancelled;
+
+  /// No description provided for @relatoriosFailedServer.
+  ///
+  /// In pt, this message translates to:
+  /// **'O servidor parou várias vezes enquanto montava este relatório. Tente de novo mais tarde, ou peça um relatório menor.'**
+  String get relatoriosFailedServer;
+
   /// No description provided for @relatoriosRetry.
   ///
   /// In pt, this message translates to:

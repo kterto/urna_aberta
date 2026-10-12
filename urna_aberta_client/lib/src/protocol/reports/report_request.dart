@@ -36,9 +36,10 @@ abstract class ReportRequest
     this.startedAt,
     this.finishedAt,
     this.aliveAt,
+    int? attempts,
     this.sha256,
     this.publicToken,
-  });
+  }) : attempts = attempts ?? 0;
 
   factory ReportRequest({
     int? id,
@@ -54,6 +55,7 @@ abstract class ReportRequest
     DateTime? startedAt,
     DateTime? finishedAt,
     DateTime? aliveAt,
+    int? attempts,
     String? sha256,
     String? publicToken,
   }) = _ReportRequestImpl;
@@ -97,6 +99,7 @@ abstract class ReportRequest
       aliveAt: jsonSerialization['aliveAt'] == null
           ? null
           : _isc.DateTimeJsonExtension.fromJson(jsonSerialization['aliveAt']),
+      attempts: jsonSerialization['attempts'] as int?,
       sha256: jsonSerialization['sha256'] as String?,
       publicToken: jsonSerialization['publicToken'] as String?,
     );
@@ -123,7 +126,8 @@ abstract class ReportRequest
 
   int filesTotal;
 
-  /// Why it failed: `tseUnavailable`, `invalidRequest` or `internal`.
+  /// Why it failed: `tseUnavailable`, `invalidRequest`, `serverLost` or
+  /// `internal`.
   String? errorReason;
 
   DateTime createdAt;
@@ -136,6 +140,11 @@ abstract class ReportRequest
   /// Left untouched for [ReportService.staleAfter], its server is gone and
   /// the report is queued again.
   DateTime? aliveAt;
+
+  /// Times a server took it off the queue. A report that keeps losing its
+  /// server (one that runs it out of memory, say) fails after
+  /// [ReportService.maxAttempts] instead of being queued forever.
+  int attempts;
 
   /// SHA-256 of the CSV (the report's data), printed on the PDF.
   String? sha256;
@@ -161,6 +170,7 @@ abstract class ReportRequest
     DateTime? startedAt,
     DateTime? finishedAt,
     DateTime? aliveAt,
+    int? attempts,
     String? sha256,
     String? publicToken,
   });
@@ -181,6 +191,7 @@ abstract class ReportRequest
       if (startedAt != null) 'startedAt': startedAt?.toJson(),
       if (finishedAt != null) 'finishedAt': finishedAt?.toJson(),
       if (aliveAt != null) 'aliveAt': aliveAt?.toJson(),
+      'attempts': attempts,
       if (sha256 != null) 'sha256': sha256,
       if (publicToken != null) 'publicToken': publicToken,
     };
@@ -203,6 +214,7 @@ abstract class ReportRequest
       if (startedAt != null) 'startedAt': startedAt?.toJson(),
       if (finishedAt != null) 'finishedAt': finishedAt?.toJson(),
       if (aliveAt != null) 'aliveAt': aliveAt?.toJson(),
+      'attempts': attempts,
       if (sha256 != null) 'sha256': sha256,
       if (publicToken != null) 'publicToken': publicToken,
     };
@@ -231,6 +243,7 @@ class _ReportRequestImpl extends ReportRequest {
     DateTime? startedAt,
     DateTime? finishedAt,
     DateTime? aliveAt,
+    int? attempts,
     String? sha256,
     String? publicToken,
   }) : super._(
@@ -247,6 +260,7 @@ class _ReportRequestImpl extends ReportRequest {
          startedAt: startedAt,
          finishedAt: finishedAt,
          aliveAt: aliveAt,
+         attempts: attempts,
          sha256: sha256,
          publicToken: publicToken,
        );
@@ -269,6 +283,7 @@ class _ReportRequestImpl extends ReportRequest {
     Object? startedAt = _Undefined,
     Object? finishedAt = _Undefined,
     Object? aliveAt = _Undefined,
+    int? attempts,
     Object? sha256 = _Undefined,
     Object? publicToken = _Undefined,
   }) {
@@ -290,6 +305,7 @@ class _ReportRequestImpl extends ReportRequest {
       startedAt: startedAt is DateTime? ? startedAt : this.startedAt,
       finishedAt: finishedAt is DateTime? ? finishedAt : this.finishedAt,
       aliveAt: aliveAt is DateTime? ? aliveAt : this.aliveAt,
+      attempts: attempts ?? this.attempts,
       sha256: sha256 is String? ? sha256 : this.sha256,
       publicToken: publicToken is String? ? publicToken : this.publicToken,
     );

@@ -153,6 +153,8 @@ class _ReportCard extends StatelessWidget {
     final p = context.atlas;
     final r = report;
     final busy = c.busy(r.id!);
+    final unfinished =
+        r.status == ReportStatus.running || r.status == ReportStatus.queued;
     final breakdown = switch (r.spec.breakdown) {
       ReportBreakdown.none => null,
       ReportBreakdown.uf => l.relatoriosBreakdownUf,
@@ -180,8 +182,7 @@ class _ReportCard extends StatelessWidget {
               ].join(' · '),
               style: t.bodySmall?.copyWith(color: p.inkMuted),
             ),
-            if (r.status == ReportStatus.running ||
-                r.status == ReportStatus.queued) ...[
+            if (unfinished) ...[
               const SizedBox(height: Space.x3),
               LinearProgressIndicator(
                 value: r.filesTotal == 0 || r.status == ReportStatus.queued
@@ -202,12 +203,11 @@ class _ReportCard extends StatelessWidget {
             ],
             if (r.status == ReportStatus.failed) ...[
               const SizedBox(height: Space.x3),
-              Text(
-                r.errorReason == 'tseUnavailable'
-                    ? l.relatoriosFailedTse
-                    : l.relatoriosFailedOther,
-                style: t.bodyMedium,
-              ),
+              Text(switch (r.errorReason) {
+                'tseUnavailable' => l.relatoriosFailedTse,
+                'serverLost' => l.relatoriosFailedServer,
+                _ => l.relatoriosFailedOther,
+              }, style: t.bodyMedium),
             ],
             if (r.status == ReportStatus.ready && r.sha256 != null) ...[
               const SizedBox(height: Space.x2),
@@ -289,17 +289,21 @@ class _ReportCard extends StatelessWidget {
                     onPressed: () => _act(context, () => c.retry(r)),
                     child: Text(l.relatoriosRetry),
                   ),
-                if (r.status != ReportStatus.running)
-                  TextButton(
-                    onPressed: busy
-                        ? null
-                        : () => _act(
-                            context,
-                            () => c.delete(r),
-                            done: l.relatoriosDeleted,
-                          ),
-                    child: Text(l.relatoriosDelete),
+                // Unfinished, deleting cancels it: the server stops building.
+                TextButton(
+                  onPressed: busy
+                      ? null
+                      : () => _act(
+                          context,
+                          () => c.delete(r),
+                          done: unfinished
+                              ? l.relatoriosCancelled
+                              : l.relatoriosDeleted,
+                        ),
+                  child: Text(
+                    unfinished ? l.relatoriosCancel : l.relatoriosDelete,
                   ),
+                ),
               ],
             ),
           ],

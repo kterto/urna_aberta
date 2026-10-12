@@ -1634,6 +1634,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get relatoriosDeleted => 'Relatório apagado.';
 
   @override
+  String get relatoriosCancel => 'Cancelar';
+
+  @override
+  String get relatoriosCancelled => 'Relatório cancelado.';
+
+  @override
+  String get relatoriosFailedServer =>
+      'O servidor parou várias vezes enquanto montava este relatório. Tente de novo mais tarde, ou peça um relatório menor.';
+
+  @override
   String get relatoriosRetry => 'Tentar de novo';
 
   @override

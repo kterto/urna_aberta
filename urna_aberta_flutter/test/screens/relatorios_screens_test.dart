@@ -199,6 +199,38 @@ void main() {
       expect(find.text('Na fila'), findsOneWidget);
     });
 
+    testWidgets('a report being built can be cancelled', (tester) async {
+      reports.reports = [
+        sampleRequest(id: 6, status: ReportStatus.running, filesDone: 3),
+      ];
+      await pump(tester, meus());
+      expect(find.text('Apagar'), findsNothing);
+      await tester.tap(find.text('Cancelar'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(reports.deleted, [6]);
+      expect(find.text('Relatório cancelado.'), findsOneWidget);
+      expect(find.text('Montando'), findsNothing);
+    });
+
+    testWidgets('a report whose server kept stopping says so', (
+      tester,
+    ) async {
+      reports.reports = [
+        sampleRequest(
+          id: 8,
+          status: ReportStatus.failed,
+          errorReason: 'serverLost',
+        ),
+      ];
+      await pump(tester, meus());
+      expect(
+        find.textContaining('O servidor parou várias vezes'),
+        findsOneWidget,
+      );
+      expect(find.text('Apagar'), findsOneWidget);
+    });
+
     testWidgets('no reports yet', (tester) async {
       await pump(tester, meus());
       expect(

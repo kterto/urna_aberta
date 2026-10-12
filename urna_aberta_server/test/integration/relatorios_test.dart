@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
@@ -757,6 +758,95 @@ void main() {
           expect([q.status, q.filesDone], [ReportStatus.queued, 0]);
           final a = (await relatorios.listar(bia)).single;
           expect([a.status, a.filesDone], [ReportStatus.running, 1]);
+        },
+      );
+
+      test(
+        'a report that keeps losing its server fails, and the viewer can '
+        'ask again',
+        () async {
+          final r = await relatorios.pedir(ana, _spec([1], ac));
+          final session = sessionBuilder.build();
+          await ReportRequest.db.updateRow(
+            session,
+            r.copyWith(
+              status: ReportStatus.running,
+              attempts: ReportService.maxAttempts,
+              aliveAt: now.subtract(
+                ReportService.staleAfter + const Duration(seconds: 1),
+              ),
+            ),
+          );
+          expect(await RelatoriosEndpoint.service.recover(session), isFalse);
+          final lost = (await relatorios.listar(ana)).single;
+          expect(lost.status, ReportStatus.failed);
+          expect(lost.errorReason, 'serverLost');
+
+          final again = await relatorios.pedir(ana, _spec([1], ac));
+          await drain();
+          final built = await ReportRequest.db.findById(session, again.id!);
+          expect([built!.status, built.attempts], [ReportStatus.ready, 1]);
+        },
+      );
+
+      test(
+        'a queued report can be cancelled, freeing the viewer\'s turn',
+        () async {
+          final r = await relatorios.pedir(ana, _spec([1], ac));
+          await relatorios.apagar(ana, r.id!);
+          expect(await relatorios.listar(ana), isEmpty);
+          final again = await relatorios.pedir(ana, _spec([1], ac));
+          expect(again.status, ReportStatus.queued);
+        },
+      );
+
+      test(
+        'a report cancelled while it is built stops, keeps no files, and '
+        'the queue goes on',
+        () async {
+          final base = RelatoriosEndpoint.service;
+          final reading = Completer<void>();
+          final cancelled = Completer<void>();
+          var held = false;
+          RelatoriosEndpoint.service = ReportService(
+            planner: base.planner,
+            builder: ReportBuilder(
+              result: (session, need) async {
+                if (held) {
+                  if (!reading.isCompleted) reading.complete();
+                  await cancelled.future;
+                }
+                return base.builder.result(session, need);
+              },
+              section: base.builder.section,
+              retryAfter: const [Duration.zero],
+            ),
+            ratePerSecond: 20,
+            now: () => now,
+          );
+          final r = await relatorios.pedir(ana, _spec([1, 3], ac));
+          final other = await relatorios.pedir(bia, _spec([1], ac));
+          held = true;
+          final draining = drain();
+          await reading.future;
+          await relatorios.apagar(ana, r.id!);
+          held = false;
+          cancelled.complete();
+          await draining;
+
+          final session = sessionBuilder.build();
+          expect(await ReportRequest.db.findById(session, r.id!), isNull);
+          for (final format in ReportService.formats.keys) {
+            expect(
+              await session.storage.fileExists(
+                storageId: ReportService.storageId,
+                path: ReportService.filePath(r.id!, format),
+              ),
+              isFalse,
+            );
+          }
+          final o = await ReportRequest.db.findById(session, other.id!);
+          expect(o!.status, ReportStatus.ready);
         },
       );
 

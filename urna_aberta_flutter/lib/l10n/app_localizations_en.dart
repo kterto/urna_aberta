@@ -1635,6 +1635,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get relatoriosDeleted => 'Report deleted.';
 
   @override
+  String get relatoriosCancel => 'Cancel';
+
+  @override
+  String get relatoriosCancelled => 'Report cancelled.';
+
+  @override
+  String get relatoriosFailedServer =>
+      'The server stopped several times while building this report. Try again later, or ask for a smaller report.';
+
+  @override
   String get relatoriosRetry => 'Try again';
 
   @override

@@ -12,7 +12,8 @@ fields:
   ### TSE files read so far, of those the report needs.
   filesDone: int
   filesTotal: int
-  ### Why it failed: `tseUnavailable`, `invalidRequest` or `internal`.
+  ### Why it failed: `tseUnavailable`, `invalidRequest`, `serverLost` or
+  ### `internal`.
   errorReason: String?
   createdAt: DateTime
   startedAt: DateTime?
@@ -21,6 +22,10 @@ fields:
   ### Left untouched for [ReportService.staleAfter], its server is gone and
   ### the report is queued again.
   aliveAt: DateTime?
+  ### Times a server took it off the queue. A report that keeps losing its
+  ### server (one that runs it out of memory, say) fails after
+  ### [ReportService.maxAttempts] instead of being queued forever.
+  attempts: int, default=0
   ### SHA-256 of the CSV (the report's data), printed on the PDF.
   sha256: String?
   ### Set while the owner publishes it: the report is then readable by
