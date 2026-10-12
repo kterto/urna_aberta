@@ -19,6 +19,7 @@ class AtlasPage extends StatelessWidget {
     this.actions = const [],
     this.maxWidth = 1240,
     this.showBack = false,
+    this.onRefresh,
   });
 
   final String title;
@@ -27,6 +28,11 @@ class AtlasPage extends StatelessWidget {
   final List<Widget> actions;
   final double maxWidth;
   final bool showBack;
+
+  /// Reloads what the page shows when it is pulled down from the top
+  /// (iOS: the bouncing refresh control; elsewhere, Material's indicator,
+  /// which phones' browsers get too).
+  final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -68,23 +74,34 @@ class AtlasPage extends StatelessWidget {
             ),
           );
 
+    // Short pages still scroll, so they can be pulled.
+    final physics = onRefresh == null
+        ? null
+        : const AlwaysScrollableScrollPhysics();
+    Widget pullable(Widget scroll) => onRefresh == null
+        ? scroll
+        : RefreshIndicator(onRefresh: onRefresh!, child: scroll);
+
     if (wide && kind == ShellKind.web) {
-      return CustomScrollView(
-        slivers: [
-          content([
-            const SizedBox(height: Space.x7),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (showBack) _back(context),
-                Expanded(child: Text(title, style: t.displayMedium)),
-                ...actions,
-              ],
-            ),
-            const SizedBox(height: Space.x3),
-            ?ledeText,
-          ]),
-        ],
+      return pullable(
+        CustomScrollView(
+          physics: physics,
+          slivers: [
+            content([
+              const SizedBox(height: Space.x7),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (showBack) _back(context),
+                  Expanded(child: Text(title, style: t.displayMedium)),
+                  ...actions,
+                ],
+              ),
+              const SizedBox(height: Space.x3),
+              ?ledeText,
+            ]),
+          ],
+        ),
       );
     }
 
@@ -107,12 +124,23 @@ class AtlasPage extends StatelessWidget {
             backgroundColor: p.paper,
           );
 
-    return CustomScrollView(
-      slivers: [
-        bar,
-        content([const SizedBox(height: Space.x3), ?ledeText]),
-      ],
-    );
+    final slivers = [
+      bar,
+      if (kind == ShellKind.ios && onRefresh != null)
+        CupertinoSliverRefreshControl(onRefresh: onRefresh),
+      content([const SizedBox(height: Space.x3), ?ledeText]),
+    ];
+    if (kind == ShellKind.ios) {
+      return CustomScrollView(
+        physics: physics == null
+            ? null
+            : const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+        slivers: slivers,
+      );
+    }
+    return pullable(CustomScrollView(physics: physics, slivers: slivers));
   }
 
   /// Back to the screen underneath, or to the first section when there is

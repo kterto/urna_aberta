@@ -62,6 +62,7 @@ class _ResultadosScreenState extends State<ResultadosScreen> {
       builder: (context, _) => AtlasPage(
         title: l.resultadosTitle,
         lede: l.resultadosLede,
+        onRefresh: _c!.refresh,
         children: [
           _Controls(c: _c!),
           const SizedBox(height: Space.x5),

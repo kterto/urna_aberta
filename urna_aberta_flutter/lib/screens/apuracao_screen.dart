@@ -49,6 +49,13 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
     _live ??= LiveController(TallyScope.of(context))..load();
   }
 
+  /// Pulled to refresh: the live count read again; the replay too, if it
+  /// never loaded.
+  Future<void> _refresh() => Future.wait([
+    _live!.load(),
+    if (_replay!.night == null) _replay!.load(),
+  ]);
+
   @override
   void dispose() {
     _replay?.dispose();
@@ -68,6 +75,7 @@ class _ApuracaoScreenState extends State<ApuracaoScreen> {
         final showLive = status != null && liveFrame != null && !_replayChosen;
         return AtlasPage(
           title: wide ? l.apuracaoHeadline : l.navApuracao,
+          onRefresh: _refresh,
           lede: !showLive
               ? l.apuracaoLede
               : status.open

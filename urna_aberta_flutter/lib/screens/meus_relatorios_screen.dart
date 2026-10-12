@@ -75,6 +75,7 @@ class _MeusRelatoriosScreenState extends State<MeusRelatoriosScreen> {
         builder: (context, _) => AtlasPage(
           title: l.relatoriosMine,
           lede: l.relatoriosMineLede,
+          onRefresh: _signedIn ? c.load : null,
           maxWidth: 880,
           showBack: true,
           actions: [

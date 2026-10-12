@@ -84,6 +84,10 @@ class _SecaoScreenState extends State<SecaoScreen> {
         return AtlasPage(
           title: l.secaoTitle,
           lede: l.secaoLede,
+          // The section on screen, looked up again.
+          onRefresh: c.canConsult && (c.report != null || c.error != null)
+              ? c.consultar
+              : null,
           maxWidth: 1040,
           children: [
             _form(context, c, wide),

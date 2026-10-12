@@ -231,6 +231,23 @@ void main() {
       expect(find.text('Apagar'), findsOneWidget);
     });
 
+    testWidgets('pulling the list down reads it again', (tester) async {
+      await pump(tester, meus());
+      expect(
+        find.text('Você ainda não pediu nenhum relatório.'),
+        findsOneWidget,
+      );
+      reports.reports = [sampleRequest(id: 9)];
+      await tester.fling(
+        find.text('Você ainda não pediu nenhum relatório.'),
+        // The indicator arms after a quarter of this tall test window.
+        const Offset(0, 1200),
+        1000,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Pronto'), findsOneWidget);
+    });
+
     testWidgets('no reports yet', (tester) async {
       await pump(tester, meus());
       expect(

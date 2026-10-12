@@ -157,6 +157,15 @@ class ResultadosController extends ChangeNotifier {
     _schedule();
   }
 
+  /// Pulled to refresh: the result on screen read again in place; the
+  /// Câmara or a failed read loaded again; everything, when not even the
+  /// elections loaded.
+  Future<void> refresh() => _elections.isEmpty
+      ? start()
+      : _report != null
+      ? reload()
+      : _refresh();
+
   void _schedule() {
     _timer?.cancel();
     _timer = autoRefresh && live ? Timer(refreshEvery, reload) : null;
